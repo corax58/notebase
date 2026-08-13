@@ -8,6 +8,13 @@
       "when": 1786604455218,
       "tag": "0000_short_lizard",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1786656513957,
+      "tag": "0001_amazing_puck",
+      "breakpoints": true
     }
   ]
 }
