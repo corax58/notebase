@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { AppSidebar } from "@/components/app-sidebar";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { auth } from "@/lib/auth";
 
@@ -28,11 +29,12 @@ export default async function DashboardLayout(
         <AppSidebar />
         <SidebarInset className="ring-border bg-secondary flex-1 overflow-hidden ring-1">
           <DashboardHeader user={user} />
-          <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-4 md:p-6">
+          <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-2 md:p-3">
             {props.children}
           </div>
         </SidebarInset>
       </SidebarProvider>
+      <Toaster />
     </TooltipProvider>
   );
 }

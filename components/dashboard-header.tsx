@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -82,14 +83,16 @@ export function DashboardHeader({
           }
         />
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>
-            <div className="flex flex-col">
-              <span className="font-medium">{user.name}</span>
-              <span className="text-muted-foreground text-xs font-normal">
-                {user.email}
-              </span>
-            </div>
-          </DropdownMenuLabel>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>
+              <div className="flex flex-col">
+                <span className="font-medium">{user.name}</span>
+                <span className="text-muted-foreground text-xs font-normal">
+                  {user.email}
+                </span>
+              </div>
+            </DropdownMenuLabel>
+          </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem
             variant="destructive"
