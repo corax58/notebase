@@ -1,12 +1,18 @@
+"use client";
+
+import * as React from "react";
 import Link from "next/link";
 import {
   ArchiveIcon,
   ClockIcon,
   FolderIcon,
-  LinkSimpleIcon,
   GlobeIcon,
+  DotsThreeVerticalIcon,
+  PencilSimpleIcon,
+  TrashIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -14,7 +20,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { DeleteNoteAlert } from "@/components/delete-note-alert";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { EditNoteDialog } from "@/components/edit-note-dialog";
 import { formatRelativeDate } from "@/lib/utils";
+
+type Folder = { id: string; name: string; color: string | null };
+type Tag = { id: string; name: string };
 
 type NoteCardProps = {
   note: {
@@ -27,11 +44,13 @@ type NoteCardProps = {
     faviconUrl: string | null;
     createdAt: Date;
     folder: { id: string; name: string; color: string | null } | null;
-    tags: { id: string; name: string }[];
+    tags: Tag[];
   };
+  folders?: Folder[];
+  tags?: Tag[];
 };
 
-export function NoteCard({ note }: NoteCardProps) {
+export function NoteCard({ note, folders = [], tags = [] }: NoteCardProps) {
   let hostname: string | null = null;
 
   if (note.sourceUrl && !note.sourceTitle) {
@@ -44,25 +63,52 @@ export function NoteCard({ note }: NoteCardProps) {
 
   const hasBadges = note.archived || note.label || note.tags.length > 0;
 
+  const [editOpen, setEditOpen] = React.useState(false);
+  const [deleteOpen, setDeleteOpen] = React.useState(false);
+
   return (
     <Card size="sm" className="flex flex-col rounded-md">
-      <CardHeader>
-        {note.folder && (
-          <Link
-            href={`/dashboard/notes?folder=${note.folder.id}`}
-            className="text-muted-foreground hover:text-foreground flex w-fit items-center gap-1 text-xs font-medium hover:underline"
-            style={note.folder.color ? { color: note.folder.color } : undefined}
+      <CardHeader className="flex flex-row items-start justify-between gap-2">
+        <div className="min-w-0">
+          {note.folder && (
+            <Link
+              href={`/dashboard/notes?folder=${note.folder.id}`}
+              className="text-muted-foreground hover:text-foreground flex w-fit items-center gap-1 text-xs font-medium hover:underline"
+              style={
+                note.folder.color ? { color: note.folder.color } : undefined
+              }
+            >
+              <FolderIcon className="size-3.5" weight="fill" />
+              {note.folder.name}
+            </Link>
+          )}
+          <CardTitle className="line-clamp-1 text-2xl">
+            {note.label ?? "Untitled note"}
+          </CardTitle>
+          <CardDescription className="mt-4 line-clamp-4">
+            {note.content}
+          </CardDescription>
+        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={<Button variant="ghost" size="icon-sm" />}
           >
-            <FolderIcon className="size-3.5" weight="fill" />
-            {note.folder.name}
-          </Link>
-        )}
-        <CardTitle className="line-clamp-1">
-          {note.label ?? "Untitled note"}
-        </CardTitle>
-        <CardDescription className="line-clamp-4">
-          {note.content}
-        </CardDescription>
+            <DotsThreeVerticalIcon className="size-5" weight="bold" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => setEditOpen(true)}>
+              <PencilSimpleIcon />
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              variant="destructive"
+              onClick={() => setDeleteOpen(true)}
+            >
+              <TrashIcon />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </CardHeader>
       <CardContent className="flex flex-1 flex-col justify-end gap-3">
         {hasBadges && (
@@ -73,7 +119,6 @@ export function NoteCard({ note }: NoteCardProps) {
                 Archived
               </Badge>
             )}
-            {note.label && <Badge variant="outline">{note.label}</Badge>}
             {note.tags.map((tag) => (
               <Badge key={tag.id} variant="secondary">
                 #{tag.name}
@@ -114,6 +159,27 @@ export function NoteCard({ note }: NoteCardProps) {
           </span>
         </div>
       </CardContent>
+
+      <EditNoteDialog
+        note={{
+          id: note.id,
+          content: note.content,
+          label: note.label,
+          folderId: note.folder?.id ?? null,
+          tagIds: note.tags.map((tag) => tag.id),
+          sourceTitle: note.sourceTitle,
+          sourceUrl: note.sourceUrl,
+        }}
+        folders={folders}
+        tags={tags}
+        open={editOpen}
+        onOpenChange={setEditOpen}
+      />
+      <DeleteNoteAlert
+        noteId={note.id}
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+      />
     </Card>
   );
 }

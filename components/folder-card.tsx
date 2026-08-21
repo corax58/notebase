@@ -1,22 +1,22 @@
+"use client";
+
+import * as React from "react";
 import Link from "next/link";
 import {
-  ArchiveIcon,
-  ClockIcon,
   FolderIcon,
-  LinkSimpleIcon,
-  GlobeIcon,
-  DotsThreeCircleVerticalIcon,
   DotsThreeVerticalIcon,
+  PencilSimpleIcon,
+  TrashIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { DeleteFolderAlert } from "@/components/delete-folder-alert";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { formatRelativeDate } from "@/lib/utils";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { EditFolderDialog } from "@/components/edit-folder-dialog";
 import { Button } from "./ui/button";
 
 type FolderCardProps = {
@@ -29,10 +29,17 @@ type FolderCardProps = {
 };
 
 export function FolderCard({ folder }: FolderCardProps) {
+  const href = `/dashboard/folders/${folder.id}`;
+  const [editOpen, setEditOpen] = React.useState(false);
+  const [deleteOpen, setDeleteOpen] = React.useState(false);
+
   return (
     <Card key={folder.id} size="sm" className="rounded-md py-0">
       <CardContent className="p-0">
-        <div className="bg-secondary flex aspect-video w-full items-center justify-center">
+        <Link
+          href={href}
+          className="bg-secondary flex aspect-video w-full items-center justify-center"
+        >
           <div className="relative size-32">
             <FolderIcon
               weight="fill"
@@ -50,9 +57,9 @@ export function FolderCard({ folder }: FolderCardProps) {
               }}
             />
           </div>
-        </div>
+        </Link>
         <div className="flex items-center justify-between">
-          <div className="flex w-full gap-4 p-4">
+          <Link href={href} className="flex w-full min-w-0 gap-4 p-4">
             <div
               className="bg-primary/10 text-primary flex size-9 shrink-0 items-center justify-center rounded-lg"
               style={
@@ -72,12 +79,41 @@ export function FolderCard({ folder }: FolderCardProps) {
                 {folder.noteCount} {folder.noteCount === 1 ? "note" : "notes"}
               </p>
             </div>
-          </div>
-          <Button variant={"ghost"}>
-            <DotsThreeVerticalIcon className="size-6" weight="bold" />
-          </Button>
+          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={<Button variant="ghost" className={"size-6"} />}
+            >
+              <DotsThreeVerticalIcon className="size-6" weight="bold" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setEditOpen(true)}>
+                <PencilSimpleIcon />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={() => setDeleteOpen(true)}
+              >
+                <TrashIcon />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </CardContent>
+
+      <EditFolderDialog
+        folder={folder}
+        open={editOpen}
+        onOpenChange={setEditOpen}
+      />
+      <DeleteFolderAlert
+        folderId={folder.id}
+        folderName={folder.name}
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+      />
     </Card>
   );
 }

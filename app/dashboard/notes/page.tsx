@@ -64,7 +64,12 @@ export default async function NotesPage({
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {noteRows.map((note) => (
-            <NoteCard key={note.id} note={note} />
+            <NoteCard
+              key={note.id}
+              note={note}
+              folders={userFolders}
+              tags={userTags}
+            />
           ))}
         </div>
       )}
