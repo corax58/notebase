@@ -3,6 +3,14 @@
   "private": true,
   "scripts": {
     "web:dev": "pnpm --filter web dev",
-    "web:build": "pnpm --filter web build"
+    "web:build": "pnpm --filter web build",
+    "ext:dev": "pnpm --filter extension dev",
+    "ext:build": "pnpm --filter extension build",
+    "ext:zip": "pnpm --filter extension zip",
+    "dev": "pnpm --parallel --filter web --filter extension dev",
+    "db:generate": "pnpm --filter web db:generate",
+    "db:migrate": "pnpm --filter web db:migrate",
+    "db:push": "pnpm --filter web db:push",
+    "db:studio": "pnpm --filter web db:studio"
   }
 }
