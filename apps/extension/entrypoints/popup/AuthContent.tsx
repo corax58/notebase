@@ -1,25 +1,27 @@
 import { useSession } from "@/auth/auth-client";
-import { GoogleSignInButton } from "@/components/google-sign-in-button";
+import { LoginScreen } from "@/components/login-screen";
+import { AccountScreen } from "@/components/account-screen";
 
 function AuthContent() {
   const { data, isPending, error } = useSession();
-  console.log(data, isPending, error);
+
   if (isPending) {
-    return <>Loading...</>;
-  }
-  if (error) {
-    return <>Error: {error.message}</>;
-  }
-  if (data) {
-    return <>Signed in as {data.user.name}</>;
-  }
-  if (!data) {
     return (
-      <>
-        <GoogleSignInButton />
-      </>
+      <div className="flex items-center justify-center px-6 py-10 text-sm text-muted-foreground">
+        Loading...
+      </div>
     );
   }
+
+  if (error) {
+    return <LoginScreen error={error.message} />;
+  }
+
+  if (!data) {
+    return <LoginScreen />;
+  }
+
+  return <AccountScreen user={data.user} />;
 }
 
 export default AuthContent;
