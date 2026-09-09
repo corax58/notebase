@@ -64,7 +64,7 @@ export function AppSidebar() {
                       tooltip={item.title}
                       render={<Link href={item.href} />}
                       className={cn(
-                        "rounded-md",
+                        "rounded-xs",
                         isActive &&
                           "data-active:bg-secondary data-active:text-primary data-active:hover:bg-secondary/80",
                       )}

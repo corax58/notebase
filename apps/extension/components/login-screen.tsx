@@ -6,7 +6,7 @@ interface LoginScreenProps {
 
 export function LoginScreen({ error }: LoginScreenProps) {
   return (
-    <div className="flex flex-col items-center gap-6 px-6 py-10 text-center">
+    <div className="flex flex-col items-center justify-center h-full gap-6 px-6 py-10 text-center">
       <div className="flex flex-col items-center gap-2">
         <div className="flex size-12 items-center justify-center rounded-2xl bg-primary text-lg font-semibold text-primary-foreground">
           N

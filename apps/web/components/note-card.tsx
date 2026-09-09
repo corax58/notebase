@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   ArchiveIcon,
   ClockIcon,
+  EyeIcon,
   FolderIcon,
   GlobeIcon,
   DotsThreeVerticalIcon,
@@ -28,6 +29,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { EditNoteDialog } from "@/components/edit-note-dialog";
+import { ViewNoteDialog } from "@/components/view-note-dialog";
 import { formatRelativeDate } from "@/lib/utils";
 
 type Folder = { id: string; name: string; color: string | null };
@@ -51,7 +53,7 @@ type NoteCardProps = {
 };
 
 export function NoteCard({ note, folders = [], tags = [] }: NoteCardProps) {
-  let hostname: string | null = null;
+  let hostname: string | null = note.sourceTitle;
 
   if (note.sourceUrl && !note.sourceTitle) {
     try {
@@ -63,6 +65,7 @@ export function NoteCard({ note, folders = [], tags = [] }: NoteCardProps) {
 
   const hasBadges = note.archived || note.label || note.tags.length > 0;
 
+  const [viewOpen, setViewOpen] = React.useState(false);
   const [editOpen, setEditOpen] = React.useState(false);
   const [deleteOpen, setDeleteOpen] = React.useState(false);
 
@@ -82,12 +85,18 @@ export function NoteCard({ note, folders = [], tags = [] }: NoteCardProps) {
               {note.folder.name}
             </Link>
           )}
-          <CardTitle className="line-clamp-1 text-2xl">
-            {note.label ?? "Untitled note"}
-          </CardTitle>
-          <CardDescription className="mt-4 line-clamp-4">
-            {note.content}
-          </CardDescription>
+          <button
+            type="button"
+            onClick={() => setViewOpen(true)}
+            className="block w-full text-left"
+          >
+            <CardTitle className="line-clamp-1 text-2xl hover:underline">
+              {note.label ?? "Untitled note"}
+            </CardTitle>
+            <CardDescription className="mt-4 line-clamp-4">
+              {note.content}
+            </CardDescription>
+          </button>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger
@@ -96,6 +105,10 @@ export function NoteCard({ note, folders = [], tags = [] }: NoteCardProps) {
             <DotsThreeVerticalIcon className="size-5" weight="bold" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => setViewOpen(true)}>
+              <EyeIcon />
+              View
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setEditOpen(true)}>
               <PencilSimpleIcon />
               Edit
@@ -160,6 +173,19 @@ export function NoteCard({ note, folders = [], tags = [] }: NoteCardProps) {
         </div>
       </CardContent>
 
+      <ViewNoteDialog
+        note={note}
+        open={viewOpen}
+        onOpenChange={setViewOpen}
+        onEdit={() => {
+          setViewOpen(false);
+          setEditOpen(true);
+        }}
+        onDelete={() => {
+          setViewOpen(false);
+          setDeleteOpen(true);
+        }}
+      />
       <EditNoteDialog
         note={{
           id: note.id,

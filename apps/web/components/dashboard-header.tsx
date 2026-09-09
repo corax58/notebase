@@ -46,7 +46,7 @@ export function DashboardHeader({
     .toUpperCase();
 
   return (
-    <header className="border-border bg-background flex items-center gap-3 border-b px-4 py-3 md:m-3 md:rounded-t-2xl md:px-6">
+    <header className="border-border bg-background flex items-center gap-3 border-b px-4 py-3 md:m-3 md:rounded-t-xs md:px-6">
       <SidebarTrigger />
       <Separator orientation="vertical" className="h-5" />
 
@@ -64,9 +64,9 @@ export function DashboardHeader({
         <Input placeholder="Search notes..." className="w-56 pl-9 lg:w-72" />
       </div>
 
-      <Button variant="secondary" size="icon-sm" aria-label="Notifications">
+      {/* <Button variant="secondary" size="icon-sm" aria-label="Notifications">
         <BellIcon />
-      </Button>
+      </Button> */}
 
       <DropdownMenu>
         <DropdownMenuTrigger

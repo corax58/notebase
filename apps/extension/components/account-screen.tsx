@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LogOut } from "lucide-react";
+import { Loader2, LogOut } from "lucide-react";
 import { signOut } from "@/auth/auth-client";
 import { cn } from "@/lib/utils";
 
@@ -21,7 +21,7 @@ export function AccountScreen({ user }: AccountScreenProps) {
   }
 
   return (
-    <div className="flex flex-col gap-6 px-6 py-8">
+    <div className="flex justify-between items-center  p-6">
       <div className="flex items-center gap-3">
         {user.image ? (
           <img
@@ -43,14 +43,16 @@ export function AccountScreen({ user }: AccountScreenProps) {
       </div>
       <button
         className={cn(
-          "inline-flex w-full shrink-0 cursor-pointer items-center justify-center gap-2 rounded-4xl border border-border bg-clip-padding text-sm font-medium whitespace-nowrap transition-colors outline-none select-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50",
-          "px-4 py-2",
+          "inline-flex size-10 shrink-0 cursor-pointer items-center justify-center  rounded-4xl border border-border bg-clip-padding text-sm font-medium whitespace-nowrap transition-colors outline-none select-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50",
         )}
         disabled={isSigningOut}
         onClick={handleSignOut}
       >
-        <LogOut className="size-4" />
-        {isSigningOut ? "Signing out..." : "Sign out"}
+        {isSigningOut ? (
+          <Loader2 className="size-4 animate-spin" />
+        ) : (
+          <LogOut className="size-4" />
+        )}
       </button>
     </div>
   );

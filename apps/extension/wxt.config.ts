@@ -6,6 +6,7 @@ export default defineConfig({
   modules: ["@wxt-dev/module-react"],
   manifest: {
     host_permissions: ["http://localhost:3000/*"],
+    permissions: ["contextMenus", "storage"],
   },
   vite: () => ({
     plugins: [tailwindcss()],
