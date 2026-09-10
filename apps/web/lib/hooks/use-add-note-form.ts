@@ -7,7 +7,7 @@ const initialState = {
   content: "",
   label: "",
   folderId: null as string | null,
-  tagIds: [] as string[],
+  tags: [] as string[],
   sourceTitle: "",
   sourceUrl: "",
 }
@@ -20,13 +20,8 @@ export function useAddNoteForm() {
   const [submitting, setSubmitting] = React.useState(false)
   const [form, setForm] = React.useState(initialState)
 
-  function toggleTag(tagId: string, checked: boolean) {
-    setForm((prev) => ({
-      ...prev,
-      tagIds: checked
-        ? [...prev.tagIds, tagId]
-        : prev.tagIds.filter((id) => id !== tagId),
-    }))
+  function setTags(tags: string[]) {
+    setForm((prev) => ({ ...prev, tags }))
   }
 
   function reset() {
@@ -67,7 +62,7 @@ export function useAddNoteForm() {
           content,
           label: form.label.trim() || undefined,
           folderId: form.folderId ?? undefined,
-          tagIds: form.tagIds,
+          tags: form.tags,
           sourceTitle: form.sourceTitle.trim() || undefined,
           sourceUrl: sourceUrl || undefined,
         }),
@@ -99,5 +94,5 @@ export function useAddNoteForm() {
     }
   }
 
-  return { open, setOpen, form, setForm, submitting, toggleTag, reset, handleSubmit }
+  return { open, setOpen, form, setForm, submitting, setTags, reset, handleSubmit }
 }

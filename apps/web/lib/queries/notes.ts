@@ -3,22 +3,14 @@ import { db } from "@/db"
 import { folders, notes, tags } from "@/db/schema"
 
 export async function getNotes(userId: string, folderId?: string) {
-  const rows = await db.query.notes.findMany({
+  return db.query.notes.findMany({
     where: folderId
       ? and(eq(notes.userId, userId), eq(notes.folderId, folderId))
       : eq(notes.userId, userId),
     orderBy: desc(notes.createdAt),
     limit: 50,
-    with: {
-      folder: true,
-      noteTags: { with: { tag: true } },
-    },
+    with: { folder: true },
   })
-
-  return rows.map(({ noteTags: linkedTags, ...note }) => ({
-    ...note,
-    tags: linkedTags.map((link) => link.tag),
-  }))
 }
 
 export type NoteWithRelations = Awaited<ReturnType<typeof getNotes>>[number]

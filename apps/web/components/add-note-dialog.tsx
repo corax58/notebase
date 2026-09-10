@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { NoteFolderSelect } from "@/components/note-folder-select"
 import { NoteSourceFields } from "@/components/note-source-fields"
-import { NoteTagsSelect } from "@/components/note-tags-select"
+import { NoteTagsInput } from "@/components/note-tags-input"
 import { Textarea } from "@/components/ui/textarea"
 import { useAddNoteForm } from "@/lib/hooks/use-add-note-form"
 
@@ -31,7 +31,7 @@ export function AddNoteDialog({
   folders: Folder[]
   tags: Tag[]
 }) {
-  const { open, setOpen, form, setForm, submitting, toggleTag, reset, handleSubmit } =
+  const { open, setOpen, form, setForm, submitting, setTags, reset, handleSubmit } =
     useAddNoteForm()
 
   return (
@@ -71,20 +71,19 @@ export function AddNoteDialog({
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <NoteFolderSelect
-                folders={folders}
-                value={form.folderId}
-                onChange={(folderId) =>
-                  setForm((prev) => ({ ...prev, folderId }))
-                }
-              />
-              <NoteTagsSelect
-                tags={tags}
-                selectedIds={form.tagIds}
-                onToggle={toggleTag}
-              />
-            </div>
+            <NoteFolderSelect
+              folders={folders}
+              value={form.folderId}
+              onChange={(folderId) =>
+                setForm((prev) => ({ ...prev, folderId }))
+              }
+            />
+
+            <NoteTagsInput
+              tags={form.tags}
+              onChange={setTags}
+              suggestions={tags}
+            />
 
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="note-label">Label</Label>

@@ -17,7 +17,7 @@ export const createNoteSchema = z.object({
   faviconUrl: z.url().nullable().optional(),
   label: z.string().trim().max(100).nullable().optional(),
   archived: z.boolean().optional(),
-  tagIds: z.array(z.uuid()).optional(),
+  tags: z.array(z.string().trim().min(1).max(100)).max(50).optional(),
 });
 
 export const updateNoteSchema = createNoteSchema.partial();
@@ -29,7 +29,7 @@ export const listNotesQuerySchema = z.object({
     .optional()
     .transform((v) => (v === undefined ? undefined : v === "true")),
   label: z.string().min(1).optional(),
-  tagId: z.uuid().optional(),
+  tag: z.string().min(1).optional(),
   q: z.string().min(1).optional(),
   limit: z.coerce.number().int().min(1).max(100).default(50),
   offset: z.coerce.number().int().min(0).default(0),
@@ -42,6 +42,6 @@ export const createTagSchema = z.object({
 
 export const updateTagSchema = createTagSchema;
 
-export const setNoteTagsSchema = z.object({
-  tagIds: z.array(z.uuid()),
+export const addNoteTagSchema = z.object({
+  tag: z.string().trim().min(1).max(100),
 });

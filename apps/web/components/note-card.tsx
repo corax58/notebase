@@ -46,7 +46,7 @@ type NoteCardProps = {
     faviconUrl: string | null;
     createdAt: Date;
     folder: { id: string; name: string; color: string | null } | null;
-    tags: Tag[];
+    tags: string[];
   };
   folders?: Folder[];
   tags?: Tag[];
@@ -133,8 +133,8 @@ export function NoteCard({ note, folders = [], tags = [] }: NoteCardProps) {
               </Badge>
             )}
             {note.tags.map((tag) => (
-              <Badge key={tag.id} variant="secondary">
-                #{tag.name}
+              <Badge key={tag} variant="secondary">
+                #{tag}
               </Badge>
             ))}
           </div>
@@ -192,7 +192,7 @@ export function NoteCard({ note, folders = [], tags = [] }: NoteCardProps) {
           content: note.content,
           label: note.label,
           folderId: note.folder?.id ?? null,
-          tagIds: note.tags.map((tag) => tag.id),
+          tags: note.tags,
           sourceTitle: note.sourceTitle,
           sourceUrl: note.sourceUrl,
         }}

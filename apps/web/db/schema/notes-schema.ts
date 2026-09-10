@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   pgTable,
   text,
@@ -45,6 +45,11 @@ export const notes = pgTable(
 
     label: text("label"),
 
+    tags: text("tags")
+      .array()
+      .notNull()
+      .default(sql`ARRAY[]::text[]`),
+
     archived: boolean("archived").notNull().default(false),
 
     createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -54,6 +59,7 @@ export const notes = pgTable(
     index("notes_user_idx").on(table.userId),
     index("notes_folder_idx").on(table.folderId),
     index("notes_created_at_idx").on(table.createdAt),
+    index("notes_tags_idx").using("gin", table.tags), // for @> containment queries
   ],
 );
 
@@ -65,26 +71,12 @@ export const tags = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
-    name: text("name").notNull(),
+    name: text("name").notNull(), // store normalized, e.g. lowercase
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (table) => [
     uniqueIndex("tags_user_name_unique").on(table.userId, table.name),
   ],
-);
-
-// ─── Note <-> Tag join table ───────────────
-export const noteTags = pgTable(
-  "note_tags",
-  {
-    noteId: uuid("note_id")
-      .notNull()
-      .references(() => notes.id, { onDelete: "cascade" }),
-    tagId: uuid("tag_id")
-      .notNull()
-      .references(() => tags.id, { onDelete: "cascade" }),
-  },
-  (table) => [uniqueIndex("note_tags_pk").on(table.noteId, table.tagId)],
 );
 
 // ─── Relations ──────────────────────────────
@@ -94,14 +86,4 @@ export const foldersRelations = relations(folders, ({ many }) => ({
 
 export const notesRelations = relations(notes, ({ one, many }) => ({
   folder: one(folders, { fields: [notes.folderId], references: [folders.id] }),
-  noteTags: many(noteTags),
-}));
-
-export const tagsRelations = relations(tags, ({ many }) => ({
-  noteTags: many(noteTags),
-}));
-
-export const noteTagsRelations = relations(noteTags, ({ one }) => ({
-  note: one(notes, { fields: [noteTags.noteId], references: [notes.id] }),
-  tag: one(tags, { fields: [noteTags.tagId], references: [tags.id] }),
 }));

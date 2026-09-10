@@ -2,11 +2,12 @@ import { and, eq } from "drizzle-orm";
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { db } from "@/db";
-import { noteTags, notes } from "@/db/schema";
+import { notes } from "@/db/schema";
 import { parseParams } from "@/lib/api/params";
-import { folderBelongsToUser, tagIdsBelongToUser } from "@/lib/api/ownership";
+import { folderBelongsToUser } from "@/lib/api/ownership";
 import { errorResponse, notFound, unauthorized, validationError } from "@/lib/api/response";
 import { requireUserId } from "@/lib/api/session";
+import { normalizeTagNames, upsertTags } from "@/lib/api/tags";
 import { updateNoteSchema } from "@/lib/validation/notes";
 
 const paramsSchema = z.object({ id: z.uuid() });
@@ -24,18 +25,12 @@ export async function GET(
 
   const note = await db.query.notes.findFirst({
     where: and(eq(notes.id, id), eq(notes.userId, userId)),
-    with: {
-      folder: true,
-      noteTags: { with: { tag: true } },
-    },
+    with: { folder: true },
   });
 
   if (!note) return notFound("Note");
 
-  const { noteTags: linkedTags, ...rest } = note;
-  return NextResponse.json({
-    note: { ...rest, tags: linkedTags.map((link) => link.tag) },
-  });
+  return NextResponse.json({ note });
 }
 
 export async function PATCH(
@@ -52,31 +47,29 @@ export async function PATCH(
   const parsed = updateNoteSchema.safeParse(await request.json());
   if (!parsed.success) return validationError(parsed.error);
 
-  const { tagIds, ...values } = parsed.data;
+  const { tags: tagNames, ...values } = parsed.data;
 
   if (values.folderId && !(await folderBelongsToUser(values.folderId, userId))) {
     return errorResponse("Folder not found", 400);
   }
-  if (tagIds && !(await tagIdsBelongToUser(tagIds, userId))) {
-    return errorResponse("One or more tags not found", 400);
-  }
+
+  const normalizedTags = tagNames && normalizeTagNames(tagNames);
 
   const note = await db.transaction(async (tx) => {
     const [updated] = await tx
       .update(notes)
-      .set({ ...values, updatedAt: new Date() })
+      .set({
+        ...values,
+        ...(normalizedTags && { tags: normalizedTags }),
+        updatedAt: new Date(),
+      })
       .where(and(eq(notes.id, id), eq(notes.userId, userId)))
       .returning();
 
     if (!updated) return undefined;
 
-    if (tagIds) {
-      await tx.delete(noteTags).where(eq(noteTags.noteId, id));
-      if (tagIds.length) {
-        await tx
-          .insert(noteTags)
-          .values(tagIds.map((tagId) => ({ noteId: id, tagId })));
-      }
+    if (normalizedTags) {
+      await upsertTags(tx, userId, normalizedTags);
     }
 
     return updated;

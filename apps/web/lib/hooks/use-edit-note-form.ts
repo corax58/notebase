@@ -8,7 +8,7 @@ type EditableNote = {
   content: string
   label: string | null
   folderId: string | null
-  tagIds: string[]
+  tags: string[]
   sourceTitle: string | null
   sourceUrl: string | null
 }
@@ -18,7 +18,7 @@ function toFormState(note: EditableNote) {
     content: note.content,
     label: note.label ?? "",
     folderId: note.folderId,
-    tagIds: note.tagIds,
+    tags: note.tags,
     sourceTitle: note.sourceTitle ?? "",
     sourceUrl: note.sourceUrl ?? "",
   }
@@ -36,13 +36,8 @@ export function useEditNoteForm(note: EditableNote, onSaved?: () => void) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [note.id])
 
-  function toggleTag(tagId: string, checked: boolean) {
-    setForm((prev) => ({
-      ...prev,
-      tagIds: checked
-        ? [...prev.tagIds, tagId]
-        : prev.tagIds.filter((id) => id !== tagId),
-    }))
+  function setTags(tags: string[]) {
+    setForm((prev) => ({ ...prev, tags }))
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -79,7 +74,7 @@ export function useEditNoteForm(note: EditableNote, onSaved?: () => void) {
           content,
           label: form.label.trim() || null,
           folderId: form.folderId,
-          tagIds: form.tagIds,
+          tags: form.tags,
           sourceTitle: form.sourceTitle.trim() || null,
           sourceUrl: sourceUrl || null,
         }),
@@ -110,5 +105,5 @@ export function useEditNoteForm(note: EditableNote, onSaved?: () => void) {
     }
   }
 
-  return { form, setForm, submitting, toggleTag, handleSubmit }
+  return { form, setForm, submitting, setTags, handleSubmit }
 }

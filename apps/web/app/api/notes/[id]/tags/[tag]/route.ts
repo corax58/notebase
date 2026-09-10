@@ -4,27 +4,22 @@ import { z } from "zod";
 import { db } from "@/db";
 import { notes } from "@/db/schema";
 import { parseParams } from "@/lib/api/params";
-import { notFound, unauthorized, validationError } from "@/lib/api/response";
+import { notFound, unauthorized } from "@/lib/api/response";
 import { requireUserId } from "@/lib/api/session";
-import { upsertTags } from "@/lib/api/tags";
-import { addNoteTagSchema } from "@/lib/validation/notes";
 
-const paramsSchema = z.object({ id: z.uuid() });
+const paramsSchema = z.object({ id: z.uuid(), tag: z.string().min(1).max(100) });
 
-export async function POST(
-  request: NextRequest,
-  { params }: RouteContext<"/api/notes/[id]/tags">,
+export async function DELETE(
+  _request: NextRequest,
+  { params }: RouteContext<"/api/notes/[id]/tags/[tag]">,
 ) {
   const userId = await requireUserId();
   if (!userId) return unauthorized();
 
   const parsedParams = parseParams(paramsSchema, await params);
   if (parsedParams.error) return parsedParams.error;
-  const { id: noteId } = parsedParams.data;
-
-  const parsed = addNoteTagSchema.safeParse(await request.json());
-  if (!parsed.success) return validationError(parsed.error);
-  const tag = parsed.data.tag.toLowerCase();
+  const { id: noteId, tag } = parsedParams.data;
+  const normalizedTag = tag.toLowerCase();
 
   const note = await db.transaction(async (tx) => {
     const [existing] = await tx
@@ -33,20 +28,19 @@ export async function POST(
       .where(and(eq(notes.id, noteId), eq(notes.userId, userId)));
     if (!existing) return undefined;
 
-    if (existing.tags.includes(tag)) return existing;
-
     const [updated] = await tx
       .update(notes)
-      .set({ tags: [...existing.tags, tag], updatedAt: new Date() })
+      .set({
+        tags: existing.tags.filter((t) => t !== normalizedTag),
+        updatedAt: new Date(),
+      })
       .where(eq(notes.id, noteId))
       .returning();
-
-    await upsertTags(tx, userId, [tag]);
 
     return updated;
   });
 
   if (!note) return notFound("Note");
 
-  return NextResponse.json({ note }, { status: 201 });
+  return new NextResponse(null, { status: 204 });
 }

@@ -20,8 +20,6 @@ import {
 } from "@/components/ui/dialog"
 import { formatRelativeDate } from "@/lib/utils"
 
-type Tag = { id: string; name: string }
-
 type ViewableNote = {
   id: string
   content: string
@@ -32,7 +30,7 @@ type ViewableNote = {
   faviconUrl: string | null
   createdAt: Date
   folder: { id: string; name: string; color: string | null } | null
-  tags: Tag[]
+  tags: string[]
 }
 
 export function ViewNoteDialog({
@@ -97,8 +95,8 @@ export function ViewNoteDialog({
                 </Badge>
               )}
               {note.tags.map((tag) => (
-                <Badge key={tag.id} variant="secondary">
-                  #{tag.name}
+                <Badge key={tag} variant="secondary">
+                  #{tag}
                 </Badge>
               ))}
             </div>

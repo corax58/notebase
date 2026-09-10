@@ -1,8 +1,8 @@
-import { asc, count, eq } from "drizzle-orm";
+import { and, asc, count, eq, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 import { TagIcon } from "@phosphor-icons/react/dist/ssr";
 import { db } from "@/db";
-import { noteTags, tags } from "@/db/schema";
+import { notes, tags } from "@/db/schema";
 import { Card, CardContent } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
 
@@ -14,10 +14,16 @@ export default async function TagsPage() {
     .select({
       id: tags.id,
       name: tags.name,
-      noteCount: count(noteTags.noteId),
+      noteCount: count(notes.id),
     })
     .from(tags)
-    .leftJoin(noteTags, eq(noteTags.tagId, tags.id))
+    .leftJoin(
+      notes,
+      and(
+        eq(notes.userId, tags.userId),
+        sql`${notes.tags} @> ARRAY[${tags.name}]::text[]`,
+      ),
+    )
     .where(eq(tags.userId, userId))
     .groupBy(tags.id)
     .orderBy(asc(tags.name));

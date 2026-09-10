@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { NoteFolderSelect } from "@/components/note-folder-select"
 import { NoteSourceFields } from "@/components/note-source-fields"
-import { NoteTagsSelect } from "@/components/note-tags-select"
+import { NoteTagsInput } from "@/components/note-tags-input"
 import { Textarea } from "@/components/ui/textarea"
 import { useEditNoteForm } from "@/lib/hooks/use-edit-note-form"
 
@@ -25,7 +25,7 @@ type EditableNote = {
   content: string
   label: string | null
   folderId: string | null
-  tagIds: string[]
+  tags: string[]
   sourceTitle: string | null
   sourceUrl: string | null
 }
@@ -43,7 +43,7 @@ export function EditNoteDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
-  const { form, setForm, submitting, toggleTag, handleSubmit } =
+  const { form, setForm, submitting, setTags, handleSubmit } =
     useEditNoteForm(note, () => onOpenChange(false))
 
   return (
@@ -70,20 +70,19 @@ export function EditNoteDialog({
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <NoteFolderSelect
-                folders={folders}
-                value={form.folderId}
-                onChange={(folderId) =>
-                  setForm((prev) => ({ ...prev, folderId }))
-                }
-              />
-              <NoteTagsSelect
-                tags={tags}
-                selectedIds={form.tagIds}
-                onToggle={toggleTag}
-              />
-            </div>
+            <NoteFolderSelect
+              folders={folders}
+              value={form.folderId}
+              onChange={(folderId) =>
+                setForm((prev) => ({ ...prev, folderId }))
+              }
+            />
+
+            <NoteTagsInput
+              tags={form.tags}
+              onChange={setTags}
+              suggestions={tags}
+            />
 
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="edit-note-label">Label</Label>
