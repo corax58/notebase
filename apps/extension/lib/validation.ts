@@ -14,5 +14,5 @@ export const createNoteSchema = z.object({
     .max(100, "Keep the label under 100 characters.")
     .nullable()
     .optional(),
-  tagIds: z.array(z.uuid()).optional(),
+  tags: z.array(z.string().trim().min(1).max(100)).max(50).optional(),
 });

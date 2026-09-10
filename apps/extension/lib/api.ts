@@ -1,4 +1,4 @@
-import type { CreateNote, Note } from "@/types";
+import type { CreateNote, Folder, Note, Tag } from "@/types";
 
 const extractErrorMessage = (error: unknown) => {
   if (typeof error === "string") {
@@ -50,6 +50,42 @@ export const getRecentNotes = async (): Promise<ApiResult<Note[]>> => {
     }
     const data: { notes: Note[] } = await res.json();
     return { success: true, data: data.notes };
+  } catch (e) {
+    return { success: false, message: extractErrorMessage(e) };
+  }
+};
+
+export const getFolders = async (): Promise<ApiResult<Folder[]>> => {
+  try {
+    const res = await fetch(`${apiUrl}/api/folders`, {
+      method: "GET",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!res.ok) {
+      const errorResponse = await res.json();
+      throw Error(errorResponse.message ?? "Something went wrong");
+    }
+    const data: { folders: Folder[] } = await res.json();
+    return { success: true, data: data.folders };
+  } catch (e) {
+    return { success: false, message: extractErrorMessage(e) };
+  }
+};
+
+export const getTags = async (): Promise<ApiResult<Tag[]>> => {
+  try {
+    const res = await fetch(`${apiUrl}/api/tags`, {
+      method: "GET",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!res.ok) {
+      const errorResponse = await res.json();
+      throw Error(errorResponse.message ?? "Something went wrong");
+    }
+    const data: { tags: Tag[] } = await res.json();
+    return { success: true, data: data.tags };
   } catch (e) {
     return { success: false, message: extractErrorMessage(e) };
   }

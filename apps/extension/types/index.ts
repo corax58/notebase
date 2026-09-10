@@ -5,7 +5,23 @@ export interface CreateNote {
   sourceTitle?: string;
   faviconUrl?: string;
   label?: string;
-  tagIds?: string[];
+  tags?: string[];
+}
+
+export interface Folder {
+  id: string;
+  name: string;
+  color: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+}
+
+export interface Tag {
+  id: string;
+  name: string;
+  createdAt: Date;
+  userId: string;
 }
 
 export interface Note {

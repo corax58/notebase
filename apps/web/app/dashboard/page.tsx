@@ -74,7 +74,7 @@ export default async function DashboardPage() {
                   <p className="text-muted-foreground text-sm">{stat.label}</p>
                   <p className="text-2xl font-semibold">{stat.value}</p>
                 </div>
-                <div className="bg-primary/10 text-primary border-primary flex size-10 items-center justify-center rounded-full border">
+                <div className="bg-primary/10 text-primary border-primary flex size-10 items-center justify-center rounded-lg border">
                   <stat.icon className="size-5" />
                 </div>
               </CardContent>

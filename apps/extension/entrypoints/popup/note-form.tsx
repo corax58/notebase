@@ -1,7 +1,8 @@
+import { getFolders, getTags } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { createNoteSchema } from "@/lib/validation";
-import type { CreateNote } from "@/types";
-import { X } from "lucide-react";
+import type { CreateNote, Folder, Tag } from "@/types";
+import { Plus, X } from "lucide-react";
 import React, { type FormEvent } from "react";
 
 const inputClassName = cn(
@@ -25,6 +26,31 @@ const NoteForm = ({
 
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+
+  const [folders, setFolders] = useState<Folder[]>([]);
+  const [tagSuggestions, setTagSuggestions] = useState<Tag[]>([]);
+  const [tagDraft, setTagDraft] = useState("");
+
+  useEffect(() => {
+    getFolders().then((result) => {
+      if (result.success) setFolders(result.data);
+    });
+    getTags().then((result) => {
+      if (result.success) setTagSuggestions(result.data);
+    });
+  }, []);
+
+  const addTag = () => {
+    const value = tagDraft.trim().toLowerCase();
+    if (value && !note.tags?.includes(value)) {
+      setNote({ ...note, tags: [...(note.tags ?? []), value] });
+    }
+    setTagDraft("");
+  };
+
+  const removeTag = (tag: string) => {
+    setNote({ ...note, tags: note.tags?.filter((t) => t !== tag) });
+  };
 
   const handleDiscard = () => {
     onDone();
@@ -101,6 +127,94 @@ const NoteForm = ({
           value={note.content}
           onChange={(e) => setNote({ ...note, content: e.target.value })}
         />
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="note-folder" className="text-sm font-medium">
+          Folder
+        </label>
+        <select
+          id="note-folder"
+          className={inputClassName}
+          value={note.folderId ?? ""}
+          onChange={(e) =>
+            setNote({ ...note, folderId: e.target.value || undefined })
+          }
+        >
+          <option value="">No folder</option>
+          {folders.map((folder) => (
+            <option key={folder.id} value={folder.id}>
+              {folder.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="note-tag-input" className="text-sm font-medium">
+          Tags
+        </label>
+        <div className="flex items-center gap-2">
+          <input
+            id="note-tag-input"
+            type="text"
+            list="note-tag-suggestions"
+            className={inputClassName}
+            placeholder="Add a tag"
+            value={tagDraft}
+            onChange={(e) => setTagDraft(e.target.value.replace(/\s+/g, ""))}
+            onKeyDown={(e) => {
+              if (e.key === " " || e.key === "Spacebar") {
+                e.preventDefault();
+                return;
+              }
+              if (e.key === "Enter") {
+                e.preventDefault();
+                addTag();
+              }
+            }}
+          />
+          <button
+            type="button"
+            onClick={addTag}
+            disabled={!tagDraft.trim()}
+            aria-label="Add tag"
+            className="inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-md border border-border bg-clip-padding outline-none transition-colors hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50"
+          >
+            <Plus className="size-4" />
+          </button>
+        </div>
+
+        {tagSuggestions.length > 0 && (
+          <datalist id="note-tag-suggestions">
+            {tagSuggestions
+              .filter((tag) => !note.tags?.includes(tag.name))
+              .map((tag) => (
+                <option key={tag.id} value={tag.name} />
+              ))}
+          </datalist>
+        )}
+
+        {note.tags && note.tags.length > 0 && (
+          <div className="flex flex-wrap items-center gap-1.5">
+            {note.tags.map((tag) => (
+              <span
+                key={tag}
+                className="inline-flex items-center gap-1 rounded-full border border-border bg-clip-padding px-2.5 py-1 text-xs"
+              >
+                #{tag}
+                <button
+                  type="button"
+                  onClick={() => removeTag(tag)}
+                  aria-label={`Remove tag ${tag}`}
+                  className="text-muted-foreground outline-none hover:text-foreground"
+                >
+                  <X className="size-3" />
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       {(note.sourceTitle || note.sourceUrl || note.faviconUrl) && (

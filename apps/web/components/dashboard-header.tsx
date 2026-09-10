@@ -73,7 +73,7 @@ export function DashboardHeader({
           render={
             <button
               type="button"
-              className="focus-visible:ring-ring/50 rounded-full outline-none focus-visible:ring-[3px]"
+              className="focus-visible:ring-ring/50 rounded-lg outline-none focus-visible:ring-[3px]"
             >
               <Avatar>
                 <AvatarImage src={user.image ?? undefined} />
