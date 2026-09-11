@@ -1,9 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  BookOpenTextIcon,
   FolderIcon,
   HouseIcon,
   NotePencilIcon,
@@ -39,10 +39,27 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" render={<Link href="/dashboard" />}>
-              <div className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-lg">
-                <BookOpenTextIcon className="size-4" />
-              </div>
-              <span className="text-sm font-semibold">Notebase</span>
+              <Image
+                src="/favicon-96x96.png"
+                alt="Notebase"
+                width={32}
+                height={32}
+                className="hidden size-8 shrink-0 group-data-[collapsible=icon]:block"
+              />
+              <Image
+                src="/notebase-logo.webp"
+                alt="Notebase"
+                width={124}
+                height={30}
+                className="h-6 w-auto dark:hidden group-data-[collapsible=icon]:hidden"
+              />
+              <Image
+                src="/notebase-logo-dark.webp"
+                alt="Notebase"
+                width={124}
+                height={30}
+                className="hidden h-6 w-auto dark:block group-data-[collapsible=icon]:hidden"
+              />
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

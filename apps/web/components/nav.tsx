@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -15,8 +16,23 @@ export function Nav() {
 
   return (
     <header className="flex items-center justify-between border-b border-border px-6 py-3">
-      <Link href="/" className="text-sm font-semibold">
-        Notebase
+      <Link href="/" className="flex items-center">
+        <Image
+          src="/notebase-logo.webp"
+          alt="Notebase"
+          width={124}
+          height={30}
+          className="h-6 w-auto dark:hidden"
+          priority
+        />
+        <Image
+          src="/notebase-logo-dark.webp"
+          alt="Notebase"
+          width={124}
+          height={30}
+          className="hidden h-6 w-auto dark:block"
+          priority
+        />
       </Link>
       <div className="flex items-center gap-3">
         {isPending ? null : session ? (
