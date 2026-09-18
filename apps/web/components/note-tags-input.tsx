@@ -1,11 +1,18 @@
 "use client"
 
 import * as React from "react"
-import { PlusIcon, XIcon } from "@phosphor-icons/react"
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import {
+  Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxItem,
+  ComboboxList,
+  useComboboxAnchor,
+} from "@/components/ui/combobox"
 import { Label } from "@/components/ui/label"
 
 type Tag = { id: string; name: string }
@@ -19,81 +26,68 @@ export function NoteTagsInput({
   onChange: (tags: string[]) => void
   suggestions?: Tag[]
 }) {
-  const [draft, setDraft] = React.useState("")
-  const listId = React.useId()
+  const anchor = useComboboxAnchor()
+  const [inputValue, setInputValue] = React.useState("")
+  const [highlighted, setHighlighted] = React.useState<string | null>(null)
 
-  function addTag() {
-    const value = draft.trim().toLowerCase()
-    if (value && !tags.includes(value)) {
-      onChange([...tags, value])
+  const items = React.useMemo(
+    () =>
+      suggestions
+        .map((tag) => tag.name)
+        .filter((name) => !tags.includes(name)),
+    [suggestions, tags]
+  )
+
+  function addTag(value: string) {
+    const next = value.trim().toLowerCase()
+    if (next && !tags.includes(next)) {
+      onChange([...tags, next])
     }
-    setDraft("")
-  }
-
-  function removeTag(tag: string) {
-    onChange(tags.filter((t) => t !== tag))
+    setInputValue("")
   }
 
   return (
     <div className="flex flex-col gap-1.5">
       <Label htmlFor="note-tag-input">Tags</Label>
-      <div className="flex items-center gap-2">
-        <Input
-          id="note-tag-input"
-          list={listId}
-          placeholder="Add a tag"
-          value={draft}
-          onChange={(event) => setDraft(event.target.value.replace(/\s+/g, ""))}
-          onKeyDown={(event) => {
-            if (event.key === " " || event.key === "Spacebar") {
-              event.preventDefault()
-              return
-            }
-            if (event.key === "Enter") {
-              event.preventDefault()
-              addTag()
-            }
-          }}
-        />
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          disabled={!draft.trim()}
-          onClick={addTag}
-          aria-label="Add tag"
-        >
-          <PlusIcon />
-        </Button>
-      </div>
-
-      {suggestions.length > 0 && (
-        <datalist id={listId}>
-          {suggestions
-            .filter((tag) => !tags.includes(tag.name))
-            .map((tag) => (
-              <option key={tag.id} value={tag.name} />
-            ))}
-        </datalist>
-      )}
-
-      {tags.length > 0 && (
-        <div className="flex flex-wrap items-center gap-1.5">
+      <Combobox
+        multiple
+        items={items}
+        value={tags}
+        onValueChange={onChange}
+        inputValue={inputValue}
+        onInputValueChange={setInputValue}
+        onItemHighlighted={(item) =>
+          setHighlighted((item as string | undefined) ?? null)
+        }
+      >
+        <ComboboxChips ref={anchor}>
           {tags.map((tag) => (
-            <Badge key={tag} variant="secondary" className="gap-1">
+            <ComboboxChip key={tag} aria-label={`Remove tag ${tag}`}>
               #{tag}
-              <button
-                type="button"
-                onClick={() => removeTag(tag)}
-                aria-label={`Remove tag ${tag}`}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <XIcon data-icon="inline-end" />
-              </button>
-            </Badge>
+            </ComboboxChip>
           ))}
-        </div>
-      )}
+          <ComboboxChipsInput
+            id="note-tag-input"
+            placeholder={tags.length ? undefined : "Add a tag"}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" && highlighted === null) {
+                event.preventDefault()
+                addTag(inputValue)
+              }
+            }}
+          />
+        </ComboboxChips>
+        <ComboboxContent anchor={anchor}>
+          <ComboboxList>
+            <ComboboxEmpty>No matching tags</ComboboxEmpty>
+            {items.map((name) => (
+              <ComboboxItem key={name} value={name}>
+                #{name}
+              </ComboboxItem>
+            ))}
+          </ComboboxList>
+        </ComboboxContent>
+      </Combobox>
     </div>
   )
 }

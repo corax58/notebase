@@ -1,8 +1,19 @@
+import {
+  Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxItem,
+  ComboboxList,
+  useComboboxAnchor,
+} from "@/components/ui/combobox";
 import { getFolders, getTags } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { createNoteSchema } from "@/lib/validation";
 import type { CreateNote, Folder, Tag } from "@/types";
-import { Plus, X } from "lucide-react";
+import { X } from "lucide-react";
 import React, { type FormEvent } from "react";
 
 const inputClassName = cn(
@@ -29,7 +40,9 @@ const NoteForm = ({
 
   const [folders, setFolders] = useState<Folder[]>([]);
   const [tagSuggestions, setTagSuggestions] = useState<Tag[]>([]);
-  const [tagDraft, setTagDraft] = useState("");
+  const [tagInputValue, setTagInputValue] = useState("");
+  const [highlightedTag, setHighlightedTag] = useState<string | null>(null);
+  const tagAnchor = useComboboxAnchor();
 
   useEffect(() => {
     getFolders().then((result) => {
@@ -40,16 +53,26 @@ const NoteForm = ({
     });
   }, []);
 
-  const addTag = () => {
-    const value = tagDraft.trim().toLowerCase();
-    if (value && !note.tags?.includes(value)) {
-      setNote({ ...note, tags: [...(note.tags ?? []), value] });
-    }
-    setTagDraft("");
+  const tags = note.tags ?? [];
+
+  const tagItems = useMemo(
+    () =>
+      tagSuggestions
+        .map((tag) => tag.name)
+        .filter((name) => !tags.includes(name)),
+    [tagSuggestions, tags],
+  );
+
+  const setTags = (next: string[]) => {
+    setNote({ ...note, tags: next });
   };
 
-  const removeTag = (tag: string) => {
-    setNote({ ...note, tags: note.tags?.filter((t) => t !== tag) });
+  const addTag = (value: string) => {
+    const next = value.trim().toLowerCase();
+    if (next && !tags.includes(next)) {
+      setNote({ ...note, tags: [...tags, next] });
+    }
+    setTagInputValue("");
   };
 
   const handleDiscard = () => {
@@ -154,67 +177,45 @@ const NoteForm = ({
         <label htmlFor="note-tag-input" className="text-sm font-medium">
           Tags
         </label>
-        <div className="flex items-center gap-2">
-          <input
-            id="note-tag-input"
-            type="text"
-            list="note-tag-suggestions"
-            className={inputClassName}
-            placeholder="Add a tag"
-            value={tagDraft}
-            onChange={(e) => setTagDraft(e.target.value.replace(/\s+/g, ""))}
-            onKeyDown={(e) => {
-              if (e.key === " " || e.key === "Spacebar") {
-                e.preventDefault();
-                return;
-              }
-              if (e.key === "Enter") {
-                e.preventDefault();
-                addTag();
-              }
-            }}
-          />
-          <button
-            type="button"
-            onClick={addTag}
-            disabled={!tagDraft.trim()}
-            aria-label="Add tag"
-            className="inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-md border border-border bg-clip-padding outline-none transition-colors hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50"
-          >
-            <Plus className="size-4" />
-          </button>
-        </div>
-
-        {tagSuggestions.length > 0 && (
-          <datalist id="note-tag-suggestions">
-            {tagSuggestions
-              .filter((tag) => !note.tags?.includes(tag.name))
-              .map((tag) => (
-                <option key={tag.id} value={tag.name} />
-              ))}
-          </datalist>
-        )}
-
-        {note.tags && note.tags.length > 0 && (
-          <div className="flex flex-wrap items-center gap-1.5">
-            {note.tags.map((tag) => (
-              <span
-                key={tag}
-                className="inline-flex items-center gap-1 rounded-full border border-border bg-clip-padding px-2.5 py-1 text-xs"
-              >
+        <Combobox
+          multiple
+          items={tagItems}
+          value={tags}
+          onValueChange={setTags}
+          inputValue={tagInputValue}
+          onInputValueChange={setTagInputValue}
+          onItemHighlighted={(item) =>
+            setHighlightedTag((item as string | undefined) ?? null)
+          }
+        >
+          <ComboboxChips ref={tagAnchor}>
+            {tags.map((tag) => (
+              <ComboboxChip key={tag} aria-label={`Remove tag ${tag}`}>
                 #{tag}
-                <button
-                  type="button"
-                  onClick={() => removeTag(tag)}
-                  aria-label={`Remove tag ${tag}`}
-                  className="text-muted-foreground outline-none hover:text-foreground"
-                >
-                  <X className="size-3" />
-                </button>
-              </span>
+              </ComboboxChip>
             ))}
-          </div>
-        )}
+            <ComboboxChipsInput
+              id="note-tag-input"
+              placeholder={tags.length ? undefined : "Add a tag"}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && highlightedTag === null) {
+                  e.preventDefault();
+                  addTag(tagInputValue);
+                }
+              }}
+            />
+          </ComboboxChips>
+          <ComboboxContent anchor={tagAnchor}>
+            <ComboboxList>
+              <ComboboxEmpty>No matching tags</ComboboxEmpty>
+              {tagItems.map((name) => (
+                <ComboboxItem key={name} value={name}>
+                  #{name}
+                </ComboboxItem>
+              ))}
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
       </div>
 
       {(note.sourceTitle || note.sourceUrl || note.faviconUrl) && (
