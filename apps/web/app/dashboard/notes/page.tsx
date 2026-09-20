@@ -30,7 +30,7 @@ export default async function NotesPage({
       <div className="flex items-center justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold">Notes</h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Everything you&apos;ve captured, newest first.
           </p>
         </div>
@@ -39,7 +39,7 @@ export default async function NotesPage({
 
       {folderId && (
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">
+          <span className="text-muted-foreground text-sm">
             Filtered by folder:
           </span>
           <Badge variant="secondary">
@@ -57,19 +57,21 @@ export default async function NotesPage({
 
       {noteRows.length === 0 ? (
         <Card>
-          <CardContent className="py-12 text-center text-sm text-muted-foreground">
+          <CardContent className="text-muted-foreground py-12 text-center text-sm">
             {folderId ? "No notes in this folder yet." : "No notes yet."}
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="columns-1 gap-4 sm:columns-2 md:columns-3">
           {noteRows.map((note) => (
-            <NoteCard
-              key={note.id}
-              note={note}
-              folders={userFolders}
-              tags={userTags}
-            />
+            <div className="mb-4 break-inside-avoid">
+              <NoteCard
+                key={note.id}
+                note={note}
+                folders={userFolders}
+                tags={userTags}
+              />
+            </div>
           ))}
         </div>
       )}

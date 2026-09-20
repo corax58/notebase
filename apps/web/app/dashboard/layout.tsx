@@ -26,7 +26,7 @@ export default async function DashboardLayout(
         defaultOpen={defaultOpen}
         className="dashboard-shell bg-background"
       >
-        <AppSidebar />
+        <AppSidebar user={user} />
         <SidebarInset className="ring-border bg-secondary flex-1 overflow-hidden ring-1">
           <DashboardHeader user={user} />
           <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-2 md:p-3">

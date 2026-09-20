@@ -18,6 +18,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -31,6 +32,7 @@ import {
 import { EditNoteDialog } from "@/components/edit-note-dialog";
 import { ViewNoteDialog } from "@/components/view-note-dialog";
 import { formatRelativeDate } from "@/lib/utils";
+import { Separator } from "./ui/separator";
 
 type Folder = { id: string; name: string; color: string | null };
 type Tag = { id: string; name: string };
@@ -70,10 +72,10 @@ export function NoteCard({ note, folders = [], tags = [] }: NoteCardProps) {
   const [deleteOpen, setDeleteOpen] = React.useState(false);
 
   return (
-    <Card size="sm" className="flex flex-col rounded-xs">
-      <CardHeader className="flex flex-row items-start justify-between gap-2">
+    <Card size="sm" className="flex flex-col gap-3 rounded-xs py-3">
+      <CardHeader className="flex flex-row items-center justify-between gap-2">
         <div className="min-w-0">
-          {note.folder && (
+          {note.folder ? (
             <Link
               href={`/dashboard/notes?folder=${note.folder.id}`}
               className="text-muted-foreground hover:text-foreground flex w-fit items-center gap-1 text-xs font-medium hover:underline"
@@ -84,18 +86,21 @@ export function NoteCard({ note, folders = [], tags = [] }: NoteCardProps) {
               <FolderIcon className="size-3.5" weight="fill" />
               {note.folder.name}
             </Link>
+          ) : (
+            <div className="text-muted-foreground hover:text-foreground flex w-fit items-center gap-1 text-xs font-medium hover:underline">
+              {" "}
+              <FolderIcon className="size-3.5" weight="fill" />
+              No folder
+            </div>
           )}
           <button
             type="button"
             onClick={() => setViewOpen(true)}
             className="block w-full text-left"
           >
-            <CardTitle className="line-clamp-1 text-2xl hover:underline">
+            <CardTitle className="mt-1 line-clamp-1 text-xl font-semibold hover:underline">
               {note.label ?? "Untitled note"}
             </CardTitle>
-            <CardDescription className="mt-4 line-clamp-4">
-              {note.content}
-            </CardDescription>
           </button>
         </div>
         <DropdownMenu>
@@ -123,9 +128,11 @@ export function NoteCard({ note, folders = [], tags = [] }: NoteCardProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </CardHeader>
+      <Separator />
       <CardContent className="flex flex-1 flex-col justify-end gap-3">
+        <div className="line-clamp-4">{note.content}</div>
         {hasBadges && (
-          <div className="flex flex-wrap items-center gap-1.5">
+          <div className="mt-2 flex flex-wrap items-center gap-1.5">
             {note.archived && (
               <Badge variant="outline">
                 <ArchiveIcon />
@@ -139,8 +146,10 @@ export function NoteCard({ note, folders = [], tags = [] }: NoteCardProps) {
             ))}
           </div>
         )}
-
-        <div className="text-muted-foreground flex items-center justify-between gap-2 text-xs">
+      </CardContent>
+      <Separator />
+      <CardFooter className="flex items-center">
+        <div className="text-muted-foreground flex w-full items-center justify-between gap-2 text-xs">
           {note.sourceUrl ? (
             <a
               href={note.sourceUrl ?? undefined}
@@ -171,8 +180,7 @@ export function NoteCard({ note, folders = [], tags = [] }: NoteCardProps) {
             {formatRelativeDate(note.createdAt)}
           </span>
         </div>
-      </CardContent>
-
+      </CardFooter>
       <ViewNoteDialog
         note={note}
         open={viewOpen}

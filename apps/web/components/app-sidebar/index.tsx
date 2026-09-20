@@ -12,6 +12,7 @@ import {
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -20,8 +21,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { SidebarUser } from "./_components/sidebar-user";
 
 const navItems = [
   { title: "Dashboard", href: "/dashboard", icon: HouseIcon },
@@ -30,7 +33,10 @@ const navItems = [
   { title: "Tags", href: "/dashboard/tags", icon: TagIcon },
 ];
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  user: { name: string; email: string; image?: string | null };
+}
+export function AppSidebar({ user }: AppSidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -51,14 +57,14 @@ export function AppSidebar() {
                 alt="Notebase"
                 width={124}
                 height={30}
-                className="h-6 w-auto dark:hidden group-data-[collapsible=icon]:hidden"
+                className="h-6 w-auto group-data-[collapsible=icon]:hidden dark:hidden"
               />
               <Image
                 src="/notebase-logo-dark.webp"
                 alt="Notebase"
                 width={124}
                 height={30}
-                className="hidden h-6 w-auto dark:block group-data-[collapsible=icon]:hidden"
+                className="hidden h-6 w-auto group-data-[collapsible=icon]:hidden dark:block"
               />
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -96,6 +102,10 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <SidebarSeparator />
+        <SidebarUser user={user} />
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
