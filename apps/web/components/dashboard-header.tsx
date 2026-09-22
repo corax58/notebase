@@ -27,9 +27,8 @@ export function DashboardHeader({
   return (
     <header className="border-border bg-background flex items-center gap-3 border-b px-4 py-3 md:m-3 md:rounded-t-xs md:px-6">
       <SidebarTrigger />
-      <Separator orientation="vertical" className="h-5" />
 
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 flex-1 md:border-l md:pl-6">
         <h1 className="truncate text-sm font-semibold">
           Welcome back, {user.name.split(" ")[0]}
         </h1>

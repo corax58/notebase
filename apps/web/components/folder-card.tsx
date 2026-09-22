@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { EditFolderDialog } from "@/components/edit-folder-dialog";
 import { Button } from "./ui/button";
+import { Folder } from "lucide-react";
 
 type FolderCardProps = {
   folder: {
@@ -43,13 +44,22 @@ export function FolderCard({ folder }: FolderCardProps) {
           <div className="relative size-32">
             <FolderIcon
               weight="fill"
-              className="size-32"
+              className="absolute inset-1 size-30 rotate-180"
+              style={folder.color ? { color: folder.color } : undefined}
+            />
+
+            <div className="absolute inset-x-4 inset-y-7 z-0 h-10 w-20 rounded-r-sm border bg-white"></div>
+            <div className="absolute inset-x-4 inset-y-8 z-0 h-10 w-22 rounded-r-sm border bg-white"></div>
+
+            <FolderIcon
+              weight="fill"
+              className="absolute z-10 size-32"
               style={folder.color ? { color: folder.color } : undefined}
             />
             {/* highlight: same icon, white, faded top-to-bottom via mask */}
             <FolderIcon
               weight="fill"
-              className="absolute inset-0 size-32 text-white opacity-50"
+              className="absolute inset-0 z-10 size-32 text-white opacity-50"
               style={{
                 maskImage: "linear-gradient(to bottom, black, transparent 75%)",
                 WebkitMaskImage:

@@ -72,8 +72,8 @@ export function NoteCard({ note, folders = [], tags = [] }: NoteCardProps) {
   const [deleteOpen, setDeleteOpen] = React.useState(false);
 
   return (
-    <Card size="sm" className="flex flex-col gap-3 rounded-xs py-3">
-      <CardHeader className="flex flex-row items-center justify-between gap-2">
+    <Card size="sm" className="flex flex-col gap-2 rounded-xs py-3">
+      <CardHeader className="flex flex-row items-center justify-between gap-2 border-b pb-2!">
         <div className="min-w-0">
           {note.folder ? (
             <Link
@@ -93,15 +93,6 @@ export function NoteCard({ note, folders = [], tags = [] }: NoteCardProps) {
               No folder
             </div>
           )}
-          <button
-            type="button"
-            onClick={() => setViewOpen(true)}
-            className="block w-full text-left"
-          >
-            <CardTitle className="mt-1 line-clamp-1 text-xl font-semibold hover:underline">
-              {note.label ?? "Untitled note"}
-            </CardTitle>
-          </button>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger
@@ -128,9 +119,18 @@ export function NoteCard({ note, folders = [], tags = [] }: NoteCardProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </CardHeader>
-      <Separator />
-      <CardContent className="flex flex-1 flex-col justify-end gap-3">
-        <div className="line-clamp-4">{note.content}</div>
+      <CardContent className="flex flex-1 flex-col justify-start gap-3 pt-0!">
+        <button
+          type="button"
+          onClick={() => setViewOpen(true)}
+          className="block w-full cursor-pointer text-left"
+        >
+          <CardTitle className="mt-1 line-clamp-1 text-xl font-semibold hover:underline">
+            {note.label ?? "Untitled note"}
+          </CardTitle>
+          <div className="mt-2 line-clamp-4">{note.content}</div>
+        </button>
+
         {hasBadges && (
           <div className="mt-2 flex flex-wrap items-center gap-1.5">
             {note.archived && (

@@ -102,8 +102,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <SidebarSeparator />
+      <SidebarFooter className="border-t">
         <SidebarUser user={user} />
       </SidebarFooter>
       <SidebarRail />
