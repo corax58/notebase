@@ -22,6 +22,13 @@
       "when": 1789038256295,
       "tag": "0002_colossal_cammi",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790343435150,
+      "tag": "0003_violet_lord_hawal",
+      "breakpoints": true
     }
   ]
 }
