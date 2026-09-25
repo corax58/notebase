@@ -72,7 +72,7 @@ export function NoteCard({ note, folders = [], tags = [] }: NoteCardProps) {
   const [deleteOpen, setDeleteOpen] = React.useState(false);
 
   return (
-    <Card size="sm" className="flex flex-col gap-2 rounded-xs py-3">
+    <Card size="sm" className="flex flex-col gap-2 rounded-lg py-3">
       <CardHeader className="flex flex-row items-center justify-between gap-2 border-b pb-2!">
         <div className="min-w-0">
           {note.folder ? (

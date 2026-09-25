@@ -17,7 +17,7 @@ import { X } from "lucide-react";
 import React, { type FormEvent } from "react";
 
 const inputClassName = cn(
-  "w-full rounded-md border border-border bg-clip-padding px-3 py-2 text-sm outline-none",
+  "w-full rounded-lg border border-border bg-clip-padding px-3 py-2 text-sm outline-none",
   "focus-visible:ring-[3px] focus-visible:ring-ring/50",
 );
 
@@ -219,7 +219,7 @@ const NoteForm = ({
       </div>
 
       {(note.sourceTitle || note.sourceUrl || note.faviconUrl) && (
-        <div className="relative flex items-start gap-2 rounded-md border border-border bg-clip-padding px-3 py-2 pr-8 text-xs text-muted-foreground">
+        <div className="relative flex items-start gap-2 rounded-lg border border-border bg-clip-padding px-3 py-2 pr-8 text-xs text-muted-foreground">
           {note.faviconUrl && (
             <img
               src={note.faviconUrl}

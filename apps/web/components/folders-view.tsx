@@ -42,7 +42,7 @@ export function FoldersView({ folders }: { folders: FolderRow[] }) {
       ) : !ready ? (
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-56 rounded-md" />
+            <Skeleton key={i} className="h-56 rounded-lg" />
           ))}
         </div>
       ) : view === "grid" ? (
@@ -52,7 +52,7 @@ export function FoldersView({ folders }: { folders: FolderRow[] }) {
           ))}
         </div>
       ) : (
-        <div className="bg-card divide-y overflow-hidden rounded-md border">
+        <div className="bg-card divide-y overflow-hidden rounded-lg border">
           {folders.map((folder) => (
             <FolderListItem key={folder.id} folder={folder} />
           ))}

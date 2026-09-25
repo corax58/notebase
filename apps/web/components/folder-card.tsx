@@ -35,7 +35,7 @@ export function FolderCard({ folder }: FolderCardProps) {
   const [deleteOpen, setDeleteOpen] = React.useState(false);
 
   return (
-    <Card key={folder.id} size="sm" className="rounded-md py-0">
+    <Card key={folder.id} size="sm" className="rounded-lg py-0">
       <CardContent className="p-0">
         <Link
           href={href}

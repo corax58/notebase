@@ -67,7 +67,7 @@ function RecentNotesView({
                   <button
                     type="button"
                     onClick={() => onSelectNote(note)}
-                    className="w-full rounded-md px-2 py-2 text-left  transition-colors hover:bg-accent"
+                    className="w-full rounded-lg px-2 py-2 text-left  transition-colors hover:bg-accent"
                   >
                     <p className="line-clamp-2 font-semibold text-[16px] text-foreground ">
                       {note.label}

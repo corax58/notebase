@@ -106,7 +106,7 @@ export default async function DashboardPage() {
           <Link key={stat.label} href={stat.href}>
             <Card
               size="sm"
-              className="hover:bg-muted/50 rounded-xs transition-colors"
+              className="hover:bg-muted/50 rounded-lg transition-colors"
             >
               <CardContent className="flex items-center justify-between">
                 <div>
@@ -123,7 +123,7 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
-        <Card className="rounded-xs md:col-span-2">
+        <Card className="rounded-lg md:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between gap-4">
             <div>
               <CardTitle>Recent notes</CardTitle>
@@ -150,7 +150,7 @@ export default async function DashboardPage() {
               recentNotes.map((note) => (
                 <div
                   key={note.id}
-                  className="hover:bg-muted flex items-center justify-between gap-4 rounded-xs px-3 py-2.5"
+                  className="hover:bg-muted flex items-center justify-between gap-4 rounded-lg px-3 py-2.5"
                 >
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium">
@@ -168,7 +168,7 @@ export default async function DashboardPage() {
         </Card>
 
         <div className="flex flex-col gap-6">
-          <Card className="rounded-xs">
+          <Card className="rounded-lg">
             <CardHeader className="flex flex-row items-center justify-between gap-4">
               <CardTitle>Folders</CardTitle>
               <Button
@@ -191,13 +191,15 @@ export default async function DashboardPage() {
                   <Link
                     key={folder.id}
                     href={`/dashboard/folders/${folder.id}`}
-                    className="hover:bg-muted flex items-center justify-between gap-2 rounded-xs px-3 py-2"
+                    className="hover:bg-muted flex items-center justify-between gap-2 rounded-lg px-3 py-2"
                   >
                     <div className="flex min-w-0 items-center gap-2">
                       <FolderIcon
                         weight="fill"
                         className="text-primary size-4 shrink-0"
-                        style={folder.color ? { color: folder.color } : undefined}
+                        style={
+                          folder.color ? { color: folder.color } : undefined
+                        }
                       />
                       <span className="truncate text-sm font-medium">
                         {folder.name}
@@ -212,7 +214,7 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-xs">
+          <Card className="rounded-lg">
             <CardHeader className="flex flex-row items-center justify-between gap-4">
               <CardTitle>Tags</CardTitle>
               <Button
@@ -234,7 +236,7 @@ export default async function DashboardPage() {
                 topTags.map((tag) => (
                   <div
                     key={tag.id}
-                    className="flex items-center justify-between gap-2 rounded-xs px-3 py-2"
+                    className="flex items-center justify-between gap-2 rounded-lg px-3 py-2"
                   >
                     <div className="flex min-w-0 items-center gap-2">
                       <TagIcon className="text-primary size-4 shrink-0" />

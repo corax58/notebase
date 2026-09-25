@@ -23,7 +23,7 @@ export default async function FoldersPage() {
     .orderBy(asc(folders.name));
 
   return (
-    <div className="bg-background h-full p-4 md:p-6">
+    <div className="bg-background h-full rounded-lg border p-4 md:p-6">
       <FoldersView folders={rows} />
     </div>
   );

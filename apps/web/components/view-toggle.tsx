@@ -51,7 +51,7 @@ export function ViewToggle({
     <div
       role="group"
       aria-label="View mode"
-      className="bg-muted inline-flex items-center rounded-md p-0.5"
+      className="bg-muted inline-flex items-center rounded-lg p-0.5"
     >
       {options.map(({ value, label, Icon }) => (
         <button

@@ -16,7 +16,7 @@ export default async function NotesPage({
   ]);
 
   return (
-    <div className="bg-background flex flex-col gap-6 border-t p-4 md:p-6">
+    <div className="bg-background flex flex-col gap-6 rounded-lg border p-4 md:p-6">
       <NotesList notes={notes} userFolders={userFolders} userTags={userTags} />
     </div>
   );

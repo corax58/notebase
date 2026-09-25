@@ -141,7 +141,7 @@ export function ColorPicker({
             className="h-10 w-full justify-start gap-2 px-3 font-normal"
           >
             <span
-              className="h-5 w-5 shrink-0 rounded-md border border-slate-200"
+              className="h-5 w-5 shrink-0 rounded-lg border border-slate-200"
               style={{ backgroundColor: current }}
             />
             <span className="text-sm tracking-wide text-slate-700 uppercase">
@@ -193,7 +193,7 @@ export function ColorPicker({
                 <button
                   type="button"
                   onClick={() => colorInputRef.current?.click()}
-                  className="relative h-9 w-9 shrink-0 overflow-hidden rounded-md border border-slate-200 focus:ring-2 focus:ring-slate-400 focus:ring-offset-1 focus:outline-none"
+                  className="relative h-9 w-9 shrink-0 overflow-hidden rounded-lg border border-slate-200 focus:ring-2 focus:ring-slate-400 focus:ring-offset-1 focus:outline-none"
                   style={{
                     backgroundColor: isValidHex(current) ? current : "#ffffff",
                   }}
