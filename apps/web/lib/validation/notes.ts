@@ -62,6 +62,11 @@ export const createBundleSchema = z.object({
   noteIds: bundleNoteIdsSchema.default([]),
 });
 
+// Must list exactly the bundle's current notes — reorders, never changes membership
+export const reorderBundleNotesSchema = z.object({
+  noteIds: bundleNoteIdsSchema,
+});
+
 export const addBundleNotesSchema = z.object({
   noteIds: bundleNoteIdsSchema.min(1),
   // Index in noteOrder to insert at; omitted (or past the end) appends

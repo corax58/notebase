@@ -16,6 +16,7 @@ import type { BundleWithNotes } from "@/lib/queries/bundles";
 import type { Folder, Tag } from "@/lib/queries/notes";
 import { formatRelativeDate } from "@/lib/utils";
 import { NoteListItem } from "@/app/dashboard/notes/_components/note-list-item";
+import { SortNotesDialog } from "./sort-notes-dialog";
 
 interface BundleNotesListProps {
   bundle: BundleWithNotes;
@@ -92,10 +93,13 @@ const BundleNotesList = ({
             </p>
           </div>
         </div>
-        <Button variant="outline" onClick={() => setDeleteOpen(true)}>
-          <TrashIcon data-icon="inline-start" />
-          Delete
-        </Button>
+        <div className="flex items-center gap-3">
+          <SortNotesDialog bundleId={bundle.id} notes={notes} />
+          <Button variant="outline" onClick={() => setDeleteOpen(true)}>
+            <TrashIcon data-icon="inline-start" />
+            Delete
+          </Button>
+        </div>
       </div>
 
       {notes.length === 0 ? (
