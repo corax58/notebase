@@ -7,6 +7,7 @@ import {
   FolderIcon,
   HouseIcon,
   NotePencilIcon,
+  StackIcon,
   TagIcon,
 } from "@phosphor-icons/react";
 import {
@@ -31,6 +32,7 @@ const navItems = [
   { title: "Notes", href: "/dashboard/notes", icon: NotePencilIcon },
   { title: "Folders", href: "/dashboard/folders", icon: FolderIcon },
   { title: "Tags", href: "/dashboard/tags", icon: TagIcon },
+  { title: "Bundles", href: "/dashboard/bundles", icon: StackIcon },
 ];
 
 interface AppSidebarProps {

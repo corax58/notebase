@@ -93,9 +93,10 @@ export const bundles = pgTable(
     name: text("name").notNull(),
 
     // Ordered list of note IDs — the display/compile order. Source of truth
-    // for sequence; membership itself is owned by bundleItems. Reconciled
-    // against bundleItems on read (see getBundleWithNotes) rather than kept
-    // in lockstep on every write, to sidestep the cascade-delete gap.
+    // for sequence; membership itself is owned by bundleItems. Removals
+    // (including cascades from deleted notes) are synced by the
+    // bundle_items_after_delete trigger — see drizzle/0004. Additions are
+    // written alongside the bundleItems insert (POST /api/bundles/[id]/notes).
     noteOrder: uuid("note_order")
       .array()
       .notNull()

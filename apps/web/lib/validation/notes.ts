@@ -45,3 +45,29 @@ export const updateTagSchema = createTagSchema;
 export const addNoteTagSchema = z.object({
   tag: z.string().trim().min(1).max(100),
 });
+
+// ─── Bundles ───────────────────────────────
+export const MAX_BUNDLE_NOTES = 500;
+
+const bundleNoteIdsSchema = z
+  .array(z.uuid())
+  .max(MAX_BUNDLE_NOTES)
+  .refine((ids) => new Set(ids).size === ids.length, {
+    message: "A note can only be added to a bundle once",
+  });
+
+export const createBundleSchema = z.object({
+  name: z.string().trim().min(1).max(255),
+  // Ordered — becomes the bundle's noteOrder
+  noteIds: bundleNoteIdsSchema.default([]),
+});
+
+export const addBundleNotesSchema = z.object({
+  noteIds: bundleNoteIdsSchema.min(1),
+  // Index in noteOrder to insert at; omitted (or past the end) appends
+  position: z.number().int().min(0).optional(),
+});
+
+export const updateBundleSchema = z.object({
+  name: z.string().trim().min(1).max(255).optional(),
+});

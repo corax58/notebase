@@ -18,6 +18,7 @@ import {
   EyeIcon,
   FolderIcon,
   GlobeIcon,
+  MinusCircleIcon,
   PencilSimpleIcon,
   TrashIcon,
 } from "@phosphor-icons/react/dist/ssr";
@@ -42,12 +43,15 @@ type NoteListItemProps = {
   };
   folders?: Folder[];
   tags?: Tag[];
+  // Shown as a menu action when the list is a bundle's notes
+  onRemoveFromBundle?: () => void;
 };
 
 export function NoteListItem({
   note,
   folders = [],
   tags = [],
+  onRemoveFromBundle,
 }: NoteListItemProps) {
   let hostname: string | null = note.sourceTitle;
 
@@ -161,6 +165,12 @@ export function NoteListItem({
             <PencilSimpleIcon />
             Edit
           </DropdownMenuItem>
+          {onRemoveFromBundle && (
+            <DropdownMenuItem onClick={onRemoveFromBundle}>
+              <MinusCircleIcon />
+              Remove from bundle
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem
             variant="destructive"
             onClick={() => setDeleteOpen(true)}
