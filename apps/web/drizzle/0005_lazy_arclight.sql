@@ -1,0 +1,1 @@
+ALTER TABLE "bundles" ALTER COLUMN "last_compile_settings" SET DATA TYPE jsonb USING last_compile_settings::jsonb;

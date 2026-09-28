@@ -36,6 +36,13 @@
       "when": 1790415125390,
       "tag": "0004_bundle_note_order_trigger",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790621576558,
+      "tag": "0005_lazy_arclight",
+      "breakpoints": true
     }
   ]
 }

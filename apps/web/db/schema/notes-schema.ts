@@ -7,8 +7,10 @@ import {
   boolean,
   index,
   uniqueIndex,
+  jsonb,
 } from "drizzle-orm/pg-core";
 import { user } from "./auth-schema";
+import { CompileSettings } from "@/lib/validation/notes";
 
 // ─── Folders ───────────────────────────────
 export const folders = pgTable(
@@ -107,8 +109,9 @@ export const bundles = pgTable(
     compiledAt: timestamp("compiled_at"),
 
     // Settings used for the most recent compile (JSON), so Recompile can
-    // default to last-used settings instead of starting blank
-    lastCompileSettings: text("last_compile_settings"),
+    lastCompileSettings: jsonb(
+      "last_compile_settings",
+    ).$type<CompileSettings>(),
 
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),

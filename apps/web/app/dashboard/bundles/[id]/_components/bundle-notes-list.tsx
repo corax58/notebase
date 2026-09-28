@@ -16,6 +16,7 @@ import type { BundleWithNotes } from "@/lib/queries/bundles";
 import type { Folder, Tag } from "@/lib/queries/notes";
 import { formatRelativeDate } from "@/lib/utils";
 import { NoteListItem } from "@/app/dashboard/notes/_components/note-list-item";
+import { CompileDialog } from "./compile-dialog";
 import { SortNotesDialog } from "./sort-notes-dialog";
 
 interface BundleNotesListProps {
@@ -78,13 +79,13 @@ const BundleNotesList = ({
         Bundles
       </Link>
 
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex min-w-0 items-center gap-3">
           <div className="bg-primary/10 text-primary flex size-9 shrink-0 items-center justify-center rounded-lg">
             <StackIcon className="size-4" weight="fill" />
           </div>
-          <div>
-            <h2 className="text-lg font-semibold">{bundle.name}</h2>
+          <div className="min-w-0">
+            <h2 className="text-lg font-semibold break-words">{bundle.name}</h2>
             <p className="text-muted-foreground text-sm">
               {notes.length} {notes.length === 1 ? "note" : "notes"} ·{" "}
               {bundle.compiledAt
@@ -93,8 +94,12 @@ const BundleNotesList = ({
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <SortNotesDialog bundleId={bundle.id} notes={notes} />
+          <CompileDialog
+            lastCompileSettings={bundle.lastCompileSettings}
+            noteCount={notes.length}
+          />
           <Button variant="outline" onClick={() => setDeleteOpen(true)}>
             <TrashIcon data-icon="inline-start" />
             Delete

@@ -76,3 +76,36 @@ export const addBundleNotesSchema = z.object({
 export const updateBundleSchema = z.object({
   name: z.string().trim().min(1).max(255).optional(),
 });
+
+// ─── Compile ───────────────────────────────
+export const compileSettingsSchema = z.object({
+  includeTitle: z.boolean(),
+  labels: z.enum(["none", "heading"]),
+  quoteStyle: z.enum(["plain", "blockquote"]),
+  sources: z.enum(["none", "inline", "footnoted"]),
+  includeTags: z.boolean(),
+  separator: z.enum(["none", "blank", "rule"]),
+});
+
+export type CompileSettings = z.infer<typeof compileSettingsSchema>;
+
+export const DEFAULT_COMPILE_SETTINGS: CompileSettings = {
+  includeTitle: true,
+  labels: "heading",
+  quoteStyle: "blockquote",
+  sources: "footnoted",
+  includeTags: false,
+  separator: "rule",
+};
+
+// lastCompileSettings is stored as JSON text; anything unreadable (or from an
+// older shape) falls back to the defaults rather than failing the dialog
+export function parseCompileSettings(raw: string | null): CompileSettings {
+  if (!raw) return DEFAULT_COMPILE_SETTINGS;
+  try {
+    const result = compileSettingsSchema.safeParse(JSON.parse(raw));
+    return result.success ? result.data : DEFAULT_COMPILE_SETTINGS;
+  } catch {
+    return DEFAULT_COMPILE_SETTINGS;
+  }
+}
