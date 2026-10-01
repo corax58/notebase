@@ -1,13 +1,6 @@
 "use client";
 
-import * as React from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import {
-  ArrowLeftIcon,
-  StackIcon,
-  TrashIcon,
-} from "@phosphor-icons/react/dist/ssr";
+import { NoteListItem } from "@/app/dashboard/notes/_components/note-list-item";
 import { DeleteBundleAlert } from "@/components/delete-bundle-alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,8 +8,16 @@ import { toast } from "@/components/ui/toast";
 import type { BundleWithNotes } from "@/lib/queries/bundles";
 import type { Folder, Tag } from "@/lib/queries/notes";
 import { formatRelativeDate } from "@/lib/utils";
-import { NoteListItem } from "@/app/dashboard/notes/_components/note-list-item";
+import {
+  ArrowLeftIcon,
+  StackIcon,
+  TrashIcon,
+} from "@phosphor-icons/react/dist/ssr";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import * as React from "react";
 import { CompileDialog } from "./compile-dialog";
+import { DocDialog } from "./doc-dialog";
 import { SortNotesDialog } from "./sort-notes-dialog";
 
 interface BundleNotesListProps {
@@ -97,9 +98,13 @@ const BundleNotesList = ({
         <div className="flex flex-wrap items-center gap-3">
           <SortNotesDialog bundleId={bundle.id} notes={notes} />
           <CompileDialog
+            bundleId={bundle.id}
             lastCompileSettings={bundle.lastCompileSettings}
             noteCount={notes.length}
           />
+          {bundle.docContent && (
+            <DocDialog bundleId={bundle.id} docContent={bundle.docContent} />
+          )}
           <Button variant="outline" onClick={() => setDeleteOpen(true)}>
             <TrashIcon data-icon="inline-start" />
             Delete

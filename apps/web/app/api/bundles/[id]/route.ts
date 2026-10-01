@@ -40,7 +40,9 @@ export async function PATCH(
   if (parsedParams.error) return parsedParams.error;
   const { id } = parsedParams.data;
 
-  const parsed = updateBundleSchema.safeParse(await request.json());
+  const requestBody = await request.json();
+  const parsed = updateBundleSchema.safeParse(requestBody);
+
   if (!parsed.success) return validationError(parsed.error);
 
   const [bundle] = await db

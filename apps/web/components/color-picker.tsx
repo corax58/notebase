@@ -182,55 +182,6 @@ export function ColorPicker({
                 })}
               </div>
             </div>
-
-            <div className="h-px bg-slate-200" />
-
-            <div>
-              <p className="mb-2 text-xs font-medium tracking-wide text-slate-500 uppercase">
-                Custom
-              </p>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => colorInputRef.current?.click()}
-                  className="relative h-9 w-9 shrink-0 overflow-hidden rounded-lg border border-slate-200 focus:ring-2 focus:ring-slate-400 focus:ring-offset-1 focus:outline-none"
-                  style={{
-                    backgroundColor: isValidHex(current) ? current : "#ffffff",
-                  }}
-                  title="Pick a custom color"
-                >
-                  <Pipette
-                    className="absolute right-0.5 bottom-0.5 h-3.5 w-3.5"
-                    style={{ color: getContrastColor(current) }}
-                  />
-                  <input
-                    ref={colorInputRef}
-                    type="color"
-                    value={
-                      isValidHex(current) ? normalizeHex(current) : "#000000"
-                    }
-                    onChange={(e) => commitColor(e.target.value)}
-                    className="absolute inset-0 cursor-pointer opacity-0"
-                    aria-label="Custom color wheel"
-                  />
-                </button>
-                <Input
-                  value={hexInput}
-                  onChange={handleHexChange}
-                  onBlur={handleHexBlur}
-                  spellCheck={false}
-                  aria-label="Hex color code"
-                  placeholder="#3B82F6"
-                  className="h-9 font-mono text-sm uppercase"
-                  maxLength={7}
-                />
-              </div>
-              {!isValidHex(hexInput) && (
-                <p className="mt-1.5 text-xs text-red-500">
-                  Enter a valid hex code, e.g. #3B82F6
-                </p>
-              )}
-            </div>
           </div>
         </PopoverContent>
       </Popover>

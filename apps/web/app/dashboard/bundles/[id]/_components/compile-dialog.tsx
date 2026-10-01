@@ -19,28 +19,40 @@ import {
   parseCompileSettings,
   type CompileSettings,
 } from "@/lib/validation/notes";
+import { useRouter } from "next/dist/client/components/navigation";
 
 export function CompileDialog({
   lastCompileSettings,
   noteCount,
+  bundleId,
 }: {
-  lastCompileSettings: string | null;
+  lastCompileSettings: {
+    includeTitle: boolean;
+    labels: "none" | "heading";
+    quoteStyle: "plain" | "blockquote";
+    sources: "none" | "inline" | "footnoted";
+    includeTags: boolean;
+    separator: "none" | "blank" | "rule";
+  } | null;
   noteCount: number;
+  bundleId: string;
 }) {
   const [open, setOpen] = React.useState(false);
-  const saved = React.useMemo(
-    () => parseCompileSettings(lastCompileSettings),
-    [lastCompileSettings],
-  );
-  const [settings, setSettings] = React.useState(saved);
 
+  const [settings, setSettings] = React.useState(
+    lastCompileSettings ?? DEFAULT_COMPILE_SETTINGS,
+  );
+
+  const [compiling, setCompiling] = React.useState(false);
+
+  const router = useRouter();
   const isDefault = (
     Object.keys(DEFAULT_COMPILE_SETTINGS) as (keyof CompileSettings)[]
   ).every((key) => settings[key] === DEFAULT_COMPILE_SETTINGS[key]);
 
   function handleOpenChange(next: boolean) {
     // Every open starts from the last-used settings; cancel just discards
-    if (next) setSettings(saved);
+    if (next) setSettings(lastCompileSettings ?? DEFAULT_COMPILE_SETTINGS);
     setOpen(next);
   }
 
@@ -51,9 +63,43 @@ export function CompileDialog({
     setSettings((prev) => ({ ...prev, [key]: value }));
   }
 
-  function handleCompile() {
+  async function handleCompile() {
     // TODO: send settings to the compile endpoint
-    toast.info("Compiling isn't available yet");
+    setCompiling(true);
+
+    try {
+      const response = await fetch(`/api/bundles/${bundleId}/compile`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(settings),
+      });
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => null);
+        const firstIssue = Object.values(body?.issues ?? {})[0] as
+          string[] | undefined;
+        throw new Error(
+          firstIssue?.[0] ??
+            body?.error ??
+            "Something went wrong while compiling this bundle.",
+        );
+      }
+
+      toast.success(
+        "Bundle compiled",
+        "Your bundle was compiled successfully.",
+      );
+      setOpen(false);
+      router.refresh();
+    } catch (error) {
+      toast.error(
+        "Couldn't compile bundle",
+        error instanceof Error ? error.message : "Please try again.",
+      );
+    } finally {
+      setCompiling(false);
+    }
+
     setOpen(false);
   }
 
@@ -178,8 +224,13 @@ export function CompileDialog({
               >
                 Cancel
               </Button>
-              <Button type="button" onClick={handleCompile}>
-                Compile
+
+              <Button
+                type="button"
+                onClick={handleCompile}
+                disabled={compiling}
+              >
+                {compiling ? "Compiling..." : "Compile"}
               </Button>
             </div>
           </DialogFooter>
