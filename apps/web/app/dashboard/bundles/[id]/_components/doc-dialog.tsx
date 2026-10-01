@@ -20,9 +20,9 @@ import { useRouter } from "next/navigation";
 
 export function DocDialog({
   docContent,
-  bundleId,
+  bundle,
 }: {
-  bundleId: string;
+  bundle: { id: string; title: string };
   docContent: string;
 }) {
   const [open, setOpen] = React.useState(false);
@@ -50,7 +50,7 @@ export function DocDialog({
     setSaving(true);
     const body = JSON.stringify({ docContent: value });
     try {
-      const response = await fetch(`/api/bundles/${bundleId}`, {
+      const response = await fetch(`/api/bundles/${bundle.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body,
@@ -85,7 +85,7 @@ export function DocDialog({
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "bundle.md"; // or `${bundleTitle}.md`
+    a.download = `${bundle.title}.md`;
     a.click();
     URL.revokeObjectURL(url);
   }

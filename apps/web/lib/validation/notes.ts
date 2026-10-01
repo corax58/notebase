@@ -76,6 +76,7 @@ export const addBundleNotesSchema = z.object({
 export const updateBundleSchema = z.object({
   name: z.string().trim().min(1).max(255).optional(),
   docContent: z.string().optional(),
+  noteIds: bundleNoteIdsSchema.optional(),
 });
 
 // ─── Compile ───────────────────────────────

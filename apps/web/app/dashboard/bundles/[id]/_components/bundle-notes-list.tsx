@@ -19,6 +19,13 @@ import * as React from "react";
 import { CompileDialog } from "./compile-dialog";
 import { DocDialog } from "./doc-dialog";
 import { SortNotesDialog } from "./sort-notes-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { DotsThreeVerticalIcon, PencilSimpleIcon } from "@phosphor-icons/react";
 
 interface BundleNotesListProps {
   bundle: BundleWithNotes;
@@ -103,12 +110,35 @@ const BundleNotesList = ({
             noteCount={notes.length}
           />
           {bundle.docContent && (
-            <DocDialog bundleId={bundle.id} docContent={bundle.docContent} />
+            <DocDialog
+              bundle={{ id: bundle.id, title: bundle.name }}
+              docContent={bundle.docContent}
+            />
           )}
-          <Button variant="outline" onClick={() => setDeleteOpen(true)}>
-            <TrashIcon data-icon="inline-start" />
-            Delete
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={<Button variant="ghost" className={"size-6"} />}
+            >
+              <DotsThreeVerticalIcon className="size-6" weight="bold" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={() =>
+                  router.push(`/dashboard/bundles/${bundle.id}/edit`)
+                }
+              >
+                <PencilSimpleIcon />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={() => setDeleteOpen(true)}
+              >
+                <TrashIcon />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
