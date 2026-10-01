@@ -10,7 +10,7 @@ export function Nav() {
   const { data: session, isPending } = authClient.useSession();
   const pathname = usePathname();
 
-  if (pathname.startsWith("/dashboard")) {
+  if (pathname.startsWith("/dashboard") || pathname === "/auth") {
     return null;
   }
 

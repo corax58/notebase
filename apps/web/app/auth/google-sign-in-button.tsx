@@ -27,7 +27,13 @@ function GoogleLogo() {
   );
 }
 
-export function GoogleSignInButton({ callbackURL }: { callbackURL: string }) {
+export function GoogleSignInButton({
+  callbackURL,
+  compact = false,
+}: {
+  callbackURL: string;
+  compact?: boolean;
+}) {
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,7 +56,7 @@ export function GoogleSignInButton({ callbackURL }: { callbackURL: string }) {
         type="button"
         variant="outline"
         size="lg"
-        className="w-full"
+        className={compact ? "size-11 rounded-xl p-0" : "w-full"}
         disabled={isPending}
         onClick={handleSignIn}
       >
