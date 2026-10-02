@@ -149,7 +149,7 @@ const BundleNotesList = ({
           </CardContent>
         </Card>
       ) : (
-        <ol className="bg-card divide-y overflow-hidden rounded-lg border">
+        <ol className="bg-card divide-y overflow-hidden rounded-xl border">
           {notes.map((note, index) => (
             <li key={note.id} className="flex items-center">
               <span className="text-muted-foreground w-10 shrink-0 pl-4 text-xs font-medium tabular-nums">

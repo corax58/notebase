@@ -240,14 +240,14 @@ function SortableRow({
         type="button"
         ref={setActivatorNodeRef}
         aria-label={`Drag to reorder ${title}`}
-        className="text-muted-foreground hover:text-foreground hover:bg-muted flex h-9 w-6 shrink-0 cursor-grab touch-none items-center justify-center rounded active:cursor-grabbing"
+        className="text-muted-foreground hover:text-foreground hover:bg-muted flex h-9 w-6 shrink-0 cursor-grab touch-none items-center justify-center rounded-md active:cursor-grabbing"
         {...attributes}
         {...listeners}
       >
         <DotsSixVerticalIcon className="size-4" weight="bold" />
       </button>
 
-      <span className="bg-muted text-muted-foreground flex size-6 shrink-0 items-center justify-center rounded text-xs font-medium tabular-nums">
+      <span className="bg-muted text-muted-foreground flex size-6 shrink-0 items-center justify-center rounded-md text-xs font-medium tabular-nums">
         {index + 1}
       </span>
 

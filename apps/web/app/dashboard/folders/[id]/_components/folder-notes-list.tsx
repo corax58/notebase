@@ -68,7 +68,7 @@ const FolderNotesList = ({
       ) : !ready ? (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-40 rounded-lg" />
+            <Skeleton key={i} className="h-40 rounded-xl" />
           ))}
         </div>
       ) : view === "grid" ? (
@@ -83,7 +83,7 @@ const FolderNotesList = ({
           ))}
         </div>
       ) : (
-        <div className="bg-card divide-y overflow-hidden rounded-lg border">
+        <div className="bg-card divide-y overflow-hidden rounded-xl border">
           {notes.map((note) => (
             <NoteListItem
               key={note.id}

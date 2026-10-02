@@ -10,7 +10,7 @@ export default async function BundlesPage() {
   const rows = await getBundles(userId);
 
   return (
-    <div className="bg-background h-full rounded-lg border p-4 md:p-6">
+    <div className="bg-secondary h-full rounded-xl border p-4 md:p-6">
       <BundlesView bundles={rows} />
     </div>
   );

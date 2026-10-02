@@ -179,7 +179,7 @@ const EditBundleForm = ({
 
       <div className="grid gap-4 lg:grid-cols-2">
         {/* ─── Picker ─── */}
-        <section className="bg-card flex min-h-0 flex-col overflow-hidden rounded-lg border">
+        <section className="bg-card flex min-h-0 flex-col overflow-hidden rounded-xl border">
           <div className="flex flex-col gap-3 border-b p-4">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold">Your notes</h3>
@@ -221,7 +221,7 @@ const EditBundleForm = ({
                   >
                     <span
                       className={cn(
-                        "mt-0.5 flex size-4 shrink-0 items-center justify-center rounded border",
+                        "mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-sm border",
                         selected &&
                           "bg-primary border-primary text-primary-foreground",
                       )}
@@ -239,7 +239,7 @@ const EditBundleForm = ({
         </section>
 
         {/* ─── Order ─── */}
-        <section className="bg-card flex min-h-0 flex-col overflow-hidden rounded-lg border">
+        <section className="bg-card flex min-h-0 flex-col overflow-hidden rounded-xl border">
           <div className="flex items-center justify-between border-b p-4">
             <h3 className="text-sm font-semibold">
               In this bundle
@@ -269,7 +269,7 @@ const EditBundleForm = ({
                 if (!note) return null;
                 return (
                   <li key={id} className="flex items-start gap-3 px-4 py-3">
-                    <span className="bg-muted text-muted-foreground mt-0.5 flex size-5 shrink-0 items-center justify-center rounded text-xs font-medium tabular-nums">
+                    <span className="bg-muted text-muted-foreground mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-md text-xs font-medium tabular-nums">
                       {index + 1}
                     </span>
                     <NoteSummary note={note} />

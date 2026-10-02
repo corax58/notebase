@@ -64,7 +64,7 @@ export function BundlesView({ bundles }: { bundles: BundleRow[] }) {
       ) : !ready ? (
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-36 rounded-lg" />
+            <Skeleton key={i} className="h-36 rounded-xl" />
           ))}
         </div>
       ) : view === "grid" ? (
@@ -74,7 +74,7 @@ export function BundlesView({ bundles }: { bundles: BundleRow[] }) {
           ))}
         </div>
       ) : (
-        <div className="bg-card divide-y overflow-hidden rounded-lg border">
+        <div className="bg-card divide-y overflow-hidden rounded-xl border">
           {bundles.map((bundle) => (
             <BundleListItem key={bundle.id} bundle={bundle} />
           ))}
@@ -88,7 +88,7 @@ function BundleCard({ bundle }: { bundle: BundleRow }) {
   const href = `/dashboard/bundles/${bundle.id}`;
 
   return (
-    <Card size="sm" className="rounded-lg py-0">
+    <Card size="sm" className="py-0">
       <CardContent className="flex flex-col gap-4 p-4">
         <div className="flex items-start justify-between gap-2">
           <Link

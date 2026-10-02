@@ -28,6 +28,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ModeToggle } from "@/components/theme-toggle";
 
 interface SidebarUserProps {
   user: { name: string; email: string; image?: string | null };
@@ -80,7 +81,7 @@ export function SidebarUser({ user }: SidebarUserProps) {
             }
           ></DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+            className="w-(--radix-dropdown-menu-trigger-width) min-w-56"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
@@ -108,6 +109,7 @@ export function SidebarUser({ user }: SidebarUserProps) {
               <DropdownMenuItem>
                 <Sparkles />
                 Theme
+                <ModeToggle />
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

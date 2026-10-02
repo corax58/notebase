@@ -29,7 +29,7 @@ export default async function FolderPage({
   ]);
 
   return (
-    <div className="bg-background flex flex-col gap-6 rounded-lg border p-4 md:p-6">
+    <div className="bg-secondary flex flex-col gap-6 rounded-xl border p-4 md:p-6">
       <FolderNotesList
         folder={folder}
         notes={noteRows}

@@ -141,10 +141,10 @@ export function ColorPicker({
             className="h-10 w-full justify-start gap-2 px-3 font-normal"
           >
             <span
-              className="h-5 w-5 shrink-0 rounded-lg border border-slate-200"
+              className="h-5 w-5 shrink-0 rounded-sm border border-border"
               style={{ backgroundColor: current }}
             />
-            <span className="text-sm tracking-wide text-slate-700 uppercase">
+            <span className="text-sm tracking-wide text-foreground uppercase">
               {current}
             </span>
           </Button>
@@ -153,7 +153,7 @@ export function ColorPicker({
         <PopoverContent className="w-64 p-4" align="start">
           <div className="space-y-4">
             <div>
-              <p className="mb-2 text-xs font-medium tracking-wide text-slate-500 uppercase">
+              <p className="mb-2 text-xs font-medium tracking-wide text-muted-foreground uppercase">
                 Presets
               </p>
               <div className="grid grid-cols-6 gap-2">
@@ -166,7 +166,7 @@ export function ColorPicker({
                       type="button"
                       title={preset.name}
                       onClick={() => commitColor(preset.value)}
-                      className="relative flex h-7 w-7 items-center justify-center rounded-full border border-black/10 transition-transform hover:scale-110 focus:ring-2 focus:ring-slate-400 focus:ring-offset-1 focus:outline-none"
+                      className="relative flex h-7 w-7 items-center justify-center rounded-full border border-border transition-transform hover:scale-110 focus:ring-2 focus:ring-ring focus:ring-offset-1 focus:ring-offset-popover focus:outline-none"
                       style={{ backgroundColor: preset.value }}
                     >
                       {selected && (

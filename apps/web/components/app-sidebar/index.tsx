@@ -42,7 +42,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
   const pathname = usePathname();
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" className="dark:border-transparent">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -91,7 +91,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
                       className={cn(
                         "rounded-lg",
                         isActive &&
-                          "data-active:bg-secondary data-active:text-primary data-active:hover:bg-secondary/80",
+                          "data-active:bg-background data-active:text-primary data-active:hover:bg-background/80",
                       )}
                     >
                       <item.icon />

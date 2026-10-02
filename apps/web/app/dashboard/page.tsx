@@ -123,7 +123,7 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
-        <Card className="rounded-lg md:col-span-2">
+        <Card className="md:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between gap-4">
             <div>
               <CardTitle>Recent notes</CardTitle>
@@ -168,7 +168,7 @@ export default async function DashboardPage() {
         </Card>
 
         <div className="flex flex-col gap-6">
-          <Card className="rounded-lg">
+          <Card>
             <CardHeader className="flex flex-row items-center justify-between gap-4">
               <CardTitle>Folders</CardTitle>
               <Button
@@ -214,7 +214,7 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-lg">
+          <Card>
             <CardHeader className="flex flex-row items-center justify-between gap-4">
               <CardTitle>Tags</CardTitle>
               <Button

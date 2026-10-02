@@ -33,7 +33,7 @@ const toastIcons: Record<ToastVariant, React.ElementType> = {
 };
 
 const toastIconClasses: Record<ToastVariant, string> = {
-  success: "text-emerald-500",
+  success: "text-success",
   error: "text-destructive",
   info: "text-primary",
 };
@@ -53,7 +53,7 @@ function ToastList() {
         toast={t}
         className={cn(
           "[--gap:0.75rem] [--height:var(--toast-frontmost-height,var(--toast-height))] [--offset-y:calc(var(--toast-offset-y)*-1+calc(var(--toast-index)*var(--gap)*-1)+var(--toast-swipe-movement-y))] [--peek:0.75rem] [--scale:calc(max(0,1-(var(--toast-index)*0.1)))] [--shrink:calc(1-var(--scale))]",
-          "bg-popover text-popover-foreground ring-foreground/10 absolute right-0 bottom-0 left-auto z-[calc(1000-var(--toast-index))] w-full origin-bottom overflow-hidden rounded-lg shadow-2xl ring-1 select-none",
+          "bg-popover text-popover-foreground ring-foreground/10 absolute right-0 bottom-0 left-auto z-[calc(1000-var(--toast-index))] w-full origin-bottom overflow-hidden rounded-xl shadow-2xl ring-1 select-none",
           "h-[var(--height)] data-expanded:h-[var(--toast-height)]",
           "[transform:translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)-(var(--toast-index)*var(--peek))-(var(--shrink)*var(--height))))_scale(var(--scale))]",
           "data-expanded:[transform:translateX(var(--toast-swipe-movement-x))_translateY(var(--offset-y))]",

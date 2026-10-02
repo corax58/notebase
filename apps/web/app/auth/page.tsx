@@ -13,7 +13,7 @@ export default async function AuthPage({ searchParams }: PageProps<"/auth">) {
     typeof redirectTo === "string" ? redirectTo : "/dashboard";
 
   return (
-    <div className="flex flex-1 items-center justify-center bg-zinc-50 px-4 py-32 dark:bg-black">
+    <div className="flex flex-1 items-center justify-center bg-muted px-4 py-32">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Sign in</CardTitle>
