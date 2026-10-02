@@ -39,7 +39,7 @@ export function FolderCard({ folder }: FolderCardProps) {
       <CardContent className="p-0">
         <Link
           href={href}
-          className="bg-secondary flex aspect-video w-full items-center justify-center"
+          className="bg-input/40 flex aspect-video w-full items-center justify-center"
         >
           <div className="relative size-32">
             <FolderIcon

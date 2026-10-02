@@ -46,9 +46,9 @@ export function AddNoteDialog({
         <PlusIcon data-icon="inline-start" />
         Add note
       </DialogTrigger>
-      <DialogContent>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          <DialogHeader>
+      <DialogContent className="flex h-[min(42rem,calc(100dvh-2rem))] flex-col gap-0 overflow-hidden p-0 sm:max-w-lg">
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
+          <DialogHeader className="shrink-0 border-b px-6 pt-6 pb-4 pr-14">
             <DialogTitle>Add a note</DialogTitle>
             <DialogDescription>
               Capture something worth remembering. Only the content is
@@ -56,7 +56,7 @@ export function AddNoteDialog({
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-6 py-5">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="note-content">Content</Label>
               <Textarea
@@ -68,6 +68,7 @@ export function AddNoteDialog({
                 }
                 required
                 autoFocus
+                className="h-40 max-h-[50vh] min-h-24"
               />
             </div>
 
@@ -110,7 +111,7 @@ export function AddNoteDialog({
             />
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="shrink-0 border-t px-6 py-4">
             <DialogClose render={<Button type="button" variant="outline" />}>
               Cancel
             </DialogClose>
