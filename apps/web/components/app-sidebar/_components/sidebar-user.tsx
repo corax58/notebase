@@ -15,7 +15,13 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { SignOutIcon } from "@phosphor-icons/react";
+import {
+  ChatCircleDotsIcon,
+  FileTextIcon,
+  PuzzlePieceIcon,
+  ShieldCheckIcon,
+  SignOutIcon,
+} from "@phosphor-icons/react";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -106,25 +112,34 @@ export function SidebarUser({ user }: SidebarUserProps) {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Theme
+              <DropdownMenuItem className="flex w-full items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <Sparkles />
+                  Theme
+                </div>
                 <ModeToggle />
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <BadgeCheck />
-                Account
+                <PuzzlePieceIcon />
+                Get the extension
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <CreditCard />
-                Billing
+                <ChatCircleDotsIcon />
+                Send feedback
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                <ShieldCheckIcon />
+                Privacy policy
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Bell />
-                Notifications
+                <FileTextIcon />
+                Terms of service
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
