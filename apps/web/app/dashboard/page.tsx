@@ -95,18 +95,21 @@ export default async function DashboardPage() {
       label: "Tags",
       value: tagCount.value,
       icon: TagIcon,
-      href: "/dashboard/tags",
     },
   ];
 
   return (
     <div className="flex flex-col gap-6">
       <div className="grid gap-4 sm:grid-cols-3">
-        {stats.map((stat) => (
-          <Link key={stat.label} href={stat.href}>
+        {stats.map((stat) => {
+          const card = (
             <Card
               size="sm"
-              className="hover:bg-muted/50 rounded-lg transition-colors"
+              className={
+                stat.href
+                  ? "hover:bg-muted/50 rounded-lg transition-colors"
+                  : "rounded-lg"
+              }
             >
               <CardContent className="flex items-center justify-between">
                 <div>
@@ -118,8 +121,15 @@ export default async function DashboardPage() {
                 </div>
               </CardContent>
             </Card>
-          </Link>
-        ))}
+          );
+          return stat.href ? (
+            <Link key={stat.label} href={stat.href}>
+              {card}
+            </Link>
+          ) : (
+            <div key={stat.label}>{card}</div>
+          );
+        })}
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
@@ -217,15 +227,6 @@ export default async function DashboardPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between gap-4">
               <CardTitle>Tags</CardTitle>
-              <Button
-                size="sm"
-                variant="ghost"
-                nativeButton={false}
-                render={<Link href="/dashboard/tags" />}
-              >
-                View all
-                <ArrowRightIcon data-icon="inline-end" />
-              </Button>
             </CardHeader>
             <CardContent className="flex flex-col gap-1">
               {topTags.length === 0 ? (

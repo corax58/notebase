@@ -35,17 +35,6 @@ export const listNotesQuerySchema = z.object({
   offset: z.coerce.number().int().min(0).default(0),
 });
 
-// ─── Tags ──────────────────────────────────
-export const createTagSchema = z.object({
-  name: z.string().trim().min(1).max(100),
-});
-
-export const updateTagSchema = createTagSchema;
-
-export const addNoteTagSchema = z.object({
-  tag: z.string().trim().min(1).max(100),
-});
-
 // ─── Bundles ───────────────────────────────
 export const MAX_BUNDLE_NOTES = 500;
 
