@@ -50,7 +50,7 @@ export function GoogleSignInButton({ callbackURL }: { callbackURL: string }) {
         type="button"
         variant="outline"
         size="lg"
-        className="w-full"
+        className="h-11 w-full rounded-[10px] bg-input/30 hover:bg-input/50"
         disabled={isPending}
         onClick={handleSignIn}
       >
