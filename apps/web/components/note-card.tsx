@@ -30,7 +30,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { EditNoteDialog } from "@/components/edit-note-dialog";
+import { Highlight, matchExcerpt } from "@/components/highlight";
 import { ViewNoteDialog } from "@/components/view-note-dialog";
+import { notesHref } from "@/lib/note-filters";
 import { formatRelativeDate } from "@/lib/utils";
 import { Separator } from "./ui/separator";
 
@@ -52,9 +54,16 @@ type NoteCardProps = {
   };
   folders?: Folder[];
   tags?: Tag[];
+  // Search terms to mark in the title and preview
+  highlight?: string[];
 };
 
-export function NoteCard({ note, folders = [], tags = [] }: NoteCardProps) {
+export function NoteCard({
+  note,
+  folders = [],
+  tags = [],
+  highlight,
+}: NoteCardProps) {
   let hostname: string | null = note.sourceTitle;
 
   if (note.sourceUrl && !note.sourceTitle) {
@@ -126,9 +135,18 @@ export function NoteCard({ note, folders = [], tags = [] }: NoteCardProps) {
           className="block w-full cursor-pointer text-left"
         >
           <CardTitle className="mt-1 line-clamp-1 text-xl font-semibold hover:underline">
-            {note.label ?? "Untitled note"}
+            {note.label ? (
+              <Highlight text={note.label} terms={highlight} />
+            ) : (
+              "Untitled note"
+            )}
           </CardTitle>
-          <div className="mt-2 line-clamp-4">{note.content}</div>
+          <div className="mt-2 line-clamp-4">
+            <Highlight
+              text={matchExcerpt(note.content, highlight, 120)}
+              terms={highlight}
+            />
+          </div>
         </button>
 
         {hasBadges && (
@@ -140,7 +158,13 @@ export function NoteCard({ note, folders = [], tags = [] }: NoteCardProps) {
               </Badge>
             )}
             {note.tags.map((tag) => (
-              <Badge key={tag} variant="secondary">
+              <Badge
+                key={tag}
+                variant="secondary"
+                render={
+                  <Link href={notesHref({ tags: [tag] })} prefetch={false} />
+                }
+              >
                 #{tag}
               </Badge>
             ))}

@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { EditFolderDialog } from "@/components/edit-folder-dialog";
+import { Highlight } from "@/components/highlight";
 import { Button } from "@/components/ui/button";
 
 type FolderListItemProps = {
@@ -25,9 +26,11 @@ type FolderListItemProps = {
     color: string | null;
     noteCount: number;
   };
+  // Search terms to mark in the name
+  highlight?: string[];
 };
 
-export function FolderListItem({ folder }: FolderListItemProps) {
+export function FolderListItem({ folder, highlight }: FolderListItemProps) {
   const href = `/dashboard/folders/${folder.id}`;
   const [editOpen, setEditOpen] = React.useState(false);
   const [deleteOpen, setDeleteOpen] = React.useState(false);
@@ -45,7 +48,9 @@ export function FolderListItem({ folder }: FolderListItemProps) {
         >
           <FolderIcon className="size-4" weight="fill" />
         </div>
-        <span className="truncate text-sm font-medium">{folder.name}</span>
+        <span className="truncate text-sm font-medium">
+          <Highlight text={folder.name} terms={highlight} />
+        </span>
       </Link>
 
       <span className="text-muted-foreground w-24 shrink-0 text-right text-xs">

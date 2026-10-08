@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { EditFolderDialog } from "@/components/edit-folder-dialog";
+import { Highlight } from "@/components/highlight";
 import { Button } from "./ui/button";
 import { Folder } from "lucide-react";
 
@@ -27,9 +28,11 @@ type FolderCardProps = {
     color: string | null;
     noteCount: number;
   };
+  // Search terms to mark in the name
+  highlight?: string[];
 };
 
-export function FolderCard({ folder }: FolderCardProps) {
+export function FolderCard({ folder, highlight }: FolderCardProps) {
   const href = `/dashboard/folders/${folder.id}`;
   const [editOpen, setEditOpen] = React.useState(false);
   const [deleteOpen, setDeleteOpen] = React.useState(false);
@@ -84,7 +87,9 @@ export function FolderCard({ folder }: FolderCardProps) {
               <FolderIcon className="size-4" />
             </div>
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium">{folder.name}</p>
+              <p className="truncate text-sm font-medium">
+                <Highlight text={folder.name} terms={highlight} />
+              </p>
               <p className="text-muted-foreground text-xs">
                 {folder.noteCount} {folder.noteCount === 1 ? "note" : "notes"}
               </p>

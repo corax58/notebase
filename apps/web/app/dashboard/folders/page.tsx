@@ -14,6 +14,7 @@ export default async function FoldersPage() {
       id: folders.id,
       name: folders.name,
       color: folders.color,
+      createdAt: folders.createdAt,
       noteCount: count(notes.id),
     })
     .from(folders)

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { NOTES_MAX_BATCH } from "@/lib/note-filters";
 
 // ─── Folders ───────────────────────────────
 export const createFolderSchema = z.object({
@@ -33,6 +34,13 @@ export const listNotesQuerySchema = z.object({
   q: z.string().min(1).optional(),
   limit: z.coerce.number().int().min(1).max(100).default(50),
   offset: z.coerce.number().int().min(0).default(0),
+});
+
+// Which stretch of a notes search to return; the filters themselves are read
+// the way the notes page reads its own URL
+export const searchNotesRangeSchema = z.object({
+  limit: z.coerce.number().int().min(1).max(NOTES_MAX_BATCH),
+  offset: z.coerce.number().int().min(0),
 });
 
 // ─── Bundles ───────────────────────────────

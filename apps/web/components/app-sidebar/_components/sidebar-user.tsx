@@ -24,6 +24,7 @@ import {
 } from "@phosphor-icons/react";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
@@ -133,11 +134,11 @@ export function SidebarUser({ user }: SidebarUserProps) {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem render={<Link href="/legal#privacy" />}>
                 <ShieldCheckIcon />
                 Privacy policy
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem render={<Link href="/legal#terms" />}>
                 <FileTextIcon />
                 Terms of service
               </DropdownMenuItem>

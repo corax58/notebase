@@ -9,6 +9,7 @@ import {
 import { db } from "@/db";
 import { folders, notes, tags } from "@/db/schema";
 import { auth } from "@/lib/auth";
+import { notesHref } from "@/lib/note-filters";
 import {
   ArrowRightIcon,
   FolderIcon,
@@ -235,9 +236,10 @@ export default async function DashboardPage() {
                 </p>
               ) : (
                 topTags.map((tag) => (
-                  <div
+                  <Link
                     key={tag.id}
-                    className="flex items-center justify-between gap-2 rounded-lg px-3 py-2"
+                    href={notesHref({ tags: [tag.name] })}
+                    className="hover:bg-muted flex items-center justify-between gap-2 rounded-lg px-3 py-2"
                   >
                     <div className="flex min-w-0 items-center gap-2">
                       <TagIcon className="text-primary size-4 shrink-0" />
@@ -248,7 +250,7 @@ export default async function DashboardPage() {
                     <span className="text-muted-foreground shrink-0 text-xs">
                       {tag.noteCount}
                     </span>
-                  </div>
+                  </Link>
                 ))
               )}
             </CardContent>

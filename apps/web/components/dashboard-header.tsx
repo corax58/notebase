@@ -1,23 +1,61 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { MagnifyingGlassIcon, SignOutIcon } from "@phosphor-icons/react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useFocusShortcut } from "@/hooks/use-focus-shortcut";
+import { normalizeQuery, notesHref } from "@/lib/note-filters";
+import { MagnifyingGlassIcon } from "@phosphor-icons/react";
+import { usePathname, useRouter } from "next/navigation";
+import { useRef, useState } from "react";
 
-import { authClient } from "@/lib/auth-client";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+function HeaderSearch() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [query, setQuery] = useState("");
+
+  // This box always searches notes. The folders page has a search of its own
+  // for folders, which gets the / shortcut there; the notes page has one tied
+  // into its filters, which replaces this box altogether.
+  const pageHasSearch = pathname === "/dashboard/folders";
+  useFocusShortcut(inputRef, !pageHasSearch);
+
+  if (pathname === "/dashboard/notes") return null;
+
+  return (
+    <form
+      role="search"
+      className="relative hidden sm:block"
+      onSubmit={(event) => {
+        event.preventDefault();
+        const q = normalizeQuery(query);
+        if (!q) return;
+        setQuery("");
+        router.push(notesHref({ q }));
+      }}
+    >
+      <MagnifyingGlassIcon className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+      <Input
+        ref={inputRef}
+        aria-label="Search notes"
+        placeholder="Search notes..."
+        enterKeyHint="search"
+        autoComplete="off"
+        className="w-56 pr-8 pl-9 lg:w-72"
+        value={query}
+        onChange={(event) => setQuery(event.target.value)}
+      />
+      {!query && !pageHasSearch && (
+        <kbd
+          title="Press / to search"
+          className="bg-muted-foreground/10 text-muted-foreground pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 rounded-sm px-1.5 font-sans text-xs"
+        >
+          /
+        </kbd>
+      )}
+    </form>
+  );
+}
 
 export function DashboardHeader({
   user,
@@ -37,10 +75,7 @@ export function DashboardHeader({
         </p>
       </div>
 
-      <div className="relative hidden sm:block">
-        <MagnifyingGlassIcon className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
-        <Input placeholder="Search notes..." className="w-56 pl-9 lg:w-72" />
-      </div>
+      <HeaderSearch />
     </header>
   );
 }

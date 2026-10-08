@@ -2,6 +2,7 @@
 
 import { DeleteNoteAlert } from "@/components/delete-note-alert";
 import { EditNoteDialog } from "@/components/edit-note-dialog";
+import { Highlight, matchExcerpt } from "@/components/highlight";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ViewNoteDialog } from "@/components/view-note-dialog";
+import { notesHref } from "@/lib/note-filters";
 import { formatRelativeDate } from "@/lib/utils";
 import {
   ArchiveIcon,
@@ -43,6 +45,8 @@ type NoteListItemProps = {
   };
   folders?: Folder[];
   tags?: Tag[];
+  // Search terms to mark in the title and preview
+  highlight?: string[];
   // Shown as a menu action when the list is a bundle's notes
   onRemoveFromBundle?: () => void;
 };
@@ -51,6 +55,7 @@ export function NoteListItem({
   note,
   folders = [],
   tags = [],
+  highlight,
   onRemoveFromBundle,
 }: NoteListItemProps) {
   let hostname: string | null = note.sourceTitle;
@@ -79,7 +84,11 @@ export function NoteListItem({
       >
         <div className="flex items-center gap-2">
           <span className="truncate text-sm font-semibold">
-            {note.label ?? "Untitled note"}
+            {note.label ? (
+              <Highlight text={note.label} terms={highlight} />
+            ) : (
+              "Untitled note"
+            )}
           </span>
           {note.archived && (
             <Badge variant="outline" className="shrink-0">
@@ -89,7 +98,10 @@ export function NoteListItem({
           )}
         </div>
         <p className="text-muted-foreground line-clamp-1 text-sm">
-          {note.content}
+          <Highlight
+            text={matchExcerpt(note.content, highlight, 30)}
+            terms={highlight}
+          />
         </p>
       </button>
 
@@ -113,7 +125,12 @@ export function NoteListItem({
 
       <div className="hidden w-48 shrink-0 items-center gap-1 lg:flex">
         {visibleTags.map((tag) => (
-          <Badge key={tag} variant="secondary" className="max-w-20 truncate">
+          <Badge
+            key={tag}
+            variant="secondary"
+            className="max-w-20 truncate"
+            render={<Link href={notesHref({ tags: [tag] })} prefetch={false} />}
+          >
             #{tag}
           </Badge>
         ))}
