@@ -203,12 +203,13 @@ export function getFolders(userId: string) {
     .orderBy(asc(folders.name));
 }
 
+// Most recently used first, so the suggestions lead with the tags in rotation
 export function getTags(userId: string) {
   return db
     .select()
     .from(tags)
     .where(eq(tags.userId, userId))
-    .orderBy(asc(tags.name));
+    .orderBy(desc(tags.lastUsedAt), asc(tags.name));
 }
 export type Folder = typeof folders.$inferSelect;
 export type Tag = typeof tags.$inferSelect;

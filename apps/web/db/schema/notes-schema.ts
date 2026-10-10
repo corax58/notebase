@@ -77,9 +77,11 @@ export const tags = pgTable(
       .references(() => user.id, { onDelete: "cascade" }),
     name: text("name").notNull(), // store normalized, e.g. lowercase
     createdAt: timestamp("created_at").notNull().defaultNow(),
+    lastUsedAt: timestamp("last_used_at").notNull().defaultNow(),
   },
   (table) => [
     uniqueIndex("tags_user_name_unique").on(table.userId, table.name),
+    index("tags_user_last_used_idx").on(table.userId, table.lastUsedAt),
   ],
 );
 

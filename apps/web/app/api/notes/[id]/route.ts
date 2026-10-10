@@ -56,6 +56,14 @@ export async function PATCH(
   const normalizedTags = tagNames && normalizeTagNames(tagNames);
 
   const note = await db.transaction(async (tx) => {
+    // Read before the update — only tags that are new to the note count as used
+    const [previous] = await tx
+      .select({ tags: notes.tags })
+      .from(notes)
+      .where(and(eq(notes.id, id), eq(notes.userId, userId)));
+
+    if (!previous) return undefined;
+
     const [updated] = await tx
       .update(notes)
       .set({
@@ -69,7 +77,11 @@ export async function PATCH(
     if (!updated) return undefined;
 
     if (normalizedTags) {
-      await upsertTags(tx, userId, normalizedTags);
+      await upsertTags(
+        tx,
+        userId,
+        normalizedTags.filter((name) => !previous.tags.includes(name)),
+      );
     }
 
     return updated;

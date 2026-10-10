@@ -21,6 +21,7 @@ export interface Tag {
   id: string;
   name: string;
   createdAt: Date;
+  lastUsedAt: Date;
   userId: string;
 }
 

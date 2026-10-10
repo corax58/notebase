@@ -1,4 +1,4 @@
-import { asc, eq } from "drizzle-orm";
+import { asc, desc, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { tags } from "@/db/schema";
@@ -13,7 +13,7 @@ export async function GET() {
     .select()
     .from(tags)
     .where(eq(tags.userId, userId))
-    .orderBy(asc(tags.name));
+    .orderBy(desc(tags.lastUsedAt), asc(tags.name));
 
   return NextResponse.json({ tags: rows });
 }
