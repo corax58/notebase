@@ -7,6 +7,7 @@ type PopupView =
   | { name: "login" }
   | { name: "recent" }
   | { name: "form"; note: CreateNote }
+  | { name: "edit"; note: Note }
   | { name: "detail"; note: Note };
 
 async function blankNote(): Promise<CreateNote> {
@@ -16,6 +17,18 @@ async function blankNote(): Promise<CreateNote> {
     sourceUrl: tab?.url ?? "",
     sourceTitle: tab?.title ?? "",
     faviconUrl: tab?.favIconUrl ?? "",
+  };
+}
+
+function editableNote(note: Note): CreateNote {
+  return {
+    content: note.content,
+    folderId: note.folderId ?? undefined,
+    sourceUrl: note.sourceUrl ?? undefined,
+    sourceTitle: note.sourceTitle ?? undefined,
+    faviconUrl: note.faviconUrl ?? undefined,
+    label: note.label ?? undefined,
+    tags: note.tags,
   };
 }
 
@@ -57,10 +70,20 @@ function App() {
               onDone={() => setView({ name: "recent" })}
             />
           )}
+          {view.name === "edit" && (
+            <NoteForm
+              initialNote={editableNote(view.note)}
+              noteId={view.note.id}
+              onDone={(saved) =>
+                setView({ name: "detail", note: saved ?? view.note })
+              }
+            />
+          )}
           {view.name === "detail" && (
             <NoteDetailView
               note={view.note}
               onBack={() => setView({ name: "recent" })}
+              onEdit={() => setView({ name: "edit", note: view.note })}
               onDeleted={() => setView({ name: "recent" })}
             />
           )}

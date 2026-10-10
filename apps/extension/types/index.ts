@@ -24,16 +24,22 @@ export interface Tag {
   userId: string;
 }
 
+export interface UpdateNote {
+  content: string;
+  folderId: string | null;
+  sourceUrl: string | null;
+  sourceTitle: string | null;
+  faviconUrl: string | null;
+  label: string | null;
+  tags: string[];
+}
+
 export interface Note {
-  tags: {
-    id: string;
-    name: string;
-    createdAt: Date;
-    userId: string;
-  }[];
+  tags: string[];
   id: string;
-  createdAt: Date;
-  updatedAt: Date;
+  // Timestamps arrive as ISO strings in the API's JSON
+  createdAt: string;
+  updatedAt: string;
   userId: string;
   folderId: string | null;
   content: string;

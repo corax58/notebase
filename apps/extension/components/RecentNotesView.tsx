@@ -1,6 +1,7 @@
 // entrypoints/popup/RecentNotesView.tsx
 import { useEffect, useState } from "react";
 import type { Note } from "@/types";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getRecentNotes } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
@@ -38,12 +39,30 @@ function RecentNotesView({
   }, []);
 
   return (
-    <div className="flex flex-col gap-4 p-4">
-      <div className="flex flex-col gap-2">
+    <div className="flex h-full flex-col gap-4 px-6 pb-6">
+      <div
+        className={cn(
+          "-mx-2 min-h-0 flex-1",
+          isLoading ? "overflow-hidden" : "overflow-y-auto",
+        )}
+      >
         {isLoading && (
-          <p className="py-6 text-center text-sm text-muted-foreground">
-            Loading notes...
-          </p>
+          <div
+            role="status"
+            aria-label="Loading notes"
+            className="flex flex-col"
+          >
+            <Skeleton className="mx-2 my-1 h-4 w-24" />
+            <ul className="flex flex-col gap-1">
+              {Array.from({ length: 5 }, (_, index) => (
+                <li key={index} className="flex flex-col px-2 py-2">
+                  <Skeleton className="my-1 h-4 w-2/5" />
+                  <Skeleton className="my-0.75 h-3.5 w-full" />
+                  <Skeleton className="my-0.75 h-3.5 w-3/4" />
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
 
         {!isLoading && error && (
@@ -60,7 +79,7 @@ function RecentNotesView({
 
         {!isLoading && !error && notes.length > 0 && (
           <div>
-            <p>Recent notes</p>
+            <p className="px-2">Recent notes</p>
             <ul className="flex flex-col gap-1">
               {notes.map((note) => (
                 <li key={note.id}>

@@ -5,21 +5,18 @@ import {
   ComboboxChipsInput,
   ComboboxContent,
   ComboboxEmpty,
+  ComboboxInput,
   ComboboxItem,
   ComboboxList,
   useComboboxAnchor,
 } from "@/components/ui/combobox";
-import { getFolders, getTags } from "@/lib/api";
-import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { getFolders, getTags, updateNote } from "@/lib/api";
 import { createNoteSchema } from "@/lib/validation";
-import type { CreateNote, Folder, Tag } from "@/types";
+import type { CreateNote, Folder, Note, Tag } from "@/types";
 import { X } from "lucide-react";
 import React, { type FormEvent } from "react";
-
-const inputClassName = cn(
-  "w-full rounded-lg border border-border bg-clip-padding px-3 py-2 text-sm outline-none",
-  "focus-visible:ring-[3px] focus-visible:ring-ring/50",
-);
 
 interface SaveNoteResponse {
   success: boolean;
@@ -28,10 +25,14 @@ interface SaveNoteResponse {
 
 const NoteForm = ({
   initialNote,
+  noteId,
   onDone,
 }: {
   initialNote: CreateNote;
-  onDone: () => void;
+  // Set when editing an existing note instead of creating a new one
+  noteId?: string;
+  // Receives the updated note after a successful edit
+  onDone: (saved?: Note) => void;
 }) => {
   const [note, setNote] = useState<CreateNote>(initialNote);
 
@@ -52,6 +53,9 @@ const NoteForm = ({
       if (result.success) setTagSuggestions(result.data);
     });
   }, []);
+
+  const selectedFolder =
+    folders.find((folder) => folder.id === note.folderId) ?? null;
 
   const tags = note.tags ?? [];
 
@@ -95,6 +99,34 @@ const NoteForm = ({
 
     setError(null);
     setIsSaving(true);
+
+    if (noteId) {
+      const { data } = parsed;
+      // Send explicit nulls so cleared fields are removed, not left as-is
+      const result = await updateNote(noteId, {
+        content: data.content,
+        label: data.label || null,
+        folderId: data.folderId ?? null,
+        sourceUrl: data.sourceUrl ?? null,
+        sourceTitle: data.sourceTitle ?? null,
+        faviconUrl: data.faviconUrl ?? null,
+        tags: data.tags ?? [],
+      });
+      setIsSaving(false);
+
+      if (!result.success) {
+        setError(result.message);
+        return;
+      }
+
+      onDone({
+        ...result.data,
+        folder:
+          folders.find((folder) => folder.id === result.data.folderId) ?? null,
+      });
+      return;
+    }
+
     const response: SaveNoteResponse = await browser.runtime.sendMessage({
       type: "SAVE_NOTE_REMOTE",
       note: parsed.data,
@@ -129,10 +161,9 @@ const NoteForm = ({
         <label htmlFor="note-label" className="text-sm font-medium">
           Label
         </label>
-        <input
+        <Input
           id="note-label"
           type="text"
-          className={inputClassName}
           value={note.label ?? ""}
           onChange={(e) => setNote({ ...note, label: e.target.value })}
           placeholder="Add a label (optional)"
@@ -143,10 +174,9 @@ const NoteForm = ({
         <label htmlFor="note-content" className="text-sm font-medium">
           Note
         </label>
-        <textarea
+        <Textarea
           id="note-content"
-          rows={6}
-          className={cn(inputClassName, "resize-none")}
+          className="min-h-34 resize-none"
           value={note.content}
           onChange={(e) => setNote({ ...note, content: e.target.value })}
         />
@@ -156,21 +186,26 @@ const NoteForm = ({
         <label htmlFor="note-folder" className="text-sm font-medium">
           Folder
         </label>
-        <select
-          id="note-folder"
-          className={inputClassName}
-          value={note.folderId ?? ""}
-          onChange={(e) =>
-            setNote({ ...note, folderId: e.target.value || undefined })
+        <Combobox
+          items={folders}
+          value={selectedFolder}
+          onValueChange={(folder: Folder | null) =>
+            setNote({ ...note, folderId: folder?.id })
           }
+          itemToStringLabel={(folder: Folder) => folder.name}
         >
-          <option value="">No folder</option>
-          {folders.map((folder) => (
-            <option key={folder.id} value={folder.id}>
-              {folder.name}
-            </option>
-          ))}
-        </select>
+          <ComboboxInput id="note-folder" placeholder="No folder" showClear />
+          <ComboboxContent>
+            <ComboboxEmpty>No matching folders</ComboboxEmpty>
+            <ComboboxList>
+              {(folder: Folder) => (
+                <ComboboxItem key={folder.id} value={folder}>
+                  <span className="truncate">{folder.name}</span>
+                </ComboboxItem>
+              )}
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
       </div>
 
       <div className="flex flex-col gap-1.5">
@@ -257,7 +292,7 @@ const NoteForm = ({
           disabled={isSaving}
           className="inline-flex flex-1 cursor-pointer items-center justify-center rounded-4xl border border-border bg-clip-padding px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors outline-none select-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50"
         >
-          Discard
+          {noteId ? "Cancel" : "Discard"}
         </button>
         <button
           type="submit"

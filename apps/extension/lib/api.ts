@@ -1,4 +1,4 @@
-import type { CreateNote, Folder, Note, Tag } from "@/types";
+import type { CreateNote, Folder, Note, Tag, UpdateNote } from "@/types";
 
 const extractErrorMessage = (error: unknown) => {
   if (typeof error === "string") {
@@ -86,6 +86,29 @@ export const getTags = async (): Promise<ApiResult<Tag[]>> => {
     }
     const data: { tags: Tag[] } = await res.json();
     return { success: true, data: data.tags };
+  } catch (e) {
+    return { success: false, message: extractErrorMessage(e) };
+  }
+};
+
+// The API returns the updated row without its folder relation
+export const updateNote = async (
+  id: string,
+  note: UpdateNote,
+): Promise<ApiResult<Omit<Note, "folder">>> => {
+  try {
+    const res = await fetch(`${apiUrl}/api/notes/${id}`, {
+      method: "PATCH",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(note),
+    });
+    if (!res.ok) {
+      const errorResponse = await res.json();
+      throw Error(errorResponse.message ?? "Something went wrong");
+    }
+    const data: { note: Omit<Note, "folder"> } = await res.json();
+    return { success: true, data: data.note };
   } catch (e) {
     return { success: false, message: extractErrorMessage(e) };
   }
