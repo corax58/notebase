@@ -1,5 +1,6 @@
 import { db } from "@/db";
 import { betterAuth } from "better-auth";
+import { bearer } from "better-auth/plugins";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter";
 import * as schema from "@/db/schema";
 
@@ -17,6 +18,7 @@ export const auth = betterAuth({
     provider: "pg", // or "mysql", "sqlite",
     schema,
   }),
+  plugins: [bearer()],
 
   socialProviders: {
     google: {

@@ -6,6 +6,7 @@ import {
   ArchiveIcon,
   ClockIcon,
   EyeIcon,
+  FileIcon,
   FolderIcon,
   GlobeIcon,
   DotsThreeVerticalIcon,
@@ -33,6 +34,7 @@ import { EditNoteDialog } from "@/components/edit-note-dialog";
 import { Highlight, matchExcerpt } from "@/components/highlight";
 import { ViewNoteDialog } from "@/components/view-note-dialog";
 import { notesHref } from "@/lib/note-filters";
+import { getNoteSource } from "@/lib/note-source";
 import { formatRelativeDate } from "@/lib/utils";
 import { Separator } from "./ui/separator";
 
@@ -64,15 +66,7 @@ export function NoteCard({
   tags = [],
   highlight,
 }: NoteCardProps) {
-  let hostname: string | null = note.sourceTitle;
-
-  if (note.sourceUrl && !note.sourceTitle) {
-    try {
-      hostname = new URL(note.sourceUrl).hostname.replace(/^www\./, "");
-    } catch {
-      hostname = null;
-    }
-  }
+  const source = getNoteSource(note);
 
   const hasBadges = note.archived || note.label || note.tags.length > 0;
 
@@ -174,9 +168,9 @@ export function NoteCard({
       <Separator />
       <CardFooter className="flex items-center">
         <div className="text-muted-foreground flex w-full items-center justify-between gap-2 text-xs">
-          {note.sourceUrl ? (
+          {source?.href ? (
             <a
-              href={note.sourceUrl ?? undefined}
+              href={source.href}
               target="_blank"
               rel="noreferrer"
               className="hover:text-foreground flex min-w-0 items-center gap-1 truncate hover:underline"
@@ -185,14 +179,19 @@ export function NoteCard({
                 <img
                   src={note.faviconUrl}
                   className="size-3.5 shrink-0 object-cover"
-                  alt={`${hostname} favicon`}
+                  alt={`${source.label} favicon`}
                 />
               ) : (
                 <GlobeIcon className="size-3.5 shrink-0" />
               )}
 
-              <span className="truncate">{hostname}</span>
+              <span className="truncate">{source.label}</span>
             </a>
+          ) : source ? (
+            <span className="flex min-w-0 items-center gap-1">
+              <FileIcon className="size-3.5 shrink-0" />
+              <span className="truncate">{source.label}</span>
+            </span>
           ) : (
             <span />
           )}

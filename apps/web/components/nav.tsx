@@ -14,6 +14,8 @@ export function Nav() {
     pathname === "/" ||
     pathname === "/auth" ||
     pathname === "/legal" ||
+    pathname === "/get-extension" ||
+    pathname === "/extension/auth-success" ||
     pathname.startsWith("/dashboard")
   ) {
     return null;

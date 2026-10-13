@@ -2,6 +2,7 @@
 
 import { FolderDashedIcon } from "@phosphor-icons/react";
 import * as React from "react";
+import { FolderGridSkeleton } from "@/components/dashboard-skeletons";
 import { AddFolderDialog } from "@/components/add-folder-dialog";
 import { FolderCard } from "@/components/folder-card";
 import { FolderListItem } from "@/components/folder-list-item";
@@ -9,7 +10,6 @@ import { SearchInput } from "@/components/search-input";
 import { SortMenu } from "@/components/sort-menu";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { ViewToggle, useViewMode } from "@/components/view-toggle";
 import { normalizeQuery } from "@/lib/note-filters";
 
@@ -165,11 +165,7 @@ export function FoldersView({ folders }: { folders: FolderRow[] }) {
           </CardContent>
         </Card>
       ) : !ready ? (
-        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-56 rounded-xl" />
-          ))}
-        </div>
+        <FolderGridSkeleton />
       ) : view === "grid" ? (
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
           {visible.map((folder) => (

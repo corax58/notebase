@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRightIcon,
@@ -16,6 +15,8 @@ import type { Icon } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { CaptureDemo } from "./_components/capture-demo";
 import { CompileDemo } from "./_components/compile-demo";
+import { Em } from "./_components/em";
+import { LandingFooter } from "./_components/landing-footer";
 import { LandingNav } from "./_components/landing-nav";
 
 type Feature = { icon: Icon; title: string; body: string };
@@ -65,14 +66,6 @@ const appFeatures: Feature[] = [
     body: "Compile a bundle into markdown, edit it, and export.",
   },
 ];
-
-function Em({ children }: { children: React.ReactNode }) {
-  return (
-    <em className="font-serif font-medium tracking-[-0.025em] text-primary italic">
-      {children}
-    </em>
-  );
-}
 
 function Part({
   eyebrow,
@@ -155,15 +148,13 @@ export default function Home() {
             >
               Get started <ArrowRightIcon />
             </Link>
-            <a
-              href="#"
+            <Link
+              href="/get-extension"
               className="inline-flex h-[50px] items-center gap-2.5 rounded-xl border border-border bg-card px-5 text-[15px] font-medium whitespace-nowrap text-foreground hover:bg-muted"
             >
-              <PuzzlePieceIcon
-                className="size-[18px] text-primary"
-              />
+              <PuzzlePieceIcon className="size-[18px] text-primary" />
               Add extension
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -247,33 +238,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="mx-auto flex max-w-[1160px] flex-wrap items-center justify-between gap-4 px-6 pt-2 pb-8 text-[13px] text-muted-foreground">
-        <div className="flex items-center gap-4">
-          <Image
-            src="/notebase-logo.webp"
-            alt="Notebase"
-            width={124}
-            height={30}
-            className="h-5 w-auto dark:hidden"
-          />
-          <Image
-            src="/notebase-logo-dark.webp"
-            alt="Notebase"
-            width={124}
-            height={30}
-            className="hidden h-5 w-auto dark:block"
-          />
-          <span>© 2026</span>
-        </div>
-        <nav className="flex gap-5">
-          <Link href="/legal#privacy" className="hover:underline">
-            Privacy policy
-          </Link>
-          <Link href="/legal#terms" className="hover:underline">
-            Terms and conditions
-          </Link>
-        </nav>
-      </footer>
+      <LandingFooter />
     </div>
   );
 }

@@ -9,7 +9,7 @@ import {
   Trash2,
 } from "lucide-react";
 import type { Note } from "@/types";
-import { deleteNote } from "@/lib/api";
+import { deleteNote } from "@/lib/api-client";
 import { cn } from "@/lib/utils";
 
 interface NoteDetailViewProps {

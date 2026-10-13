@@ -16,3 +16,5 @@ export const createNoteSchema = z.object({
     .optional(),
   tags: z.array(z.string().trim().min(1).max(100)).max(50).optional(),
 });
+
+export type ValidatedNote = z.output<typeof createNoteSchema>;

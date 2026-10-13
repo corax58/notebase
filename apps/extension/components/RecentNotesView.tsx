@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import type { Note } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getRecentNotes } from "@/lib/api";
+import { getRecentNotes } from "@/lib/api-client";
 import { cn } from "@/lib/utils";
 
 interface RecentNotesViewProps {

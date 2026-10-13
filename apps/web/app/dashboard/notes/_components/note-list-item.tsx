@@ -13,11 +13,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ViewNoteDialog } from "@/components/view-note-dialog";
 import { notesHref } from "@/lib/note-filters";
+import { getNoteSource } from "@/lib/note-source";
 import { formatRelativeDate } from "@/lib/utils";
 import {
   ArchiveIcon,
   DotsThreeVerticalIcon,
   EyeIcon,
+  FileIcon,
   FolderIcon,
   GlobeIcon,
   MinusCircleIcon,
@@ -58,15 +60,7 @@ export function NoteListItem({
   highlight,
   onRemoveFromBundle,
 }: NoteListItemProps) {
-  let hostname: string | null = note.sourceTitle;
-
-  if (note.sourceUrl && !note.sourceTitle) {
-    try {
-      hostname = new URL(note.sourceUrl).hostname.replace(/^www\./, "");
-    } catch {
-      hostname = null;
-    }
-  }
+  const source = getNoteSource(note);
 
   const [viewOpen, setViewOpen] = React.useState(false);
   const [editOpen, setEditOpen] = React.useState(false);
@@ -140,9 +134,9 @@ export function NoteListItem({
       </div>
 
       <div className="text-muted-foreground hidden w-32 shrink-0 xl:block">
-        {note.sourceUrl ? (
+        {source?.href ? (
           <a
-            href={note.sourceUrl}
+            href={source.href}
             target="_blank"
             rel="noreferrer"
             className="hover:text-foreground flex items-center gap-1.5 text-xs hover:underline"
@@ -157,8 +151,13 @@ export function NoteListItem({
             ) : (
               <GlobeIcon className="size-3.5 shrink-0" />
             )}
-            <span className="truncate">{hostname}</span>
+            <span className="truncate">{source.label}</span>
           </a>
+        ) : source ? (
+          <span className="flex items-center gap-1.5 text-xs">
+            <FileIcon className="size-3.5 shrink-0" />
+            <span className="truncate">{source.label}</span>
+          </span>
         ) : null}
       </div>
 

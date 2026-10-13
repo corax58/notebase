@@ -12,16 +12,18 @@ import {
 } from "@/components/ui/combobox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { getFolders, getTags, updateNote } from "@/lib/api";
+import {
+  createNote,
+  getFolders,
+  getTags,
+  updateNote,
+} from "@/lib/api-client";
 import { createNoteSchema } from "@/lib/validation";
 import type { CreateNote, Folder, Note, Tag } from "@/types";
 import { X } from "lucide-react";
 import React, { type FormEvent } from "react";
 
-interface SaveNoteResponse {
-  success: boolean;
-  message: string;
-}
+const RECENT_TAG_LIMIT = 10;
 
 const NoteForm = ({
   initialNote,
@@ -127,16 +129,11 @@ const NoteForm = ({
       return;
     }
 
-    const response: SaveNoteResponse = await browser.runtime.sendMessage({
-      type: "SAVE_NOTE_REMOTE",
-      note: parsed.data,
-    });
+    const response = await createNote(parsed.data);
     setIsSaving(false);
 
-    if (!response?.success) {
-      setError(
-        response?.message ?? "Something went wrong while saving your note.",
-      );
+    if (!response.success) {
+      setError(response.message);
       return;
     }
 
@@ -215,6 +212,9 @@ const NoteForm = ({
         <Combobox
           multiple
           items={tagItems}
+          // Tags arrive most recently used first, so the cap leaves the latest
+          // ones until a query narrows the list
+          limit={tagInputValue.trim() ? -1 : RECENT_TAG_LIMIT}
           value={tags}
           onValueChange={setTags}
           inputValue={tagInputValue}
@@ -241,13 +241,13 @@ const NoteForm = ({
             />
           </ComboboxChips>
           <ComboboxContent anchor={tagAnchor}>
+            <ComboboxEmpty>No matching tags</ComboboxEmpty>
             <ComboboxList>
-              <ComboboxEmpty>No matching tags</ComboboxEmpty>
-              {tagItems.map((name) => (
+              {(name: string) => (
                 <ComboboxItem key={name} value={name}>
                   #{name}
                 </ComboboxItem>
-              ))}
+              )}
             </ComboboxList>
           </ComboboxContent>
         </Combobox>

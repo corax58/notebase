@@ -1,4 +1,6 @@
-import { createNote } from "@/lib/api";
+import * as api from "@/lib/api";
+import { API_REQUEST, type ApiRequest } from "@/lib/api-client";
+import { sourceFromTab } from "@/lib/source";
 import type { CreateNote } from "@/types";
 
 export default defineBackground(() => {
@@ -17,9 +19,7 @@ export default defineBackground(() => {
 
     const note: CreateNote = {
       content: info.selectionText,
-      sourceUrl: tab?.url ?? "",
-      sourceTitle: tab?.title ?? "",
-      faviconUrl: tab?.favIconUrl ?? "",
+      ...sourceFromTab(tab),
     };
 
     await browser.storage.local.set({
@@ -29,10 +29,18 @@ export default defineBackground(() => {
     await browser.action.openPopup();
   });
 
-  browser.runtime.onMessage.addListener((msg) => {
-    if (msg.type === "SAVE_NOTE_REMOTE") {
-      const note: CreateNote = msg.note;
-      return createNote(note);
-    }
-  });
+  browser.runtime.onMessage.addListener(
+    (msg: ApiRequest, _sender, sendResponse) => {
+      if (msg?.type !== API_REQUEST) return;
+
+      const handler = api[msg.method] as
+        | ((...args: unknown[]) => Promise<unknown>)
+        | undefined;
+      if (!handler) return;
+
+      handler(...msg.args).then(sendResponse);
+      // Keep the channel open until the request settles
+      return true;
+    },
+  );
 });

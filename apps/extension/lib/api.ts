@@ -1,4 +1,5 @@
-import type { CreateNote, Folder, Note, Tag, UpdateNote } from "@/types";
+import type { ValidatedNote } from "@/lib/validation";
+import type { Folder, Note, Tag, UpdateNote } from "@/types";
 
 const extractErrorMessage = (error: unknown) => {
   if (typeof error === "string") {
@@ -12,15 +13,28 @@ const extractErrorMessage = (error: unknown) => {
 
 const apiUrl = import.meta.env.WXT_API_URL;
 
+// Authenticates with the bearer token the auth client stores on sign-in
+const request = async (path: string, init: RequestInit = {}) => {
+  const token = await storage.getItem<string>("local:token");
+  const res = await fetch(`${apiUrl}${path}`, {
+    ...init,
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...init.headers,
+    },
+  });
+  if (res.status === 401) await storage.removeItem("local:token");
+  return res;
+};
+
 export const createNote = async (
-  note: CreateNote,
+  note: ValidatedNote,
 ): Promise<{ success: boolean; message: string }> => {
   const body = JSON.stringify(note);
   try {
-    const res = await fetch(`${apiUrl}/api/notes`, {
+    const res = await request("/api/notes", {
       method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
       body,
     });
     if (!res.ok) {
@@ -39,11 +53,7 @@ type ApiResult<T> =
 
 export const getRecentNotes = async (): Promise<ApiResult<Note[]>> => {
   try {
-    const res = await fetch(`${apiUrl}/api/notes?limit=5`, {
-      method: "GET",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-    });
+    const res = await request("/api/notes?limit=5");
     if (!res.ok) {
       const errorResponse = await res.json();
       throw Error(errorResponse.message ?? "Something went wrong");
@@ -57,11 +67,7 @@ export const getRecentNotes = async (): Promise<ApiResult<Note[]>> => {
 
 export const getFolders = async (): Promise<ApiResult<Folder[]>> => {
   try {
-    const res = await fetch(`${apiUrl}/api/folders`, {
-      method: "GET",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-    });
+    const res = await request("/api/folders");
     if (!res.ok) {
       const errorResponse = await res.json();
       throw Error(errorResponse.message ?? "Something went wrong");
@@ -75,11 +81,7 @@ export const getFolders = async (): Promise<ApiResult<Folder[]>> => {
 
 export const getTags = async (): Promise<ApiResult<Tag[]>> => {
   try {
-    const res = await fetch(`${apiUrl}/api/tags`, {
-      method: "GET",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-    });
+    const res = await request("/api/tags");
     if (!res.ok) {
       const errorResponse = await res.json();
       throw Error(errorResponse.message ?? "Something went wrong");
@@ -97,10 +99,8 @@ export const updateNote = async (
   note: UpdateNote,
 ): Promise<ApiResult<Omit<Note, "folder">>> => {
   try {
-    const res = await fetch(`${apiUrl}/api/notes/${id}`, {
+    const res = await request(`/api/notes/${id}`, {
       method: "PATCH",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(note),
     });
     if (!res.ok) {
@@ -116,9 +116,8 @@ export const updateNote = async (
 
 export const deleteNote = async (id: string): Promise<ApiResult<null>> => {
   try {
-    const res = await fetch(`${apiUrl}/api/notes/${id}`, {
+    const res = await request(`/api/notes/${id}`, {
       method: "DELETE",
-      credentials: "include",
     });
     if (!res.ok) {
       const errorResponse = await res.json();

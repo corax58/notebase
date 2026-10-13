@@ -2,6 +2,7 @@ import type { CreateNote, Note } from "@/types";
 import AuthLayout from "./AuthLayout";
 import NoteForm from "./note-form";
 import RecentNotesView from "@/components/RecentNotesView";
+import { sourceFromTab } from "@/lib/source";
 
 type PopupView =
   | { name: "login" }
@@ -12,12 +13,7 @@ type PopupView =
 
 async function blankNote(): Promise<CreateNote> {
   const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
-  return {
-    content: "",
-    sourceUrl: tab?.url ?? "",
-    sourceTitle: tab?.title ?? "",
-    faviconUrl: tab?.favIconUrl ?? "",
-  };
+  return { content: "", ...sourceFromTab(tab) };
 }
 
 function editableNote(note: Note): CreateNote {

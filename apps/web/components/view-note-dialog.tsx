@@ -8,6 +8,7 @@ import {
   CalendarBlankIcon,
   CheckIcon,
   CopyIcon,
+  FileIcon,
   FolderIcon,
   GlobeIcon,
   HashIcon,
@@ -26,6 +27,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { toast } from "@/components/ui/toast"
+import { getNoteSource } from "@/lib/note-source"
 import { formatRelativeDate } from "@/lib/utils"
 
 type ViewableNote = {
@@ -76,15 +78,7 @@ export function ViewNoteDialog({
 }) {
   const [copied, setCopied] = React.useState(false)
 
-  let hostname: string | null = null
-
-  if (note.sourceUrl) {
-    try {
-      hostname = new URL(note.sourceUrl).hostname.replace(/^www\./, "")
-    } catch {
-      hostname = null
-    }
-  }
+  const source = getNoteSource(note)
 
   const trimmed = note.content.trim()
   const wordCount = trimmed ? trimmed.split(/\s+/).length : 0
@@ -195,9 +189,9 @@ export function ViewNoteDialog({
               </DetailRow>
 
               <DetailRow icon={GlobeIcon} label="Source">
-                {note.sourceUrl ? (
+                {source?.href ? (
                   <a
-                    href={note.sourceUrl}
+                    href={source.href}
                     target="_blank"
                     rel="noreferrer"
                     className="group flex min-w-0 items-center gap-2 hover:underline"
@@ -212,17 +206,20 @@ export function ViewNoteDialog({
                       <GlobeIcon className="text-muted-foreground size-4 shrink-0" />
                     )}
                     <span className="flex min-w-0 flex-col">
-                      <span className="truncate">
-                        {note.sourceTitle ?? hostname ?? note.sourceUrl}
-                      </span>
-                      {hostname && (
+                      <span className="truncate">{source.label}</span>
+                      {source.hostname && (
                         <span className="text-muted-foreground truncate text-xs">
-                          {hostname}
+                          {source.hostname}
                         </span>
                       )}
                     </span>
                     <ArrowSquareOutIcon className="text-muted-foreground size-3.5 shrink-0 opacity-0 transition-opacity group-hover:opacity-100" />
                   </a>
+                ) : source ? (
+                  <span className="flex min-w-0 items-center gap-2">
+                    <FileIcon className="text-muted-foreground size-4 shrink-0" />
+                    <span className="truncate">{source.label}</span>
+                  </span>
                 ) : (
                   <span className="text-muted-foreground">Added manually</span>
                 )}
@@ -275,12 +272,12 @@ export function ViewNoteDialog({
               {copied ? <CheckIcon /> : <CopyIcon />}
               {copied ? "Copied" : "Copy"}
             </Button>
-            {note.sourceUrl && (
+            {source?.href && (
               <Button
                 type="button"
                 variant="outline"
                 render={
-                  <a href={note.sourceUrl} target="_blank" rel="noreferrer" />
+                  <a href={source.href} target="_blank" rel="noreferrer" />
                 }
                 nativeButton={false}
               >

@@ -8,6 +8,7 @@ import {
   StackIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
+import { BundleGridSkeleton } from "@/components/dashboard-skeletons";
 import { DeleteBundleAlert } from "@/components/delete-bundle-alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,7 +18,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Skeleton } from "@/components/ui/skeleton";
 import { ViewToggle, useViewMode } from "@/components/view-toggle";
 import type { BundleRow } from "@/lib/queries/bundles";
 import { cn, formatRelativeDate } from "@/lib/utils";
@@ -62,11 +62,7 @@ export function BundlesView({ bundles }: { bundles: BundleRow[] }) {
           </CardContent>
         </Card>
       ) : !ready ? (
-        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-36 rounded-xl" />
-          ))}
-        </div>
+        <BundleGridSkeleton />
       ) : view === "grid" ? (
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
           {bundles.map((bundle) => (
