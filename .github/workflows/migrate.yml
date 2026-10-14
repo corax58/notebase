@@ -1,0 +1,30 @@
+# .github/workflows/migrate.yml
+name: migrate
+on:
+  push:
+    branches: [staging, main]
+    paths:
+      - "apps/web/drizzle/**"
+      - "apps/web/drizzle.config.ts"
+      - ".github/workflows/migrate.yml"
+
+concurrency:
+  group: migrate-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'main' && 'migrate-production' || 'migrate-staging' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec drizzle-kit migrate
+        working-directory: apps/web
+        env:
+          MIGRATION_DATABASE_URL: ${{ secrets.MIGRATION_DATABASE_URL }}
