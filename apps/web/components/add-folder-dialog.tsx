@@ -19,15 +19,24 @@ import { useAddFolder } from "@/lib/hooks/use-add-folders-form";
 import ColorPicker from "./color-picker";
 
 export function AddFolderDialog({}: {}) {
-  const { open, setOpen, form, setForm, submitting, reset, handleSubmit } =
-    useAddFolder();
+  const {
+    open,
+    setOpen,
+    form,
+    setForm,
+    submitting,
+    reset,
+    randomizeColor,
+    handleSubmit,
+  } = useAddFolder();
 
   return (
     <Dialog
       open={open}
       onOpenChange={(next) => {
         setOpen(next);
-        if (!next) reset();
+        if (next) randomizeColor();
+        else reset();
       }}
     >
       <DialogTrigger render={<Button />}>

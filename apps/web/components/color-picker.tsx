@@ -55,6 +55,11 @@ const DEFAULT_PRESETS: ColorPreset[] = [
   { name: "Rose", value: "#f43f5e" },
 ];
 
+export function randomPresetColor(): string {
+  return DEFAULT_PRESETS[Math.floor(Math.random() * DEFAULT_PRESETS.length)]
+    .value;
+}
+
 function isValidHex(hex: string): boolean {
   return /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(hex);
 }

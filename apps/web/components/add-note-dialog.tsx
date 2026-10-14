@@ -27,12 +27,15 @@ type Tag = { id: string; name: string }
 export function AddNoteDialog({
   folders,
   tags,
+  defaultFolderId,
 }: {
   folders: Folder[]
   tags: Tag[]
+  // The folder a new note starts in, e.g. the one whose page this is on
+  defaultFolderId?: string
 }) {
   const { open, setOpen, form, setForm, submitting, setTags, reset, handleSubmit } =
-    useAddNoteForm()
+    useAddNoteForm(defaultFolderId)
 
   return (
     <Dialog

@@ -36,18 +36,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ModeToggle } from "@/components/theme-toggle";
+import { CONTACT_EMAIL } from "@/lib/contact";
+
+const FEEDBACK_HREF = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Notebase feedback")}`;
 
 interface SidebarUserProps {
   user: { name: string; email: string; image?: string | null };
 }
 
 export function SidebarUser({ user }: SidebarUserProps) {
-  const initials = user.name
-    .split(" ")
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
+  // Two letters either way: first and second name, or the start of a lone one
+  const words = user.name.trim().split(/\s+/);
+  const initials = (
+    words.length > 1 ? words[0][0] + words[1][0] : words[0].slice(0, 2)
+  ).toUpperCase();
   const router = useRouter();
 
   const { isMobile } = useSidebar();
@@ -102,7 +104,9 @@ export function SidebarUser({ user }: SidebarUserProps) {
                       alt={user.name}
                       className="rounded-lg"
                     />
-                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                    <AvatarFallback className="rounded-lg">
+                      {initials}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-medium">{user.name}</span>
@@ -123,11 +127,11 @@ export function SidebarUser({ user }: SidebarUserProps) {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem render={<Link href="/get-extension" />}>
                 <PuzzlePieceIcon />
                 Get the extension
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem render={<a href={FEEDBACK_HREF} />}>
                 <ChatCircleDotsIcon />
                 Send feedback
               </DropdownMenuItem>

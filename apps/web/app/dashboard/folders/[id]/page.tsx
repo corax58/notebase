@@ -5,6 +5,7 @@ import { db } from "@/db";
 import { folders } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { getFolders, getNotes, getTags } from "@/lib/queries/notes";
+import { z } from "zod";
 import FolderNotesList from "./_components/folder-notes-list";
 
 export default async function FolderPage({
@@ -14,6 +15,9 @@ export default async function FolderPage({
   const userId = session!.user.id;
 
   const { id } = await params;
+
+  // Non-uuid ids would otherwise throw in Postgres rather than 404
+  if (!z.uuid().safeParse(id).success) notFound();
 
   const [folder] = await db
     .select()

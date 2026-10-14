@@ -14,18 +14,21 @@ const initialState = {
 
 export type AddNoteFormState = typeof initialState
 
-export function useAddNoteForm() {
+export function useAddNoteForm(defaultFolderId: string | null = null) {
   const router = useRouter()
   const [open, setOpen] = React.useState(false)
   const [submitting, setSubmitting] = React.useState(false)
-  const [form, setForm] = React.useState(initialState)
+  const [form, setForm] = React.useState({
+    ...initialState,
+    folderId: defaultFolderId,
+  })
 
   function setTags(tags: string[]) {
     setForm((prev) => ({ ...prev, tags }))
   }
 
   function reset() {
-    setForm(initialState)
+    setForm({ ...initialState, folderId: defaultFolderId })
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {

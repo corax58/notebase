@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { CONTACT_EMAIL } from "@/lib/contact";
 import { cn } from "@/lib/utils";
 
 type Section = { title: string; paragraphs: React.ReactNode[] };
@@ -9,9 +10,12 @@ type LegalDoc = { title: string; intro: string; sections: Section[] };
 const LAST_UPDATED = "October 4, 2026";
 
 const contactEmail = (
-  <span className="rounded bg-muted px-1.5 py-0.5 font-mono text-sm tracking-[0]">
-    [contact email]
-  </span>
+  <a
+    href={`mailto:${CONTACT_EMAIL}`}
+    className="font-medium text-primary underline-offset-4 hover:underline"
+  >
+    {CONTACT_EMAIL}
+  </a>
 );
 
 const docs: Record<"privacy" | "terms", LegalDoc> = {

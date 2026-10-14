@@ -11,6 +11,7 @@ import {
   useSensors,
   type DragEndEvent,
   type DragStartEvent,
+  type Modifier,
 } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -41,6 +42,13 @@ import { toast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 
 type SortableNote = { id: string; label: string | null; content: string };
+
+// Rows only move up and down; dragged sideways, one would stick out of the
+// list and make it scroll horizontally
+const lockToVerticalAxis: Modifier = ({ transform }) => ({
+  ...transform,
+  x: 0,
+});
 
 export function SortNotesDialog({
   bundleId,
@@ -144,10 +152,11 @@ export function SortNotesDialog({
             </DialogDescription>
           </DialogHeader>
 
-          <div className="-mx-2 min-h-0 flex-1 overflow-y-auto px-2">
+          <div className="-mx-2 min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-2">
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
+              modifiers={[lockToVerticalAxis]}
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
               onDragCancel={() => setActiveId(null)}

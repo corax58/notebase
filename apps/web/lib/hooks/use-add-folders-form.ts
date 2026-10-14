@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 
+import { randomPresetColor } from "@/components/color-picker";
 import { toast } from "@/components/ui/toast";
 import { Name } from "drizzle-orm";
 
@@ -19,6 +20,12 @@ export function useAddFolder() {
 
   function reset() {
     setForm(initialState);
+  }
+
+  // Called as the dialog opens. Picking in the initial state instead would
+  // give the server and the client different colors.
+  function randomizeColor() {
+    setForm((prev) => ({ ...prev, color: randomPresetColor() }));
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -66,5 +73,14 @@ export function useAddFolder() {
     }
   }
 
-  return { open, setOpen, form, setForm, submitting, reset, handleSubmit };
+  return {
+    open,
+    setOpen,
+    form,
+    setForm,
+    submitting,
+    reset,
+    randomizeColor,
+    handleSubmit,
+  };
 }
