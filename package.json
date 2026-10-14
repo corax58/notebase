@@ -1,6 +1,7 @@
 {
   "name": "notebase",
   "private": true,
+  "packageManager": "pnpm@12.6.0",
   "scripts": {
     "web:dev": "pnpm --filter web dev",
     "web:build": "pnpm --filter web build",
