@@ -7,6 +7,7 @@ on:
       - "apps/web/drizzle/**"
       - "apps/web/drizzle.config.ts"
       - ".github/workflows/migrate.yml"
+  workflow_dispatch:
 
 concurrency:
   group: migrate-${{ github.ref_name }}
@@ -21,7 +22,7 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec drizzle-kit migrate
