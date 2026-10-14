@@ -7,6 +7,7 @@ on:
       - "apps/web/drizzle/**"
       - "apps/web/drizzle.config.ts"
       - ".github/workflows/migrate.yml"
+  workflow_dispatch:
 
 concurrency:
   group: migrate-${{ github.ref_name }}
