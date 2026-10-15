@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 };
 
 // Served from public/. Build it with `pnpm ext:zip` and copy the result there.
-const EXTENSION_ZIP = "/notebase-extension.zip";
+const EXTENSION_ZIP = "/extension/notebase-extension.zip";
 const EXTENSIONS_URL = "chrome://extensions";
 
 const notes: { icon: Icon; title: string; body: string }[] = [
@@ -50,14 +50,14 @@ const notes: { icon: Icon; title: string; body: string }[] = [
 
 function Mono({ children }: { children: React.ReactNode }) {
   return (
-    <code className="rounded-md bg-muted px-1.5 py-0.5 font-mono text-[0.85em] tracking-[0] text-foreground">
+    <code className="bg-muted text-foreground rounded-md px-1.5 py-0.5 font-mono text-[0.85em] tracking-[0]">
       {children}
     </code>
   );
 }
 
 function Strong({ children }: { children: React.ReactNode }) {
-  return <strong className="font-semibold text-foreground">{children}</strong>;
+  return <strong className="text-foreground font-semibold">{children}</strong>;
 }
 
 function Step({
@@ -72,21 +72,21 @@ function Step({
   children: React.ReactNode;
 }) {
   return (
-    <li className="grid items-center gap-x-[clamp(32px,5vw,72px)] gap-y-6 border-t border-border py-[clamp(32px,5vw,56px)] min-[900px]:grid-cols-[minmax(0,1fr)_minmax(0,460px)]">
+    <li className="border-border grid items-center gap-x-[clamp(32px,5vw,72px)] gap-y-6 border-t py-[clamp(32px,5vw,56px)] min-[900px]:grid-cols-[minmax(0,1fr)_minmax(0,460px)]">
       <div className="flex flex-col gap-3.5">
-        <span className="font-mono text-[13px] tracking-[0] text-primary">
+        <span className="text-primary font-mono text-[13px] tracking-[0]">
           Step 0{number}
         </span>
         <h2 className="text-[clamp(1.5rem,2.6vw,2rem)] leading-[1.15] font-bold tracking-[-0.035em] text-balance">
           {title}
         </h2>
-        <div className="flex flex-col items-start gap-4 text-base leading-[1.65] text-pretty text-muted-foreground">
+        <div className="text-muted-foreground flex flex-col items-start gap-4 text-base leading-[1.65] text-pretty">
           {children}
         </div>
       </div>
       <div
         aria-hidden
-        className="flex min-h-[220px] items-center justify-center rounded-2xl bg-secondary p-[clamp(16px,4vw,32px)] ring-1 ring-foreground/8"
+        className="bg-secondary ring-foreground/8 flex min-h-[220px] items-center justify-center rounded-2xl p-[clamp(16px,4vw,32px)] ring-1"
       >
         {visual}
       </div>
@@ -98,30 +98,30 @@ export default function GetExtensionPage() {
   return (
     <div
       id="top"
-      className="min-h-screen overflow-x-hidden bg-background text-foreground selection:bg-primary selection:text-white"
+      className="bg-background text-foreground selection:bg-primary min-h-screen overflow-x-hidden selection:text-white"
     >
       <section className="bg-background bg-dots px-4 pt-4">
         <LandingNav />
 
         <div className="mx-auto flex max-w-[1160px] flex-col items-center gap-[26px] px-2 pt-[clamp(56px,9vw,104px)] pb-[clamp(56px,8vw,96px)] text-center">
-          <span className="font-mono text-[13px] tracking-[0] text-primary">
+          <span className="text-primary font-mono text-[13px] tracking-[0]">
             Chrome · Edge · Brave · Arc
           </span>
           <h1 className="max-w-[900px] text-[clamp(2.6rem,7.4vw,5.2rem)] leading-[1.1] font-bold tracking-[-0.045em] text-balance">
             Install the{" "}
-            <span className="rounded-md bg-primary px-[0.1em] text-white">
+            <span className="bg-primary rounded-md px-[0.1em] text-white">
               extension
             </span>{" "}
             in <Em>five steps</Em>.
           </h1>
-          <p className="max-w-[600px] text-[clamp(1.05rem,1.7vw,1.25rem)] leading-[1.6] text-pretty text-muted-foreground">
+          <p className="text-muted-foreground max-w-[600px] text-[clamp(1.05rem,1.7vw,1.25rem)] leading-[1.6] text-pretty">
             Notebase isn’t on the Chrome Web Store, so you load it into your
             browser yourself. It takes about a minute.
           </p>
           <a
             href={EXTENSION_ZIP}
             download
-            className="inline-flex h-[50px] items-center gap-2.5 rounded-xl bg-primary px-6 text-base font-semibold whitespace-nowrap text-white"
+            className="bg-primary inline-flex h-[50px] items-center gap-2.5 rounded-xl px-6 text-base font-semibold whitespace-nowrap text-white"
           >
             <DownloadSimpleIcon weight="bold" className="size-[18px]" />
             Download the extension
@@ -130,7 +130,7 @@ export default function GetExtensionPage() {
       </section>
 
       <section className="mx-auto max-w-[1160px] px-6 pb-[clamp(48px,7vw,80px)]">
-        <ol className="flex flex-col border-b border-border">
+        <ol className="border-border flex flex-col border-b">
           <Step
             number={1}
             title="Download and unzip"
@@ -143,9 +143,9 @@ export default function GetExtensionPage() {
             <a
               href={EXTENSION_ZIP}
               download
-              className="inline-flex h-11 items-center gap-2.5 rounded-xl border border-border bg-card px-4 text-[15px] font-medium whitespace-nowrap text-foreground hover:bg-muted"
+              className="border-border bg-card text-foreground hover:bg-muted inline-flex h-11 items-center gap-2.5 rounded-xl border px-4 text-[15px] font-medium whitespace-nowrap"
             >
-              <DownloadSimpleIcon className="size-[18px] text-primary" />
+              <DownloadSimpleIcon className="text-primary size-[18px]" />
               notebase-extension.zip
             </a>
           </Step>
@@ -196,10 +196,10 @@ export default function GetExtensionPage() {
         </ol>
       </section>
 
-      <section className="border-y border-border bg-secondary">
+      <section className="border-border bg-secondary border-y">
         <div className="mx-auto flex max-w-[1160px] flex-col gap-8 px-6 py-[clamp(48px,7vw,80px)]">
           <div className="flex flex-col gap-3.5">
-            <span className="font-mono text-[13px] tracking-[0] text-primary">
+            <span className="text-primary font-mono text-[13px] tracking-[0]">
               Good to know
             </span>
             <h2 className="text-[clamp(1.75rem,3.4vw,2.4rem)] leading-[1.12] font-bold tracking-[-0.04em] text-balance">
@@ -210,13 +210,13 @@ export default function GetExtensionPage() {
             {notes.map((note) => (
               <li
                 key={note.title}
-                className="flex flex-col gap-3 rounded-2xl bg-card p-6 ring-1 ring-foreground/8"
+                className="bg-card ring-foreground/8 flex flex-col gap-3 rounded-2xl p-6 ring-1"
               >
-                <span className="flex size-11 items-center justify-center rounded-xl bg-foreground text-background">
+                <span className="bg-foreground text-background flex size-11 items-center justify-center rounded-xl">
                   <note.icon weight="fill" className="size-[22px]" />
                 </span>
                 <span className="text-base font-semibold">{note.title}</span>
-                <span className="text-[14.5px] leading-[1.6] text-pretty text-muted-foreground">
+                <span className="text-muted-foreground text-[14.5px] leading-[1.6] text-pretty">
                   {note.body}
                 </span>
               </li>
@@ -226,19 +226,19 @@ export default function GetExtensionPage() {
       </section>
 
       <section className="px-4 py-[clamp(48px,7vw,80px)]">
-        <div className="mx-auto flex max-w-[1160px] flex-wrap items-center justify-between gap-7 rounded-[28px] bg-card bg-dots px-[clamp(24px,5vw,64px)] py-[clamp(40px,7vw,80px)] ring-1 ring-foreground/8">
+        <div className="bg-card bg-dots ring-foreground/8 mx-auto flex max-w-[1160px] flex-wrap items-center justify-between gap-7 rounded-[28px] px-[clamp(24px,5vw,64px)] py-[clamp(40px,7vw,80px)] ring-1">
           <div className="flex max-w-[620px] flex-col gap-3">
             <h2 className="text-[clamp(2rem,4.4vw,3.2rem)] leading-[1.05] font-bold tracking-[-0.04em]">
               Installed? Save your first <Em>note</Em>
             </h2>
-            <p className="text-base leading-[1.6] text-muted-foreground">
+            <p className="text-muted-foreground text-base leading-[1.6]">
               Highlight text on any page, right-click, and choose Save to
               Notebase. It lands in the web app with its source.
             </p>
           </div>
           <Link
             href="/auth"
-            className="inline-flex h-[52px] items-center gap-2.5 rounded-xl bg-primary px-[26px] text-base font-semibold whitespace-nowrap text-white"
+            className="bg-primary inline-flex h-[52px] items-center gap-2.5 rounded-xl px-[26px] text-base font-semibold whitespace-nowrap text-white"
           >
             Open the web app <ArrowRightIcon />
           </Link>
