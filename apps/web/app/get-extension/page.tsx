@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 };
 
 // Served from public/. Build it with `pnpm ext:zip` and copy the result there.
-const EXTENSION_ZIP = "/extension/notebase-extension.zip";
+const EXTENSION_ZIP = "/extension/notebase-chrome.zip";
 const EXTENSIONS_URL = "chrome://extensions";
 
 const notes: { icon: Icon; title: string; body: string }[] = [
@@ -105,7 +105,7 @@ export default function GetExtensionPage() {
 
         <div className="mx-auto flex max-w-[1160px] flex-col items-center gap-[26px] px-2 pt-[clamp(56px,9vw,104px)] pb-[clamp(56px,8vw,96px)] text-center">
           <span className="text-primary font-mono text-[13px] tracking-[0]">
-            Chrome · Edge · Brave · Arc
+            Chrome
           </span>
           <h1 className="max-w-[900px] text-[clamp(2.6rem,7.4vw,5.2rem)] leading-[1.1] font-bold tracking-[-0.045em] text-balance">
             Install the{" "}
