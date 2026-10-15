@@ -26,6 +26,8 @@ dist
 apps/extension/build/
 apps/extension/chrome-mv3-dev/
 apps/extension/chrome-mv3-prod/
+*.zip
+!public/notebase-chrome.zip
 
 # misc
 .DS_Store
