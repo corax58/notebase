@@ -1,8 +1,11 @@
 import {
   Bar,
   BundleGridSkeleton,
+  BundleListSkeleton,
   LoadingStatus,
+  ViewToggleSkeleton,
 } from "@/components/dashboard-skeletons";
+import { ViewModeSkeleton } from "@/components/view-toggle";
 
 export default function BundlesLoading() {
   return (
@@ -15,12 +18,16 @@ export default function BundlesLoading() {
           </h2>
           <Bar className="h-3.5 w-56" />
         </div>
-        <div className="flex items-center gap-3">
-          <Bar className="h-8 w-15 rounded-lg" />
-          <Bar className="h-9 w-32 rounded-lg" />
+        <div className="ml-auto flex items-center gap-3">
+          <ViewToggleSkeleton />
+          <Bar className="h-9 w-30.5 rounded-lg" />
         </div>
       </div>
-      <BundleGridSkeleton />
+      <ViewModeSkeleton
+        storageKey="bundles-view"
+        grid={<BundleGridSkeleton />}
+        list={<BundleListSkeleton />}
+      />
     </div>
   );
 }

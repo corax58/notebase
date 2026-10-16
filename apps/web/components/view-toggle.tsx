@@ -6,33 +6,75 @@ import { cn } from "@/lib/utils";
 
 export type ViewMode = "grid" | "list";
 
+// Views chosen this visit, kept here too so switching still works when
+// storage is blocked
+const chosen = new Map<string, ViewMode>();
+const listeners = new Set<() => void>();
+
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+function readViewMode(storageKey: string): ViewMode {
+  const current = chosen.get(storageKey);
+  if (current) return current;
+  try {
+    const saved = localStorage.getItem(storageKey);
+    if (saved === "grid" || saved === "list") return saved;
+  } catch {}
+  return "grid";
+}
+
+const serverViewMode = (): ViewMode => "grid";
+const subscribeNever = () => () => {};
+
 /**
- * Persists the chosen view per page in localStorage. `ready` stays false until
- * the stored value has been read, so callers can avoid a grid -> list flash.
+ * Persists the chosen view per page in localStorage. The server can't read
+ * it, so `ready` is false while hydrating and callers can show a skeleton
+ * rather than flash the grid before the list. Mounted after a client-side
+ * navigation, it's ready straight away.
  */
 export function useViewMode(storageKey: string) {
-  const [view, setView] = React.useState<ViewMode>("grid");
-  const [ready, setReady] = React.useState(false);
+  const view = React.useSyncExternalStore(
+    subscribe,
+    () => readViewMode(storageKey),
+    serverViewMode,
+  );
+  const ready = React.useSyncExternalStore(
+    subscribeNever,
+    () => true,
+    () => false,
+  );
 
-  React.useEffect(() => {
-    try {
-      const saved = localStorage.getItem(storageKey);
-      if (saved === "grid" || saved === "list") setView(saved);
-    } catch {}
-    setReady(true);
-  }, [storageKey]);
-
-  const update = React.useCallback(
+  const setView = React.useCallback(
     (next: ViewMode) => {
-      setView(next);
+      chosen.set(storageKey, next);
       try {
         localStorage.setItem(storageKey, next);
       } catch {}
+      listeners.forEach((listener) => listener());
     },
     [storageKey],
   );
 
-  return { view, setView: update, ready };
+  return { view, setView, ready };
+}
+
+/** For loading states: the skeleton of the view the page will open in. */
+export function ViewModeSkeleton({
+  storageKey,
+  grid,
+  list,
+}: {
+  storageKey: string;
+  grid: React.ReactNode;
+  list: React.ReactNode;
+}) {
+  const { view } = useViewMode(storageKey);
+  return view === "list" ? list : grid;
 }
 
 export function ViewToggle({

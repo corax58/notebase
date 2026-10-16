@@ -57,7 +57,7 @@ const FolderNotesList = ({
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="ml-auto flex items-center gap-3">
           <ViewToggle view={view} onChange={setView} />
           <AddNoteDialog
             folders={userFolders}

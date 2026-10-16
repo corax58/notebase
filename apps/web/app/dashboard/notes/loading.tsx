@@ -2,8 +2,11 @@ import {
   Bar,
   LoadingStatus,
   NoteGridSkeleton,
+  NoteRowsSkeleton,
   ToolbarSkeleton,
+  ViewToggleSkeleton,
 } from "@/components/dashboard-skeletons";
+import { ViewModeSkeleton } from "@/components/view-toggle";
 
 export default function NotesLoading() {
   return (
@@ -17,14 +20,18 @@ export default function NotesLoading() {
             </h2>
             <Bar className="h-3.5 w-40" />
           </div>
-          <div className="flex items-center gap-3">
-            <Bar className="h-8 w-15 rounded-lg" />
-            <Bar className="h-9 w-28 rounded-lg" />
+          <div className="ml-auto flex items-center gap-3">
+            <ViewToggleSkeleton />
+            <Bar className="h-9 w-25.5 rounded-lg" />
           </div>
         </div>
-        <ToolbarSkeleton filters />
+        <ToolbarSkeleton sortClassName="sm:w-37.5" filters />
       </div>
-      <NoteGridSkeleton />
+      <ViewModeSkeleton
+        storageKey="notes-view"
+        grid={<NoteGridSkeleton />}
+        list={<NoteRowsSkeleton />}
+      />
     </div>
   );
 }

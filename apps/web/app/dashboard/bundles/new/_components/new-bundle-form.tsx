@@ -131,7 +131,7 @@ const NewBundleForm = ({ notes }: { notes: PickableNote[] }) => {
             Pick notes and arrange them in the order they should be compiled.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="ml-auto flex items-center gap-3">
           <Button
             type="button"
             variant="outline"

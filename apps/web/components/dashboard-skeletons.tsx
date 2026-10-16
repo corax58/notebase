@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { ArrowLeftIcon } from "@phosphor-icons/react/dist/ssr";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
@@ -16,67 +18,63 @@ export function LoadingStatus({ label }: { label: string }) {
   );
 }
 
-const cardClassName = "bg-card ring-foreground/10 rounded-xl ring-1";
-const listClassName = "bg-card divide-y overflow-hidden rounded-xl border";
-
 function repeat(count: number, render: (index: number) => React.ReactNode) {
   return Array.from({ length: count }, (_, index) => render(index));
 }
 
-/**
- * Stands in for the heading row the dashboard views share: a title and
- * subtitle on the left, the view's controls on the right.
- */
-export function ViewHeaderSkeleton({
-  title,
-  icon = false,
-  viewToggle = true,
-  actions = 1,
+// Icon-only ghost buttons, like an item's options menu, are barely there at
+// rest, so the skeletons keep their space without drawing them
+function GhostSlot({ className }: { className?: string }) {
+  return <span aria-hidden className={cn("shrink-0", className)} />;
+}
+
+/** The link back up a level. Shown for real when its label is known. */
+export function BackLinkSkeleton({
+  href,
+  label,
 }: {
-  // Titles known ahead of the data are shown for real
-  title?: string;
-  icon?: boolean;
-  viewToggle?: boolean;
-  actions?: number;
+  href?: string;
+  label?: string;
 }) {
+  if (!href || !label) return <Bar className="h-5 w-24" />;
   return (
-    <div className="flex flex-wrap items-center justify-between gap-4">
-      <div className="flex min-w-0 items-center gap-3">
-        {icon && <Bar className="size-9 shrink-0 rounded-lg" />}
-        <div>
-          {title ? (
-            <h2 className="text-lg font-semibold">{title}</h2>
-          ) : (
-            <Bar className="my-1 h-5 w-40" />
-          )}
-          <Bar className="my-0.75 h-3.5 w-48" />
-        </div>
-      </div>
-      <div className="flex items-center gap-3">
-        {viewToggle && <Bar className="h-8 w-15 rounded-lg" />}
-        {repeat(actions, (index) => (
-          <Bar key={index} className="h-9 w-28 rounded-lg" />
-        ))}
-      </div>
-    </div>
+    <Link
+      href={href}
+      className="text-muted-foreground hover:text-foreground flex w-fit items-center gap-1 text-sm hover:underline"
+    >
+      <ArrowLeftIcon className="size-3.5" />
+      {label}
+    </Link>
   );
 }
 
-export function BackLinkSkeleton() {
-  return <Bar className="h-5 w-20" />;
+export function ViewToggleSkeleton() {
+  return <Bar className="h-8.5 w-15.5 shrink-0 rounded-lg" />;
 }
 
-export function ToolbarSkeleton({ filters = false }: { filters?: boolean }) {
+/**
+ * The search box and sort menu, and on the notes page the filters under
+ * them. The sort menu is icon-only on phones and shows its option from `sm`.
+ */
+export function ToolbarSkeleton({
+  sortClassName,
+  filters = false,
+}: {
+  // The sort button's width once its label shows
+  sortClassName: string;
+  filters?: boolean;
+}) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center gap-2">
         <Bar className="h-9 flex-1 rounded-lg" />
-        <Bar className="h-9 w-28 rounded-lg" />
+        <Bar className={cn("h-9 w-10 shrink-0 rounded-lg", sortClassName)} />
       </div>
       {filters && (
         <div className="flex flex-wrap items-center gap-2">
-          {repeat(4, (index) => (
-            <Bar key={index} className="h-8 w-24 rounded-lg" />
+          {/* Folder, Tags, Created and Source */}
+          {["w-22", "w-19", "w-29", "w-28"].map((width) => (
+            <Bar key={width} className={cn("h-8 rounded-lg", width)} />
           ))}
         </div>
       )}
@@ -91,32 +89,54 @@ export const NOTE_GRID_CLASS_NAME =
 export const LIST_PANEL_CLASS_NAME =
   "bg-card border-edge raised flex flex-col gap-0.5 rounded-xl border p-1.5";
 
+const cardClassName =
+  "bg-card border-edge raised flex flex-col overflow-hidden rounded-xl border";
+const listRowClassName =
+  "flex items-center gap-3.5 rounded-lg border border-transparent py-2.5 pr-2.5 pl-3";
+
 export function NoteGridSkeleton({ count = 6 }: { count?: number }) {
   return (
     <div className={NOTE_GRID_CLASS_NAME}>
       {repeat(count, (index) => (
-        <div
-          key={index}
-          className="bg-card border-edge raised flex flex-col overflow-hidden rounded-xl border"
-        >
-          <div className="pt-3 pr-2.5 pl-4">
-            <Bar className="my-0.5 h-5 w-24 rounded-[7px]" />
+        <div key={index} className={cardClassName}>
+          <div className="flex items-center justify-between gap-2 pt-3 pr-2.5 pl-4">
+            <Bar className="h-6 w-24 rounded-[7px]" />
+            <GhostSlot className="size-7" />
           </div>
-          <div className="flex flex-col gap-2 px-4 pt-2.5 pb-3.5">
-            <Bar className="my-0.5 h-5 w-2/3" />
-            <div className="flex flex-col gap-2">
-              <Bar className="h-3.5 w-full" />
-              <Bar className="h-3.5 w-full" />
-              <Bar className="h-3.5 w-3/5" />
+          <div className="flex flex-1 flex-col gap-2 px-4 pt-2.5 pb-3.5">
+            <Bar className="my-0.5 h-4.5 w-2/3" />
+            <div className="flex flex-col">
+              <Bar className="my-1 h-3.5 w-full" />
+              <Bar className="my-1 h-3.5 w-full" />
+              <Bar className="my-1 h-3.5 w-3/5" />
             </div>
             <Bar className="mt-1 h-5.5 w-16 rounded-[7px]" />
           </div>
-          <div className="mt-auto flex items-center justify-between gap-2 border-t px-4 py-3">
-            <Bar className="h-3.5 w-28" />
-            <Bar className="h-3.5 w-14" />
+          <div className="bg-background/60 mt-auto flex items-center justify-between gap-2 border-t px-4 py-2.5">
+            <Bar className="my-px h-3.5 w-28" />
+            <Bar className="my-px h-3.5 w-14" />
           </div>
         </div>
       ))}
+    </div>
+  );
+}
+
+function NoteRowSkeleton() {
+  return (
+    <div className={listRowClassName}>
+      <Bar className="size-9 shrink-0 rounded-lg" />
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <Bar className="my-0.5 h-4 w-1/3" />
+        <Bar className="my-0.75 h-3.5 w-2/3" />
+      </div>
+      <span className="hidden w-37.5 shrink-0 md:flex">
+        <Bar className="h-6 w-24 rounded-[7px]" />
+      </span>
+      <span className="flex w-18 shrink-0 justify-end">
+        <Bar className="h-3 w-12" />
+      </span>
+      <GhostSlot className="size-7" />
     </div>
   );
 }
@@ -131,21 +151,20 @@ export function NoteRowsSkeleton({
 }) {
   return (
     <div className={LIST_PANEL_CLASS_NAME}>
-      {repeat(count, (index) => (
-        <div
-          key={index}
-          className="flex items-center gap-3.5 border border-transparent py-2.5 pr-2.5 pl-3"
-        >
-          {numbered && <Bar className="h-3.5 w-4 shrink-0" />}
-          <Bar className="size-9 shrink-0 rounded-lg" />
-          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <Bar className="my-0.5 h-4 w-1/3" />
-            <Bar className="my-0.5 h-3.5 w-2/3" />
+      {repeat(count, (index) =>
+        numbered ? (
+          <div key={index} className="flex items-center">
+            <span className="w-8 shrink-0 pl-3">
+              <Bar className="h-3 w-2.5" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <NoteRowSkeleton />
+            </div>
           </div>
-          <Bar className="hidden h-6 w-28 shrink-0 rounded-[7px] md:block" />
-          <Bar className="h-3.5 w-14 shrink-0" />
-        </div>
-      ))}
+        ) : (
+          <NoteRowSkeleton key={index} />
+        ),
+      )}
     </div>
   );
 }
@@ -158,18 +177,38 @@ export function FolderGridSkeleton({ count = 4 }: { count?: number }) {
   return (
     <div className={FOLDER_GRID_CLASS_NAME}>
       {repeat(count, (index) => (
-        <div
-          key={index}
-          className="bg-card border-edge raised overflow-hidden rounded-xl border"
-        >
-          <Bar className="aspect-16/10 w-full rounded-none" />
-          <div className="flex items-center gap-3 py-3 pr-2.5 pl-3.5">
-            <Bar className="size-9 shrink-0 rounded-lg" />
-            <div className="flex min-w-0 flex-1 flex-col gap-px">
-              <Bar className="my-0.75 h-4 w-2/3" />
-              <Bar className="my-0.5 h-3 w-1/3" />
+        <div key={index} className={cardClassName}>
+          <Bar className="aspect-16/10 w-full rounded-none border-b" />
+          <div className="flex items-center gap-2 py-3 pr-2.5 pl-3.5">
+            <div className="flex min-w-0 flex-1 items-center gap-3">
+              <Bar className="size-9 shrink-0 rounded-lg" />
+              <div className="flex min-w-0 flex-1 flex-col gap-px">
+                <Bar className="my-0.75 h-4 w-2/3" />
+                <Bar className="my-0.5 h-3 w-1/3" />
+              </div>
             </div>
+            <GhostSlot className="size-7" />
           </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function FolderListSkeleton({ count = 4 }: { count?: number }) {
+  return (
+    <div className={LIST_PANEL_CLASS_NAME}>
+      {repeat(count, (index) => (
+        <div key={index} className={listRowClassName}>
+          <div className="flex min-w-0 flex-1 items-center gap-3.5">
+            <Bar className="size-9 shrink-0 rounded-lg" />
+            <Bar className="h-3.5 w-1/3" />
+          </div>
+          <Bar className="h-1.5 w-40 min-w-15 shrink rounded-[3px] max-sm:hidden" />
+          <span className="flex w-18 shrink-0 justify-end">
+            <Bar className="h-3 w-12" />
+          </span>
+          <GhostSlot className="size-7" />
         </div>
       ))}
     </div>
@@ -183,20 +222,55 @@ export function BundleGridSkeleton({ count = 4 }: { count?: number }) {
   return (
     <div className={BUNDLE_GRID_CLASS_NAME}>
       {repeat(count, (index) => (
-        <div
-          key={index}
-          className="bg-card border-edge raised overflow-hidden rounded-xl border"
-        >
-          <Bar className="aspect-16/10 w-full rounded-none" />
+        <div key={index} className={cardClassName}>
+          <Bar className="aspect-16/10 w-full rounded-none border-b" />
           <div className="flex flex-col gap-2 pt-3 pr-2.5 pb-3.5 pl-3.5">
-            <Bar className="my-1 h-4 w-2/3" />
+            <div className="flex items-center gap-2">
+              <div className="min-w-0 flex-1">
+                <Bar className="h-4 w-2/3" />
+              </div>
+              <GhostSlot className="size-7" />
+            </div>
             <div className="flex items-center justify-between gap-2">
               <Bar className="h-3 w-14" />
-              <Bar className="h-5.5 w-28 rounded-[7px]" />
+              <Bar className="h-5.5 w-27 rounded-[7px]" />
             </div>
           </div>
         </div>
       ))}
+    </div>
+  );
+}
+
+export function BundleListSkeleton({ count = 4 }: { count?: number }) {
+  return (
+    <div className={LIST_PANEL_CLASS_NAME}>
+      {repeat(count, (index) => (
+        <div key={index} className={listRowClassName}>
+          <Bar className="size-9 shrink-0 rounded-lg" />
+          <div className="min-w-0 flex-1">
+            <Bar className="h-3.5 w-1/3" />
+          </div>
+          <span className="w-16 shrink-0">
+            <Bar className="h-3 w-12" />
+          </span>
+          <span className="flex w-37.5 shrink-0 max-sm:hidden">
+            <Bar className="h-5.5 w-27 rounded-[7px]" />
+          </span>
+          <GhostSlot className="size-7" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// A note's title, a line of its content, and on some its folder
+function NoteSummarySkeleton({ folder }: { folder: boolean }) {
+  return (
+    <div className="flex min-w-0 flex-1 flex-col gap-1">
+      <Bar className="my-0.5 h-4 w-1/2" />
+      <Bar className="my-0.5 h-3 w-4/5" />
+      {folder && <Bar className="my-0.5 h-3 w-20" />}
     </div>
   );
 }
@@ -207,10 +281,22 @@ function PickerRowsSkeleton({ count }: { count: number }) {
       {repeat(count, (index) => (
         <div key={index} className="flex items-start gap-3 px-4 py-3">
           <Bar className="mt-0.5 size-4 shrink-0 rounded-sm" />
-          <div className="flex min-w-0 flex-1 flex-col gap-1">
-            <Bar className="my-0.5 h-4 w-1/2" />
-            <Bar className="my-0.5 h-3 w-4/5" />
-          </div>
+          <NoteSummarySkeleton folder={index % 2 === 0} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function OrderRowsSkeleton({ count }: { count: number }) {
+  return (
+    <div className="divide-y">
+      {repeat(count, (index) => (
+        <div key={index} className="flex items-start gap-3 px-4 py-3">
+          <Bar className="mt-0.5 size-5 shrink-0 rounded-md" />
+          <NoteSummarySkeleton folder={index % 2 === 0} />
+          {/* Move up, move down and remove */}
+          <GhostSlot className="h-6 w-18" />
         </div>
       ))}
     </div>
@@ -218,13 +304,34 @@ function PickerRowsSkeleton({ count }: { count: number }) {
 }
 
 /** The new and edit bundle pages: a name field over the picker and the order. */
-export function BundleFormSkeleton({ title }: { title: string }) {
+export function BundleFormSkeleton({
+  title,
+  description,
+  backLink,
+  editing = false,
+}: {
+  title: string;
+  description: string;
+  // Where the back link goes and what it says, when known ahead of the data
+  backLink?: { href: string; label: string };
+  // An existing bundle comes with its notes already in order
+  editing?: boolean;
+}) {
   return (
     <div className="flex flex-col gap-6">
-      <BackLinkSkeleton />
-      <ViewHeaderSkeleton title={title} viewToggle={false} actions={2} />
+      <BackLinkSkeleton href={backLink?.href} label={backLink?.label} />
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 className="text-lg font-semibold">{title}</h2>
+          <p className="text-muted-foreground text-sm">{description}</p>
+        </div>
+        <div className="ml-auto flex items-center gap-3">
+          <Bar className="h-9 w-17.5 rounded-lg" />
+          <Bar className="h-9 w-29 rounded-lg" />
+        </div>
+      </div>
       <div className="flex max-w-md flex-col gap-1.5">
-        <Bar className="h-4 w-12" />
+        <span className="text-sm leading-none font-medium">Name</span>
         <Bar className="h-9 w-full rounded-lg" />
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
@@ -241,8 +348,16 @@ export function BundleFormSkeleton({ title }: { title: string }) {
         <section className="bg-card overflow-hidden rounded-xl border">
           <div className="flex items-center justify-between border-b p-4">
             <h3 className="text-sm font-semibold">In this bundle</h3>
+            {editing && <Bar className="h-3 w-11" />}
           </div>
-          <PickerRowsSkeleton count={3} />
+          {editing ? (
+            <OrderRowsSkeleton count={3} />
+          ) : (
+            // A new bundle always starts empty
+            <p className="text-muted-foreground px-4 py-12 text-center text-sm">
+              Select notes on the left to add them here.
+            </p>
+          )}
         </section>
       </div>
     </div>

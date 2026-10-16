@@ -129,7 +129,7 @@ export function FoldersView({ folders }: { folders: FolderRow[] }) {
               notes
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="ml-auto flex items-center gap-3">
             <ViewToggle view={view} onChange={setView} />
             <AddFolderDialog />
           </div>

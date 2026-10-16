@@ -1,9 +1,12 @@
 import {
   Bar,
   FolderGridSkeleton,
+  FolderListSkeleton,
   LoadingStatus,
   ToolbarSkeleton,
+  ViewToggleSkeleton,
 } from "@/components/dashboard-skeletons";
+import { ViewModeSkeleton } from "@/components/view-toggle";
 
 export default function FoldersLoading() {
   return (
@@ -17,14 +20,18 @@ export default function FoldersLoading() {
             </h2>
             <Bar className="h-3.5 w-48" />
           </div>
-          <div className="flex items-center gap-3">
-            <Bar className="h-8 w-15 rounded-lg" />
-            <Bar className="h-9 w-28 rounded-lg" />
+          <div className="ml-auto flex items-center gap-3">
+            <ViewToggleSkeleton />
+            <Bar className="h-9 w-29.5 rounded-lg" />
           </div>
         </div>
-        <ToolbarSkeleton />
+        <ToolbarSkeleton sortClassName="sm:w-33.5" />
       </div>
-      <FolderGridSkeleton />
+      <ViewModeSkeleton
+        storageKey="folders-view"
+        grid={<FolderGridSkeleton />}
+        list={<FolderListSkeleton />}
+      />
     </div>
   );
 }
