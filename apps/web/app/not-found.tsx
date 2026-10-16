@@ -16,7 +16,7 @@ export default function NotFound() {
       </p>
       <Link
         href="/"
-        className="inline-flex h-11 items-center gap-2.5 rounded-xl bg-primary px-5 text-[15px] font-semibold whitespace-nowrap text-white"
+        className="pressable depth-primary border border-edge-primary inline-flex h-11 items-center gap-2.5 rounded-xl bg-primary px-5 text-[15px] font-semibold whitespace-nowrap text-white"
       >
         <ArrowLeftIcon /> Back to home
       </Link>

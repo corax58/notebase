@@ -134,7 +134,7 @@ export default function ExtensionAuthSuccessPage() {
 
           <Link
             href="/dashboard/notes"
-            className="inline-flex h-[46px] items-center gap-2.5 rounded-xl bg-primary px-[22px] text-[15px] font-semibold whitespace-nowrap text-white"
+            className="pressable depth-primary border border-edge-primary inline-flex h-[46px] items-center gap-2.5 rounded-xl bg-primary px-[22px] text-[15px] font-semibold whitespace-nowrap text-white"
           >
             Open your notes <ArrowRightIcon />
           </Link>

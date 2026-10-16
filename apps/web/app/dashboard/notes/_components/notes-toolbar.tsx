@@ -45,7 +45,7 @@ function TagMatchToggle({
       <div
         role="group"
         aria-label="Tag matching"
-        className="bg-muted inline-flex items-center rounded-lg p-0.5"
+        className="bg-muted sunken border-edge inline-flex items-center rounded-lg border p-0.5"
       >
         {TAG_MATCH_OPTIONS.map((option) => (
           <button
@@ -54,9 +54,9 @@ function TagMatchToggle({
             aria-pressed={value === option.value}
             onClick={() => onChange(option.value)}
             className={cn(
-              "text-muted-foreground hover:text-foreground rounded-md px-2 py-0.5 text-xs font-medium transition-colors",
+              "text-muted-foreground hover:text-foreground rounded-md border border-transparent px-2 py-0.5 text-xs font-semibold transition-colors",
               value === option.value &&
-                "bg-background text-foreground shadow-sm",
+                "bg-background text-foreground border-edge raised [--depth:2px]",
             )}
           >
             {option.label}

@@ -221,9 +221,9 @@ const EditBundleForm = ({
                   >
                     <span
                       className={cn(
-                        "mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-sm border",
+                        "sunken border-edge bg-input/30 mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-sm border",
                         selected &&
-                          "bg-primary border-primary text-primary-foreground",
+                          "bg-primary border-edge-primary depth-primary text-primary-foreground",
                       )}
                     >
                       {selected && (
