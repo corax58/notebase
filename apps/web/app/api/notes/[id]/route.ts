@@ -2,7 +2,7 @@ import { and, eq } from "drizzle-orm";
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { db } from "@/db";
-import { notes } from "@/db/schema";
+import { folders, notes } from "@/db/schema";
 import { parseParams } from "@/lib/api/params";
 import { folderBelongsToUser } from "@/lib/api/ownership";
 import { errorResponse, notFound, unauthorized, validationError } from "@/lib/api/response";
@@ -47,7 +47,7 @@ export async function PATCH(
   const parsed = updateNoteSchema.safeParse(await request.json());
   if (!parsed.success) return validationError(parsed.error);
 
-  const { tags: tagNames, ...values } = parsed.data;
+  const { tags: tagNames, newFolder, ...values } = parsed.data;
 
   if (values.folderId && !(await folderBelongsToUser(values.folderId, userId))) {
     return errorResponse("Folder not found", 400);
@@ -64,10 +64,18 @@ export async function PATCH(
 
     if (!previous) return undefined;
 
+    const [folder] = newFolder
+      ? await tx
+          .insert(folders)
+          .values({ ...newFolder, userId })
+          .returning({ id: folders.id })
+      : [];
+
     const [updated] = await tx
       .update(notes)
       .set({
         ...values,
+        ...(folder && { folderId: folder.id }),
         ...(normalizedTags && { tags: normalizedTags }),
         updatedAt: new Date(),
       })

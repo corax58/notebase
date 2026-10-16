@@ -10,9 +10,11 @@ export const createFolderSchema = z.object({
 export const updateFolderSchema = createFolderSchema.partial();
 
 // ─── Notes ─────────────────────────────────
-export const createNoteSchema = z.object({
+const noteFieldsSchema = z.object({
   content: z.string().trim().min(1),
   folderId: z.uuid().nullable().optional(),
+  // Creates a folder alongside the note and puts the note in it
+  newFolder: createFolderSchema.optional(),
   sourceUrl: z.url().nullable().optional(),
   sourceTitle: z.string().trim().max(500).nullable().optional(),
   faviconUrl: z.url().nullable().optional(),
@@ -21,7 +23,23 @@ export const createNoteSchema = z.object({
   tags: z.array(z.string().trim().min(1).max(100)).max(50).optional(),
 });
 
-export const updateNoteSchema = createNoteSchema.partial();
+// A note goes in an existing folder or a new one, not both
+function hasOneFolder(note: { folderId?: string | null; newFolder?: unknown }) {
+  return !(note.folderId && note.newFolder);
+}
+const oneFolderMessage = {
+  message: "Pick an existing folder or create a new one, not both",
+  path: ["newFolder"],
+};
+
+export const createNoteSchema = noteFieldsSchema.refine(
+  hasOneFolder,
+  oneFolderMessage,
+);
+
+export const updateNoteSchema = noteFieldsSchema
+  .partial()
+  .refine(hasOneFolder, oneFolderMessage);
 
 export const listNotesQuerySchema = z.object({
   folderId: z.uuid().optional(),

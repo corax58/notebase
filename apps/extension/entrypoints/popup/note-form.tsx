@@ -43,7 +43,10 @@ const NoteForm = ({
     event.preventDefault();
     if (!note) return;
 
-    const parsed = createNoteSchema.safeParse(note);
+    // A new folder replaces the picked one rather than going alongside it
+    const parsed = createNoteSchema.safeParse(
+      note.newFolder ? { ...note, folderId: undefined } : note,
+    );
     if (!parsed.success) {
       setError(
         parsed.error.issues[0]?.message ??
@@ -62,6 +65,7 @@ const NoteForm = ({
         content: data.content,
         label: data.label || null,
         folderId: data.folderId ?? null,
+        newFolder: data.newFolder,
         sourceUrl: data.sourceUrl ?? null,
         sourceTitle: data.sourceTitle ?? null,
         faviconUrl: data.faviconUrl ?? null,
@@ -74,11 +78,20 @@ const NoteForm = ({
         return;
       }
 
-      onDone({
-        ...result.data,
-        folder:
-          folders.find((folder) => folder.id === result.data.folderId) ?? null,
-      });
+      // A folder created with the note isn't in the fetched list yet
+      const folder =
+        folders.find((folder) => folder.id === result.data.folderId) ??
+        (data.newFolder && result.data.folderId
+          ? {
+              id: result.data.folderId,
+              name: data.newFolder.name,
+              color: data.newFolder.color,
+              userId: result.data.userId,
+              createdAt: new Date(result.data.updatedAt),
+              updatedAt: new Date(result.data.updatedAt),
+            }
+          : null);
+      onDone({ ...result.data, folder });
       return;
     }
 
@@ -124,12 +137,16 @@ const NoteForm = ({
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="note-folder">Folder</Label>
+        <Label htmlFor="note-folder">
+          {note.newFolder ? "New folder" : "Folder"}
+        </Label>
         <NoteFolderSelect
           id="note-folder"
           folders={folders}
           value={note.folderId}
           onChange={(folderId) => setNote({ ...note, folderId })}
+          newFolder={note.newFolder}
+          onNewFolderChange={(newFolder) => setNote({ ...note, newFolder })}
         />
       </div>
 

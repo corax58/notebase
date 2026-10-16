@@ -11,6 +11,16 @@ const extractErrorMessage = (error: unknown) => {
   }
 };
 
+// The API answers failures with { error } and, for invalid input, { issues }
+// keyed by field; the first issue is the most specific message
+const readErrorMessage = async (res: Response) => {
+  const body = await res.json().catch(() => null);
+  const firstIssue = Object.values(body?.issues ?? {})[0] as
+    | string[]
+    | undefined;
+  return firstIssue?.[0] ?? body?.error ?? "Something went wrong";
+};
+
 const apiUrl = import.meta.env.WXT_API_URL;
 
 // Authenticates with the bearer token the auth client stores on sign-in
@@ -38,8 +48,7 @@ export const createNote = async (
       body,
     });
     if (!res.ok) {
-      const errorResponse = await res.json();
-      throw Error(errorResponse.message ?? "Something went wrong");
+      throw Error(await readErrorMessage(res));
     }
     return { success: true, message: "Note created" };
   } catch (e) {
@@ -55,8 +64,7 @@ export const getRecentNotes = async (): Promise<ApiResult<Note[]>> => {
   try {
     const res = await request("/api/notes?limit=5");
     if (!res.ok) {
-      const errorResponse = await res.json();
-      throw Error(errorResponse.message ?? "Something went wrong");
+      throw Error(await readErrorMessage(res));
     }
     const data: { notes: Note[] } = await res.json();
     return { success: true, data: data.notes };
@@ -69,8 +77,7 @@ export const getFolders = async (): Promise<ApiResult<Folder[]>> => {
   try {
     const res = await request("/api/folders");
     if (!res.ok) {
-      const errorResponse = await res.json();
-      throw Error(errorResponse.message ?? "Something went wrong");
+      throw Error(await readErrorMessage(res));
     }
     const data: { folders: Folder[] } = await res.json();
     return { success: true, data: data.folders };
@@ -83,8 +90,7 @@ export const getTags = async (): Promise<ApiResult<Tag[]>> => {
   try {
     const res = await request("/api/tags");
     if (!res.ok) {
-      const errorResponse = await res.json();
-      throw Error(errorResponse.message ?? "Something went wrong");
+      throw Error(await readErrorMessage(res));
     }
     const data: { tags: Tag[] } = await res.json();
     return { success: true, data: data.tags };
@@ -104,8 +110,7 @@ export const updateNote = async (
       body: JSON.stringify(note),
     });
     if (!res.ok) {
-      const errorResponse = await res.json();
-      throw Error(errorResponse.message ?? "Something went wrong");
+      throw Error(await readErrorMessage(res));
     }
     const data: { note: Omit<Note, "folder"> } = await res.json();
     return { success: true, data: data.note };
@@ -120,8 +125,7 @@ export const deleteNote = async (id: string): Promise<ApiResult<null>> => {
       method: "DELETE",
     });
     if (!res.ok) {
-      const errorResponse = await res.json();
-      throw Error(errorResponse.message ?? "Something went wrong");
+      throw Error(await readErrorMessage(res));
     }
     return { success: true, data: null };
   } catch (e) {

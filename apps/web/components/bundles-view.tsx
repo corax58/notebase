@@ -6,9 +6,12 @@ import {
   CheckCircleIcon,
   CircleDashedIcon,
   DotsThreeVerticalIcon,
+  DownloadSimpleIcon,
+  FileTextIcon,
   PlusIcon,
   StackIcon,
   TrashIcon,
+  type Icon,
 } from "@phosphor-icons/react";
 import {
   BUNDLE_GRID_CLASS_NAME,
@@ -59,19 +62,7 @@ export function BundlesView({ bundles }: { bundles: BundleRow[] }) {
       </div>
 
       {bundles.length === 0 ? (
-        <Card>
-          <CardContent className="text-muted-foreground flex flex-col items-center gap-3 py-12 text-center text-sm">
-            No bundles yet.
-            <Button
-              variant="outline"
-              size="sm"
-              nativeButton={false}
-              render={<Link href="/dashboard/bundles/new" />}
-            >
-              Create your first bundle
-            </Button>
-          </CardContent>
-        </Card>
+        <BundlesEmptyState />
       ) : !ready ? (
         <BundleGridSkeleton />
       ) : view === "grid" ? (
@@ -88,6 +79,67 @@ export function BundlesView({ bundles }: { bundles: BundleRow[] }) {
         </div>
       )}
     </div>
+  );
+}
+
+const emptySteps: { icon: Icon; title: string; body: string }[] = [
+  {
+    icon: StackIcon,
+    title: "Group notes",
+    body: "Pick the notes that belong together and put them in the order you want.",
+  },
+  {
+    icon: FileTextIcon,
+    title: "Compile into a document",
+    body: "Turn the bundle into a single, structured document.",
+  },
+  {
+    icon: DownloadSimpleIcon,
+    title: "Export as Markdown",
+    body: "Download the document as an .md file to use anywhere.",
+  },
+];
+
+function BundlesEmptyState() {
+  return (
+    <Card>
+      <CardContent className="flex flex-col items-center gap-6 py-10 text-center">
+        <div className="flex flex-col gap-1">
+          <p className="text-[15px] font-semibold">No bundles yet</p>
+          <p className="text-muted-foreground text-sm">
+            Bundles turn scattered notes into a document you can share.
+          </p>
+        </div>
+        <ol className="grid w-full max-w-3xl gap-3 sm:grid-cols-3">
+          {emptySteps.map((step, i) => (
+            <li
+              key={step.title}
+              className="bg-input/40 flex flex-col items-center gap-2.5 rounded-lg border px-4 py-5"
+            >
+              <span className="bg-primary/10 text-primary flex size-9 items-center justify-center rounded-[10px]">
+                <step.icon weight="fill" className="size-4.5" />
+              </span>
+              <span className="flex flex-col gap-0.5">
+                <span className="text-muted-foreground text-xs font-semibold tabular-nums">
+                  Step {i + 1}
+                </span>
+                <span className="text-sm font-semibold">{step.title}</span>
+                <span className="text-muted-foreground text-sm leading-[1.55] text-pretty">
+                  {step.body}
+                </span>
+              </span>
+            </li>
+          ))}
+        </ol>
+        <Button
+          nativeButton={false}
+          render={<Link href="/dashboard/bundles/new" />}
+        >
+          <PlusIcon data-icon="inline-start" />
+          Create your first bundle
+        </Button>
+      </CardContent>
+    </Card>
   );
 }
 

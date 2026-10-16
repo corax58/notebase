@@ -1,12 +1,17 @@
 "use client";
 import Link from "next/link";
-import { ArrowLeftIcon, FolderIcon } from "@phosphor-icons/react/dist/ssr";
+import {
+  ArrowLeftIcon,
+  FolderIcon,
+  NotePencilIcon,
+} from "@phosphor-icons/react/dist/ssr";
 import {
   LIST_PANEL_CLASS_NAME,
   NOTE_GRID_CLASS_NAME,
   NoteGridSkeleton,
 } from "@/components/dashboard-skeletons";
 import { AddNoteDialog } from "@/components/add-note-dialog";
+import { EmptyState } from "@/components/empty-state";
 import { NoteCard } from "@/components/note-card";
 import { Card, CardContent } from "@/components/ui/card";
 import { ViewToggle, useViewMode } from "@/components/view-toggle";
@@ -69,8 +74,18 @@ const FolderNotesList = ({
 
       {notes.length === 0 ? (
         <Card>
-          <CardContent className="text-muted-foreground py-12 text-center text-sm">
-            No notes in this folder yet.
+          <CardContent className="py-6">
+            <EmptyState
+              icon={NotePencilIcon}
+              title="No notes in this folder yet"
+              description="Add a note here, or move one in from your notes."
+            >
+              <AddNoteDialog
+                folders={userFolders}
+                tags={userTags}
+                defaultFolderId={folder.id}
+              />
+            </EmptyState>
           </CardContent>
         </Card>
       ) : !ready ? (

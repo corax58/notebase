@@ -2,6 +2,7 @@ import * as React from "react"
 import { useRouter } from "next/navigation"
 
 import { toast } from "@/components/ui/toast"
+import { useNewFolder } from "@/lib/hooks/use-new-folder"
 
 type EditableNote = {
   id: string
@@ -30,9 +31,11 @@ export function useEditNoteForm(note: EditableNote, onSaved?: () => void) {
   const router = useRouter()
   const [submitting, setSubmitting] = React.useState(false)
   const [form, setForm] = React.useState<EditNoteFormState>(() => toFormState(note))
+  const newFolder = useNewFolder()
 
   React.useEffect(() => {
     setForm(toFormState(note))
+    newFolder.reset()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [note.id])
 
@@ -65,6 +68,8 @@ export function useEditNoteForm(note: EditableNote, onSaved?: () => void) {
       }
     }
 
+    if (!newFolder.validate()) return
+
     setSubmitting(true)
     try {
       const response = await fetch(`/api/notes/${note.id}`, {
@@ -73,7 +78,8 @@ export function useEditNoteForm(note: EditableNote, onSaved?: () => void) {
         body: JSON.stringify({
           content,
           label: form.label.trim() || null,
-          folderId: form.folderId,
+          folderId: newFolder.draft ? undefined : form.folderId,
+          newFolder: newFolder.payload,
           tags: form.tags,
           sourceTitle: form.sourceTitle.trim() || null,
           sourceUrl: sourceUrl || null,
@@ -93,6 +99,7 @@ export function useEditNoteForm(note: EditableNote, onSaved?: () => void) {
       }
 
       toast.success("Note updated", "Your changes were saved.")
+      newFolder.reset()
       onSaved?.()
       router.refresh()
     } catch (error) {
@@ -105,5 +112,5 @@ export function useEditNoteForm(note: EditableNote, onSaved?: () => void) {
     }
   }
 
-  return { form, setForm, submitting, setTags, handleSubmit }
+  return { form, setForm, submitting, setTags, newFolder, handleSubmit }
 }

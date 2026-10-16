@@ -1,7 +1,7 @@
 import { and, arrayContains, desc, eq, ilike, or } from "drizzle-orm";
 import { NextResponse, type NextRequest } from "next/server";
 import { db } from "@/db";
-import { notes } from "@/db/schema";
+import { folders, notes } from "@/db/schema";
 import { folderBelongsToUser } from "@/lib/api/ownership";
 import {
   errorResponse,
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
   const parsed = createNoteSchema.safeParse(await request.json());
   if (!parsed.success) return validationError(parsed.error);
 
-  const { tags: tagNames = [], ...values } = parsed.data;
+  const { tags: tagNames = [], newFolder, ...values } = parsed.data;
 
   if (
     values.folderId &&
@@ -66,9 +66,21 @@ export async function POST(request: NextRequest) {
   const normalizedTags = normalizeTagNames(tagNames);
 
   const note = await db.transaction(async (tx) => {
+    const [folder] = newFolder
+      ? await tx
+          .insert(folders)
+          .values({ ...newFolder, userId })
+          .returning({ id: folders.id })
+      : [];
+
     const [created] = await tx
       .insert(notes)
-      .values({ ...values, userId, tags: normalizedTags })
+      .values({
+        ...values,
+        ...(folder && { folderId: folder.id }),
+        userId,
+        tags: normalizedTags,
+      })
       .returning();
 
     await upsertTags(tx, userId, normalizedTags);

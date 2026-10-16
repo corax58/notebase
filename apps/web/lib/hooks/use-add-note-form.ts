@@ -2,6 +2,7 @@ import * as React from "react"
 import { useRouter } from "next/navigation"
 
 import { toast } from "@/components/ui/toast"
+import { useNewFolder } from "@/lib/hooks/use-new-folder"
 
 const initialState = {
   content: "",
@@ -22,6 +23,7 @@ export function useAddNoteForm(defaultFolderId: string | null = null) {
     ...initialState,
     folderId: defaultFolderId,
   })
+  const newFolder = useNewFolder()
 
   function setTags(tags: string[]) {
     setForm((prev) => ({ ...prev, tags }))
@@ -29,6 +31,7 @@ export function useAddNoteForm(defaultFolderId: string | null = null) {
 
   function reset() {
     setForm({ ...initialState, folderId: defaultFolderId })
+    newFolder.reset()
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -56,6 +59,8 @@ export function useAddNoteForm(defaultFolderId: string | null = null) {
       }
     }
 
+    if (!newFolder.validate()) return
+
     setSubmitting(true)
     try {
       const response = await fetch("/api/notes", {
@@ -64,7 +69,8 @@ export function useAddNoteForm(defaultFolderId: string | null = null) {
         body: JSON.stringify({
           content,
           label: form.label.trim() || undefined,
-          folderId: form.folderId ?? undefined,
+          folderId: newFolder.draft ? undefined : (form.folderId ?? undefined),
+          newFolder: newFolder.payload,
           tags: form.tags,
           sourceTitle: form.sourceTitle.trim() || undefined,
           sourceUrl: sourceUrl || undefined,
@@ -97,5 +103,15 @@ export function useAddNoteForm(defaultFolderId: string | null = null) {
     }
   }
 
-  return { open, setOpen, form, setForm, submitting, setTags, reset, handleSubmit }
+  return {
+    open,
+    setOpen,
+    form,
+    setForm,
+    submitting,
+    setTags,
+    newFolder,
+    reset,
+    handleSubmit,
+  }
 }

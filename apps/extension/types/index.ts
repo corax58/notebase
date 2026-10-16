@@ -1,6 +1,13 @@
+// A folder created alongside a note, which the note is put in
+export interface NewFolder {
+  name: string;
+  color: string;
+}
+
 export interface CreateNote {
   content: string;
   folderId?: string;
+  newFolder?: NewFolder;
   sourceUrl?: string;
   sourceTitle?: string;
   faviconUrl?: string;
@@ -28,6 +35,7 @@ export interface Tag {
 export interface UpdateNote {
   content: string;
   folderId: string | null;
+  newFolder?: NewFolder;
   sourceUrl: string | null;
   sourceTitle: string | null;
   faviconUrl: string | null;

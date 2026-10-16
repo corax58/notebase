@@ -34,8 +34,17 @@ export function AddNoteDialog({
   // The folder a new note starts in, e.g. the one whose page this is on
   defaultFolderId?: string
 }) {
-  const { open, setOpen, form, setForm, submitting, setTags, reset, handleSubmit } =
-    useAddNoteForm(defaultFolderId)
+  const {
+    open,
+    setOpen,
+    form,
+    setForm,
+    submitting,
+    setTags,
+    newFolder,
+    reset,
+    handleSubmit,
+  } = useAddNoteForm(defaultFolderId)
 
   return (
     <Dialog
@@ -81,6 +90,9 @@ export function AddNoteDialog({
               onChange={(folderId) =>
                 setForm((prev) => ({ ...prev, folderId }))
               }
+              newFolder={newFolder.draft}
+              onNewFolderStart={newFolder.start}
+              onNewFolderChange={newFolder.setDraft}
             />
 
             <NoteTagsInput

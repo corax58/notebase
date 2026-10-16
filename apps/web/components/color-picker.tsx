@@ -137,22 +137,24 @@ export function ColorPicker({
       className={className ? `w-full max-w-xs ${className}` : "w-full max-w-xs"}
     >
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger>
-          <Button
-            id={id}
-            type="button"
-            variant="outline"
-            disabled={disabled}
-            className="h-10 w-full justify-start gap-2 px-3 font-normal"
-          >
-            <span
-              className="h-5 w-5 shrink-0 rounded-sm border border-border"
-              style={{ backgroundColor: current }}
+        <PopoverTrigger
+          render={
+            <Button
+              id={id}
+              type="button"
+              variant="outline"
+              disabled={disabled}
+              className="w-full justify-start gap-2 px-3 font-normal"
             />
-            <span className="text-sm tracking-wide text-foreground uppercase">
-              {current}
-            </span>
-          </Button>
+          }
+        >
+          <span
+            className="h-5 w-5 shrink-0 rounded-sm border border-border"
+            style={{ backgroundColor: current }}
+          />
+          <span className="text-sm tracking-wide text-foreground uppercase">
+            {current}
+          </span>
         </PopoverTrigger>
 
         <PopoverContent className="w-64 p-4" align="start">

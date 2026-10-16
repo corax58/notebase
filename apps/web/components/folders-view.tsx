@@ -1,6 +1,6 @@
 "use client";
 
-import { FolderDashedIcon } from "@phosphor-icons/react";
+import { FolderDashedIcon, FolderIcon } from "@phosphor-icons/react";
 import * as React from "react";
 import {
   FOLDER_GRID_CLASS_NAME,
@@ -8,6 +8,7 @@ import {
   LIST_PANEL_CLASS_NAME,
 } from "@/components/dashboard-skeletons";
 import { AddFolderDialog } from "@/components/add-folder-dialog";
+import { EmptyState } from "@/components/empty-state";
 import { FolderCard } from "@/components/folder-card";
 import { FolderListItem } from "@/components/folder-list-item";
 import { SearchInput } from "@/components/search-input";
@@ -155,8 +156,14 @@ export function FoldersView({ folders }: { folders: FolderRow[] }) {
 
       {folders.length === 0 ? (
         <Card>
-          <CardContent className="text-muted-foreground py-12 text-center text-sm">
-            No folders yet.
+          <CardContent className="py-6">
+            <EmptyState
+              icon={FolderIcon}
+              title="No folders yet"
+              description="Group notes by topic or project to keep them easy to find."
+            >
+              <AddFolderDialog />
+            </EmptyState>
           </CardContent>
         </Card>
       ) : visible.length === 0 ? (

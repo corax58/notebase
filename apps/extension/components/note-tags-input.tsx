@@ -56,47 +56,55 @@ export function NoteTagsInput({
   };
 
   return (
-    <Combobox
-      multiple
-      items={items}
-      // Tags arrive most recently used first, so the cap leaves the latest
-      // ones until a query narrows the list
-      limit={inputValue.trim() ? -1 : RECENT_TAG_LIMIT}
-      value={value}
-      onValueChange={onChange}
-      inputValue={inputValue}
-      onInputValueChange={setInputValue}
-      onItemHighlighted={(item) =>
-        setHighlightedTag((item as string | undefined) ?? null)
-      }
-    >
-      <ComboboxChips ref={anchor}>
-        {value.map((tag) => (
-          <ComboboxChip key={tag} aria-label={`Remove tag ${tag}`}>
-            #{tag}
-          </ComboboxChip>
-        ))}
-        <ComboboxChipsInput
-          id={id}
-          placeholder={value.length ? undefined : "Add a tag"}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && highlightedTag === null) {
-              e.preventDefault();
-              addTag(inputValue);
-            }
-          }}
-        />
-      </ComboboxChips>
-      <ComboboxContent anchor={anchor}>
-        <ComboboxEmpty>No matching tags</ComboboxEmpty>
-        <ComboboxList>
-          {(name: string) => (
-            <ComboboxItem key={name} value={name}>
-              #{name}
-            </ComboboxItem>
-          )}
-        </ComboboxList>
-      </ComboboxContent>
-    </Combobox>
+    <div className="flex flex-col gap-1.5">
+      <Combobox
+        multiple
+        items={items}
+        // Tags arrive most recently used first, so the cap leaves the latest
+        // ones until a query narrows the list
+        limit={inputValue.trim() ? -1 : RECENT_TAG_LIMIT}
+        value={value}
+        onValueChange={onChange}
+        inputValue={inputValue}
+        onInputValueChange={setInputValue}
+        onItemHighlighted={(item) =>
+          setHighlightedTag((item as string | undefined) ?? null)
+        }
+      >
+        <ComboboxChips ref={anchor}>
+          {value.map((tag) => (
+            <ComboboxChip key={tag} aria-label={`Remove tag ${tag}`}>
+              #{tag}
+            </ComboboxChip>
+          ))}
+          <ComboboxChipsInput
+            id={id}
+            aria-describedby={`${id}-hint`}
+            placeholder={value.length ? undefined : "Add a tag"}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && highlightedTag === null) {
+                e.preventDefault();
+                addTag(inputValue);
+              }
+            }}
+          />
+        </ComboboxChips>
+        <ComboboxContent anchor={anchor}>
+          <ComboboxEmpty>No matching tags</ComboboxEmpty>
+          <ComboboxList>
+            {(name: string) => (
+              <ComboboxItem key={name} value={name}>
+                #{name}
+              </ComboboxItem>
+            )}
+          </ComboboxList>
+        </ComboboxContent>
+      </Combobox>
+      <p id={`${id}-hint`} className="text-xs text-muted-foreground">
+        Press{" "}
+        <kbd className="rounded-sm border bg-muted px-1 font-sans">Enter</kbd>{" "}
+        to add a tag
+      </p>
+    </div>
   );
 }

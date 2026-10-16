@@ -2,7 +2,10 @@
 import {
   CircleNotchIcon,
   FileMagnifyingGlassIcon,
+  NotePencilIcon,
+  PuzzlePieceIcon,
 } from "@phosphor-icons/react";
+import Link from "next/link";
 import * as React from "react";
 import {
   LIST_PANEL_CLASS_NAME,
@@ -10,6 +13,7 @@ import {
   NoteGridSkeleton,
 } from "@/components/dashboard-skeletons";
 import { AddNoteDialog } from "@/components/add-note-dialog";
+import { EmptyState } from "@/components/empty-state";
 import { NoteCard } from "@/components/note-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -154,8 +158,22 @@ const NotesList = ({
             </Card>
           ) : (
             <Card>
-              <CardContent className="text-muted-foreground py-12 text-center text-sm">
-                No notes yet.
+              <CardContent className="py-6">
+                <EmptyState
+                  icon={NotePencilIcon}
+                  title="No notes yet"
+                  description="Write one here, or save text from any page with the browser extension."
+                >
+                  <AddNoteDialog folders={userFolders} tags={userTags} />
+                  <Button
+                    variant="outline"
+                    nativeButton={false}
+                    render={<Link href="/get-extension" />}
+                  >
+                    <PuzzlePieceIcon data-icon="inline-start" />
+                    Get the extension
+                  </Button>
+                </EmptyState>
               </CardContent>
             </Card>
           )

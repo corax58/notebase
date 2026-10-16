@@ -27,7 +27,9 @@ type OverviewShellProps = {
   tags: React.ReactNode;
 };
 
-// Cards sit on a solid edge, like the buttons do
+// Cards sit on a solid edge, like the buttons do. The lists in them are held
+// at the height of a full list (five rows, or two lines of tags), so a short
+// or empty one doesn't shrink its card.
 const panelClassName =
   "border-edge raised rounded-xl border ring-0 [--card-spacing:--spacing(5)]";
 const statClassName =
@@ -149,7 +151,7 @@ export function OverviewShell({
               <ArrowRightIcon data-icon="inline-end" />
             </Button>
           </CardHeader>
-          <CardContent className="flex flex-col gap-1 px-2">
+          <CardContent className="flex min-h-77.5 flex-col gap-1 px-2">
             {recentNotes}
           </CardContent>
         </Card>
@@ -168,7 +170,7 @@ export function OverviewShell({
                 <ArrowRightIcon data-icon="inline-end" />
               </Button>
             </CardHeader>
-            <CardContent className="flex flex-col gap-0.5 px-2">
+            <CardContent className="flex min-h-63.25 flex-col gap-0.5 px-2">
               {folders}
             </CardContent>
           </Card>
@@ -177,7 +179,9 @@ export function OverviewShell({
             <CardHeader>
               <CardTitle className="leading-8 font-semibold">Tags</CardTitle>
             </CardHeader>
-            <CardContent className="flex flex-wrap gap-2">{tags}</CardContent>
+            <CardContent className="flex min-h-17 flex-wrap gap-2">
+              {tags}
+            </CardContent>
           </Card>
         </div>
       </div>

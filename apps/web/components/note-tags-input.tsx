@@ -68,6 +68,7 @@ export function NoteTagsInput({
           ))}
           <ComboboxChipsInput
             id="note-tag-input"
+            aria-describedby="note-tag-hint"
             placeholder={tags.length ? undefined : "Add a tag"}
             onKeyDown={(event) => {
               if (event.key === "Enter" && highlighted === null) {
@@ -88,6 +89,11 @@ export function NoteTagsInput({
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
+      <p id="note-tag-hint" className="text-xs text-muted-foreground">
+        Press{" "}
+        <kbd className="rounded-sm border bg-muted px-1 font-sans">Enter</kbd>{" "}
+        to add a tag
+      </p>
     </div>
   )
 }

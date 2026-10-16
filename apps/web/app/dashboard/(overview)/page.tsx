@@ -4,11 +4,16 @@ import { auth } from "@/lib/auth";
 import { notesHref } from "@/lib/note-filters";
 import { getNoteSource } from "@/lib/note-source";
 import { formatRelativeDate } from "@/lib/utils";
+import { AddFolderDialog } from "@/components/add-folder-dialog";
+import { EmptyState } from "@/components/empty-state";
+import { Button } from "@/components/ui/button";
 import {
+  ArrowRightIcon,
   FileIcon,
   FolderDashedIcon,
   FolderIcon,
   GlobeIcon,
+  NotePencilIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import { and, count, desc, eq, sql } from "drizzle-orm";
 import { headers } from "next/headers";
@@ -177,9 +182,21 @@ async function RecentNotes({ userId }: { userId: string }) {
 
   if (recentNotes.length === 0) {
     return (
-      <p className="text-muted-foreground py-8 text-center text-sm">
-        No notes yet. Once you capture something, it&apos;ll show up here.
-      </p>
+      <EmptyState
+        icon={NotePencilIcon}
+        title="No notes yet"
+        description="Save text from any page with the extension, and your latest captures will show up here."
+      >
+        <Button
+          variant="outline"
+          size="sm"
+          nativeButton={false}
+          render={<Link href="/get-extension" />}
+        >
+          Get the extension
+          <ArrowRightIcon data-icon="inline-end" />
+        </Button>
+      </EmptyState>
     );
   }
 
@@ -265,9 +282,13 @@ async function TopFolders({
 
   if (rows.length === 0) {
     return (
-      <p className="text-muted-foreground py-4 text-center text-sm">
-        No folders yet.
-      </p>
+      <EmptyState
+        icon={FolderIcon}
+        title="No folders yet"
+        description="Group notes by topic or project to keep them easy to find."
+      >
+        <AddFolderDialog />
+      </EmptyState>
     );
   }
 
@@ -331,7 +352,7 @@ async function TopTags({ userId }: { userId: string }) {
 
   if (topTags.length === 0) {
     return (
-      <p className="text-muted-foreground w-full py-4 text-center text-sm">
+      <p className="text-muted-foreground flex w-full items-center justify-center text-center text-sm">
         No tags yet.
       </p>
     );

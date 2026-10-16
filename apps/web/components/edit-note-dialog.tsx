@@ -43,7 +43,7 @@ export function EditNoteDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
-  const { form, setForm, submitting, setTags, handleSubmit } =
+  const { form, setForm, submitting, setTags, newFolder, handleSubmit } =
     useEditNoteForm(note, () => onOpenChange(false))
 
   return (
@@ -77,6 +77,9 @@ export function EditNoteDialog({
               onChange={(folderId) =>
                 setForm((prev) => ({ ...prev, folderId }))
               }
+              newFolder={newFolder.draft}
+              onNewFolderStart={newFolder.start}
+              onNewFolderChange={newFolder.setDraft}
             />
 
             <NoteTagsInput
