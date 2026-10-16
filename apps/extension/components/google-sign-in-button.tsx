@@ -1,7 +1,7 @@
-"use client";
-
-import { signIn } from "@/auth/auth-client";
 import { useState } from "react";
+import { signIn } from "@/auth/auth-client";
+import { Button } from "@/components/ui/button";
+import { webUrl } from "@/lib/web";
 
 function GoogleLogo() {
   return (
@@ -35,8 +35,10 @@ export function GoogleSignInButton() {
     setIsPending(true);
     const { error, data } = await signIn.social({
       provider: "google",
-      callbackURL: "http://localhost:3000/extension/auth-success", // a simple page on your backend/web app
-      disableRedirect: true, // don't navigate the popup — just give us the URL
+      // The web app confirms the sign-in and tells the user to return here
+      callbackURL: webUrl("/extension/auth-success"),
+      // Don't navigate the popup, just get the URL to open in a tab
+      disableRedirect: true,
     });
     if (data?.url) {
       browser.tabs.create({ url: data.url });
@@ -49,14 +51,17 @@ export function GoogleSignInButton() {
 
   return (
     <div className="flex flex-col gap-2">
-      <button
-        className=" w-full group/button gap-2 inline-flex shrink-0 cursor-pointer items-center justify-center border  bg-clip-padding text-sm font-medium whitespace-nowrap transition-all  px-4 py-2 rounded-lg select-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+      <Button
+        type="button"
+        variant="outline"
+        size="lg"
+        className="h-11 w-full rounded-[10px] bg-input/30 hover:bg-input/50"
         disabled={isPending}
         onClick={handleSignIn}
       >
         <GoogleLogo />
         {isPending ? "Redirecting..." : "Continue with Google"}
-      </button>
+      </Button>
       {error && <p className="text-sm text-destructive">{error}</p>}
     </div>
   );

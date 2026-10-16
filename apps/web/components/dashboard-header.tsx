@@ -56,7 +56,7 @@ function HeaderSearch() {
         enterKeyHint="search"
         autoComplete="off"
         className={cn(
-          "pr-8 pl-9 sm:w-56 lg:w-72",
+          "bg-background pr-8 pl-9 sm:w-56 lg:w-72",
           !expanded &&
             "max-sm:w-9 max-sm:cursor-pointer max-sm:px-0 max-sm:placeholder:text-transparent",
         )}
@@ -88,15 +88,15 @@ export function DashboardHeader({
   user: { name: string; email: string; image?: string | null };
 }) {
   return (
-    <header className="group/header border-border bg-secondary flex items-center gap-3 rounded-xl border px-4 py-3 md:m-3 md:px-6">
-      <SidebarTrigger />
+    <header className="group/header border-border bg-card flex items-center gap-3 rounded-xl border px-4 py-3 md:m-3 md:gap-4 md:py-3.5 md:pr-4 md:pl-3.5">
+      <SidebarTrigger className="shrink-0" />
 
       {/* Steps aside on small screens while the search box is expanded */}
-      <div className="min-w-0 flex-1 max-sm:group-has-data-expanded/header:hidden md:border-l md:pl-6">
-        <h1 className="truncate text-sm font-semibold">
+      <div className="min-w-0 flex-1 max-sm:group-has-data-expanded/header:hidden">
+        <h1 className="truncate text-[17px] leading-5.5 font-bold tracking-[-0.03em]">
           Welcome back, {user.name.split(" ")[0]}
         </h1>
-        <p className="text-muted-foreground truncate text-xs">
+        <p className="text-muted-foreground truncate text-[13px] leading-4.5">
           Here&apos;s what&apos;s happening in your notes today.
         </p>
       </div>

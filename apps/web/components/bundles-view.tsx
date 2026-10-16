@@ -3,12 +3,18 @@
 import * as React from "react";
 import Link from "next/link";
 import {
+  CheckCircleIcon,
+  CircleDashedIcon,
   DotsThreeVerticalIcon,
   PlusIcon,
   StackIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
-import { BundleGridSkeleton } from "@/components/dashboard-skeletons";
+import {
+  BUNDLE_GRID_CLASS_NAME,
+  BundleGridSkeleton,
+  LIST_PANEL_CLASS_NAME,
+} from "@/components/dashboard-skeletons";
 import { DeleteBundleAlert } from "@/components/delete-bundle-alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -27,12 +33,17 @@ export function BundlesView({ bundles }: { bundles: BundleRow[] }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <h2 className="text-lg font-semibold">Bundles</h2>
+      <div className="bg-card flex flex-wrap items-end justify-between gap-4 rounded-xl border p-4 md:px-6 md:py-5">
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <h2 className="text-[28px] leading-[1.1] font-bold tracking-[-0.035em]">
+            Bundles
+          </h2>
           <p className="text-muted-foreground text-sm">
-            {bundles.length} {bundles.length === 1 ? "bundle" : "bundles"} ·
-            ordered collections of notes
+            <span className="text-foreground font-bold tabular-nums">
+              {bundles.length}
+            </span>{" "}
+            {bundles.length === 1 ? "bundle" : "bundles"} · ordered collections
+            of notes
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -64,13 +75,13 @@ export function BundlesView({ bundles }: { bundles: BundleRow[] }) {
       ) : !ready ? (
         <BundleGridSkeleton />
       ) : view === "grid" ? (
-        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+        <div className={BUNDLE_GRID_CLASS_NAME}>
           {bundles.map((bundle) => (
             <BundleCard key={bundle.id} bundle={bundle} />
           ))}
         </div>
       ) : (
-        <div className="bg-card divide-y overflow-hidden rounded-xl border">
+        <div className={LIST_PANEL_CLASS_NAME}>
           {bundles.map((bundle) => (
             <BundleListItem key={bundle.id} bundle={bundle} />
           ))}
@@ -80,52 +91,89 @@ export function BundlesView({ bundles }: { bundles: BundleRow[] }) {
   );
 }
 
-function BundleCard({ bundle }: { bundle: BundleRow }) {
-  const href = `/dashboard/bundles/${bundle.id}`;
+// A note card in the stack. White in both themes like paper, so its edge
+// keeps the light theme's border color too.
+const paperClassName =
+  "raised absolute h-18.5 w-25 rounded-lg border border-[oklch(0.88_0.015_100)] bg-white [--depth-color:oklch(0.88_0.015_100)] [--depth:2px]";
 
+// The bundle's name links to it and stretches over the whole card or row, so
+// all of it is clickable while the menu button above stays its own control
+const stretchedLinkClassName = "after:absolute after:inset-0";
+
+function BundleCard({ bundle }: { bundle: BundleRow }) {
   return (
-    <Card size="sm" className="py-0">
-      <CardContent className="flex flex-col gap-4 p-4">
-        <div className="flex items-start justify-between gap-2">
-          <Link
-            href={href}
-            className="bg-primary/10 text-primary flex size-9 shrink-0 items-center justify-center rounded-lg"
+    <article className="bg-card border-edge raised relative flex flex-col overflow-hidden rounded-xl border transition-[translate,box-shadow] duration-120 hover:-translate-y-0.5 hover:[--depth:5px]">
+      <div className="bg-input/40 flex aspect-16/10 w-full items-center justify-center border-b bg-[radial-gradient(color-mix(in_oklch,var(--foreground)_14%,transparent)_1px,transparent_1px)] bg-size-[18px_18px] bg-center">
+        <div className="relative h-24 w-30">
+          {/* Bigger bundles stack more cards */}
+          {bundle.noteCount >= 5 && (
+            <div className={cn(paperClassName, "top-3.5 left-1.5 -rotate-8")} />
+          )}
+          {bundle.noteCount >= 2 && (
+            <div className={cn(paperClassName, "top-2 left-3.5 rotate-5")} />
+          )}
+          <div
+            className={cn(
+              paperClassName,
+              "top-3 left-2.5 flex flex-col gap-1.5 px-3 py-2.5",
+            )}
           >
-            <StackIcon className="size-4" weight="fill" />
+            <StackIcon weight="fill" className="text-primary size-4" />
+            <span className="h-1.25 w-[72%] rounded-[3px] bg-black/8" />
+            <span className="h-1.25 w-[90%] rounded-[3px] bg-black/8" />
+            <span className="h-1.25 w-[56%] rounded-[3px] bg-black/8" />
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col gap-2 pt-3 pr-2.5 pb-3.5 pl-3.5">
+        <div className="flex items-center gap-2">
+          <Link
+            href={`/dashboard/bundles/${bundle.id}`}
+            className={cn(
+              stretchedLinkClassName,
+              "min-w-0 flex-1 truncate text-[15px] font-bold tracking-[-0.02em]",
+            )}
+          >
+            {bundle.name}
           </Link>
           <BundleActions bundle={bundle} />
         </div>
-        <Link href={href} className="min-w-0">
-          <p className="truncate text-sm font-medium hover:underline">
-            {bundle.name}
-          </p>
-          <BundleMeta bundle={bundle} />
-        </Link>
-      </CardContent>
-    </Card>
+        <div className="flex items-center justify-between gap-2">
+          <NoteCount bundle={bundle} />
+          <CompiledBadge compiledAt={bundle.compiledAt} />
+        </div>
+      </div>
+    </article>
   );
 }
 
 function BundleListItem({ bundle }: { bundle: BundleRow }) {
-  const href = `/dashboard/bundles/${bundle.id}`;
-
   return (
-    <div className="hover:bg-muted/40 flex items-center gap-4 px-4 py-3 transition-colors">
-      <Link href={href} className="flex min-w-0 flex-1 items-center gap-3">
-        <div className="bg-primary/10 text-primary flex size-9 shrink-0 items-center justify-center rounded-lg">
-          <StackIcon className="size-4" weight="fill" />
-        </div>
-        <span className="truncate text-sm font-medium">{bundle.name}</span>
+    <div className="hover:bg-background hover:border-edge hover:raised relative flex items-center gap-3.5 rounded-lg border border-transparent py-2.5 pr-2.5 pl-3 transition-[background-color,border-color,box-shadow] [--depth:2px]">
+      <span className="bg-primary/10 border-primary/30 text-primary flex size-9 shrink-0 items-center justify-center rounded-lg border">
+        <StackIcon className="size-4" weight="fill" />
+      </span>
+      <Link
+        href={`/dashboard/bundles/${bundle.id}`}
+        className={cn(
+          stretchedLinkClassName,
+          "min-w-0 flex-1 truncate text-sm font-semibold",
+        )}
+      >
+        {bundle.name}
       </Link>
 
-      <BundleMeta bundle={bundle} className="hidden shrink-0 sm:block" />
+      <NoteCount bundle={bundle} className="w-16 shrink-0" />
+      <span className="flex w-37.5 shrink-0 max-sm:hidden">
+        <CompiledBadge compiledAt={bundle.compiledAt} />
+      </span>
 
       <BundleActions bundle={bundle} />
     </div>
   );
 }
 
-function BundleMeta({
+function NoteCount({
   bundle,
   className,
 }: {
@@ -133,12 +181,41 @@ function BundleMeta({
   className?: string;
 }) {
   return (
-    <p className={cn("text-muted-foreground text-xs", className)}>
-      {bundle.noteCount} {bundle.noteCount === 1 ? "note" : "notes"} ·{" "}
-      {bundle.compiledAt
-        ? `compiled ${formatRelativeDate(bundle.compiledAt)}`
-        : "not compiled"}
-    </p>
+    <span
+      className={cn(
+        "text-muted-foreground text-xs whitespace-nowrap tabular-nums",
+        className,
+      )}
+    >
+      {bundle.noteCount} {bundle.noteCount === 1 ? "note" : "notes"}
+    </span>
+  );
+}
+
+function CompiledBadge({ compiledAt }: { compiledAt: Date | null }) {
+  const className =
+    "inline-flex h-5.5 items-center gap-1.25 rounded-[7px] px-2 text-xs font-semibold whitespace-nowrap";
+
+  if (!compiledAt) {
+    return (
+      <span className={cn(className, "bg-muted text-muted-foreground")}>
+        <CircleDashedIcon className="size-3.25" />
+        Not compiled
+      </span>
+    );
+  }
+
+  return (
+    <span
+      className={cn(
+        className,
+        "bg-success/13 dark:text-success text-[color-mix(in_oklch,var(--success),black_35%)]",
+      )}
+      title={compiledAt.toLocaleString()}
+    >
+      <CheckCircleIcon weight="fill" className="text-success size-3.25" />
+      Compiled {formatRelativeDate(compiledAt)}
+    </span>
   );
 }
 
@@ -148,8 +225,17 @@ function BundleActions({ bundle }: { bundle: BundleRow }) {
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" />}>
-          <DotsThreeVerticalIcon className="size-5" weight="bold" />
+        <DropdownMenuTrigger
+          render={
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label={`${bundle.name} options`}
+              className="text-muted-foreground relative z-10 size-7"
+            />
+          }
+        >
+          <DotsThreeVerticalIcon className="size-4.5" weight="bold" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem

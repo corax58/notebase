@@ -35,15 +35,13 @@ export default async function NotesPage({
   }
 
   return (
-    <div className="bg-secondary flex flex-col gap-6 rounded-xl border p-4 md:p-6">
-      <NotesList
-        notes={notes}
-        total={total}
-        filters={filters}
-        facets={facets}
-        userFolders={userFolders}
-        userTags={userTags}
-      />
-    </div>
+    <NotesList
+      notes={notes}
+      total={total}
+      filters={filters}
+      facets={facets}
+      userFolders={userFolders}
+      userTags={userTags}
+    />
   );
 }

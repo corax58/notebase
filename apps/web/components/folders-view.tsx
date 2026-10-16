@@ -2,7 +2,11 @@
 
 import { FolderDashedIcon } from "@phosphor-icons/react";
 import * as React from "react";
-import { FolderGridSkeleton } from "@/components/dashboard-skeletons";
+import {
+  FOLDER_GRID_CLASS_NAME,
+  FolderGridSkeleton,
+  LIST_PANEL_CLASS_NAME,
+} from "@/components/dashboard-skeletons";
 import { AddFolderDialog } from "@/components/add-folder-dialog";
 import { FolderCard } from "@/components/folder-card";
 import { FolderListItem } from "@/components/folder-list-item";
@@ -101,16 +105,26 @@ export function FoldersView({ folders }: { folders: FolderRow[] }) {
     return matches.sort(FOLDER_COMPARATORS[sort]);
   }, [folders, terms, sort]);
 
+  // List bars are relative to the fullest folder, searched for or not
+  const mostNotes = React.useMemo(
+    () => Math.max(0, ...folders.map((folder) => folder.noteCount)),
+    [folders],
+  );
+
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <h2 className="text-lg font-semibold">Folders</h2>
+      <div className="bg-card flex flex-col gap-4 rounded-xl border p-4 md:px-6 md:py-5">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <h2 className="text-[28px] leading-[1.1] font-bold tracking-[-0.035em]">
+              Folders
+            </h2>
             <p className="text-muted-foreground text-sm" aria-live="polite">
-              {terms.length > 0
-                ? `${visible.length} of ${folders.length}`
-                : folders.length}{" "}
+              <span className="text-foreground font-bold tabular-nums">
+                {terms.length > 0
+                  ? `${visible.length} of ${folders.length}`
+                  : folders.length}
+              </span>{" "}
               {folders.length === 1 ? "folder" : "folders"} · organize your
               notes
             </p>
@@ -167,15 +181,20 @@ export function FoldersView({ folders }: { folders: FolderRow[] }) {
       ) : !ready ? (
         <FolderGridSkeleton />
       ) : view === "grid" ? (
-        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+        <div className={FOLDER_GRID_CLASS_NAME}>
           {visible.map((folder) => (
             <FolderCard key={folder.id} folder={folder} highlight={terms} />
           ))}
         </div>
       ) : (
-        <div className="bg-card divide-y overflow-hidden rounded-xl border">
+        <div className={LIST_PANEL_CLASS_NAME}>
           {visible.map((folder) => (
-            <FolderListItem key={folder.id} folder={folder} highlight={terms} />
+            <FolderListItem
+              key={folder.id}
+              folder={folder}
+              mostNotes={mostNotes}
+              highlight={terms}
+            />
           ))}
         </div>
       )}

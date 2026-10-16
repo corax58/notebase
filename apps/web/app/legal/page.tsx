@@ -34,7 +34,7 @@ export default function LegalPage() {
           <IconThemeToggle />
           <Link
             href="/auth"
-            className="inline-flex h-8 items-center rounded-lg bg-primary px-3 text-sm font-medium whitespace-nowrap text-primary-foreground"
+            className="pressable depth-primary border border-edge-primary inline-flex h-8 items-center rounded-lg bg-primary px-3 text-sm font-semibold [--depth:2px] whitespace-nowrap text-primary-foreground"
           >
             Sign in
           </Link>

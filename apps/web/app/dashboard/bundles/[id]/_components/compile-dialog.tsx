@@ -284,9 +284,9 @@ function OptionGroup<T extends string>({
   return (
     <ToggleGroup
       aria-label={label}
-      variant="outline"
       size="sm"
-      spacing={0}
+      spacing={0.5}
+      className="sunken border-edge bg-muted rounded-lg border p-0.5"
       value={[value]}
       // Pressing the active item would empty the group; always keep one
       onValueChange={(next) => {
@@ -294,7 +294,11 @@ function OptionGroup<T extends string>({
       }}
     >
       {options.map((option) => (
-        <ToggleGroupItem key={option.value} value={option.value}>
+        <ToggleGroupItem
+          key={option.value}
+          value={option.value}
+          className="text-muted-foreground aria-pressed:bg-background aria-pressed:text-foreground aria-pressed:border-edge aria-pressed:raised h-7 rounded-md border border-transparent [--depth:2px]"
+        >
           {option.label}
         </ToggleGroupItem>
       ))}

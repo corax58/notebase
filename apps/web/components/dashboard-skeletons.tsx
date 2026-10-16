@@ -84,22 +84,34 @@ export function ToolbarSkeleton({ filters = false }: { filters?: boolean }) {
   );
 }
 
+// The grids and list panels the dashboard views lay their items out in,
+// shared with these skeletons so a loading view takes the same shape
+export const NOTE_GRID_CLASS_NAME =
+  "grid grid-cols-[repeat(auto-fill,minmax(min(280px,100%),1fr))] gap-4";
+export const LIST_PANEL_CLASS_NAME =
+  "bg-card border-edge raised flex flex-col gap-0.5 rounded-xl border p-1.5";
+
 export function NoteGridSkeleton({ count = 6 }: { count?: number }) {
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <div className={NOTE_GRID_CLASS_NAME}>
       {repeat(count, (index) => (
         <div
           key={index}
-          className={cn(cardClassName, "flex flex-col gap-3 p-4")}
+          className="bg-card border-edge raised flex flex-col overflow-hidden rounded-xl border"
         >
-          <Bar className="h-3.5 w-24" />
-          <Bar className="mt-2 h-6 w-2/3" />
-          <div className="flex flex-col gap-2">
-            <Bar className="h-3.5 w-full" />
-            <Bar className="h-3.5 w-full" />
-            <Bar className="h-3.5 w-3/5" />
+          <div className="pt-3 pr-2.5 pl-4">
+            <Bar className="my-0.5 h-5 w-24 rounded-[7px]" />
           </div>
-          <div className="mt-3 flex items-center justify-between gap-2">
+          <div className="flex flex-col gap-2 px-4 pt-2.5 pb-3.5">
+            <Bar className="my-0.5 h-5 w-2/3" />
+            <div className="flex flex-col gap-2">
+              <Bar className="h-3.5 w-full" />
+              <Bar className="h-3.5 w-full" />
+              <Bar className="h-3.5 w-3/5" />
+            </div>
+            <Bar className="mt-1 h-5.5 w-16 rounded-[7px]" />
+          </div>
+          <div className="mt-auto flex items-center justify-between gap-2 border-t px-4 py-3">
             <Bar className="h-3.5 w-28" />
             <Bar className="h-3.5 w-14" />
           </div>
@@ -118,32 +130,43 @@ export function NoteRowsSkeleton({
   numbered?: boolean;
 }) {
   return (
-    <div className={listClassName}>
+    <div className={LIST_PANEL_CLASS_NAME}>
       {repeat(count, (index) => (
-        <div key={index} className="flex items-center gap-4 px-4 py-3">
+        <div
+          key={index}
+          className="flex items-center gap-3.5 border border-transparent py-2.5 pr-2.5 pl-3"
+        >
           {numbered && <Bar className="h-3.5 w-4 shrink-0" />}
-          <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <Bar className="size-9 shrink-0 rounded-lg" />
+          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
             <Bar className="my-0.5 h-4 w-1/3" />
-            <Bar className="my-0.75 h-3.5 w-2/3" />
+            <Bar className="my-0.5 h-3.5 w-2/3" />
           </div>
-          <Bar className="hidden h-3.5 w-28 shrink-0 md:block" />
-          <Bar className="h-3.5 w-16 shrink-0" />
+          <Bar className="hidden h-6 w-28 shrink-0 rounded-[7px] md:block" />
+          <Bar className="h-3.5 w-14 shrink-0" />
         </div>
       ))}
     </div>
   );
 }
 
+// Shared with the folders view so the skeleton lays out the same columns
+export const FOLDER_GRID_CLASS_NAME =
+  "grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4";
+
 export function FolderGridSkeleton({ count = 4 }: { count?: number }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+    <div className={FOLDER_GRID_CLASS_NAME}>
       {repeat(count, (index) => (
-        <div key={index} className={cn(cardClassName, "overflow-hidden")}>
-          <Bar className="aspect-video w-full rounded-none" />
-          <div className="flex items-center gap-4 p-4">
+        <div
+          key={index}
+          className="bg-card border-edge raised overflow-hidden rounded-xl border"
+        >
+          <Bar className="aspect-16/10 w-full rounded-none" />
+          <div className="flex items-center gap-3 py-3 pr-2.5 pl-3.5">
             <Bar className="size-9 shrink-0 rounded-lg" />
-            <div className="flex min-w-0 flex-1 flex-col gap-1">
-              <Bar className="my-0.5 h-4 w-2/3" />
+            <div className="flex min-w-0 flex-1 flex-col gap-px">
+              <Bar className="my-0.75 h-4 w-2/3" />
               <Bar className="my-0.5 h-3 w-1/3" />
             </div>
           </div>
@@ -153,18 +176,24 @@ export function FolderGridSkeleton({ count = 4 }: { count?: number }) {
   );
 }
 
+export const BUNDLE_GRID_CLASS_NAME =
+  "grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4";
+
 export function BundleGridSkeleton({ count = 4 }: { count?: number }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+    <div className={BUNDLE_GRID_CLASS_NAME}>
       {repeat(count, (index) => (
         <div
           key={index}
-          className={cn(cardClassName, "flex flex-col gap-4 p-4")}
+          className="bg-card border-edge raised overflow-hidden rounded-xl border"
         >
-          <Bar className="size-9 rounded-lg" />
-          <div className="flex flex-col gap-1">
-            <Bar className="my-0.5 h-4 w-2/3" />
-            <Bar className="my-0.5 h-3 w-1/2" />
+          <Bar className="aspect-16/10 w-full rounded-none" />
+          <div className="flex flex-col gap-2 pt-3 pr-2.5 pb-3.5 pl-3.5">
+            <Bar className="my-1 h-4 w-2/3" />
+            <div className="flex items-center justify-between gap-2">
+              <Bar className="h-3 w-14" />
+              <Bar className="h-5.5 w-28 rounded-[7px]" />
+            </div>
           </div>
         </div>
       ))}

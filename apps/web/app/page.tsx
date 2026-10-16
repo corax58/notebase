@@ -144,13 +144,13 @@ export default function Home() {
           <div className="flex w-full flex-wrap items-center justify-center gap-3">
             <Link
               href="/auth"
-              className="inline-flex h-[50px] items-center gap-2.5 rounded-xl bg-primary px-6 text-base font-semibold whitespace-nowrap text-white"
+              className="pressable depth-primary border border-edge-primary inline-flex h-[50px] items-center gap-2.5 rounded-xl bg-primary px-6 text-base font-semibold whitespace-nowrap text-white"
             >
               Get started <ArrowRightIcon />
             </Link>
             <Link
               href="/get-extension"
-              className="inline-flex h-[50px] items-center gap-2.5 rounded-xl border border-border bg-card px-5 text-[15px] font-medium whitespace-nowrap text-foreground hover:bg-muted"
+              className="pressable inline-flex h-[50px] items-center gap-2.5 rounded-xl border border-edge bg-card px-5 text-[15px] font-semibold whitespace-nowrap text-foreground hover:bg-muted"
             >
               <PuzzlePieceIcon className="size-[18px] text-primary" />
               Add extension
@@ -231,7 +231,7 @@ export default function Home() {
           </div>
           <Link
             href="/auth"
-            className="inline-flex h-[52px] items-center gap-2.5 rounded-xl bg-primary px-[26px] text-base font-semibold whitespace-nowrap text-white"
+            className="pressable depth-primary border border-edge-primary inline-flex h-[52px] items-center gap-2.5 rounded-xl bg-primary px-[26px] text-base font-semibold whitespace-nowrap text-white"
           >
             Get started <ArrowRightIcon />
           </Link>

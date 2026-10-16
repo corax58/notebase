@@ -4,7 +4,11 @@ import {
   FileMagnifyingGlassIcon,
 } from "@phosphor-icons/react";
 import * as React from "react";
-import { NoteGridSkeleton } from "@/components/dashboard-skeletons";
+import {
+  LIST_PANEL_CLASS_NAME,
+  NOTE_GRID_CLASS_NAME,
+  NoteGridSkeleton,
+} from "@/components/dashboard-skeletons";
 import { AddNoteDialog } from "@/components/add-note-dialog";
 import { NoteCard } from "@/components/note-card";
 import { Button } from "@/components/ui/button";
@@ -89,15 +93,18 @@ const NotesList = ({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <h2 className="text-lg font-semibold">Notes</h2>
+      <div className="bg-card flex flex-col gap-4 rounded-xl border p-4 md:px-6 md:py-5">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <h2 className="text-[28px] leading-[1.1] font-bold tracking-[-0.035em]">
+              Notes
+            </h2>
             <p className="text-muted-foreground text-sm" aria-live="polite">
-              {filtered
-                ? `${total} of ${facets.total} ${facets.total === 1 ? "note" : "notes"}`
-                : `${total} ${total === 1 ? "note" : "notes"}`}{" "}
-              · {sortLabel?.toLowerCase()}
+              <span className="text-foreground font-bold tabular-nums">
+                {filtered ? `${total} of ${facets.total}` : total}
+              </span>{" "}
+              {(filtered ? facets.total : total) === 1 ? "note" : "notes"} ·{" "}
+              {sortLabel?.toLowerCase()}
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -155,7 +162,7 @@ const NotesList = ({
         ) : !ready ? (
           <NoteGridSkeleton />
         ) : view === "grid" ? (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className={NOTE_GRID_CLASS_NAME}>
             {notes.map((note) => (
               <NoteCard
                 key={note.id}
@@ -167,7 +174,7 @@ const NotesList = ({
             ))}
           </div>
         ) : (
-          <div className="bg-card divide-y overflow-hidden rounded-xl border">
+          <div className={LIST_PANEL_CLASS_NAME}>
             {notes.map((note) => (
               <NoteListItem
                 key={note.id}

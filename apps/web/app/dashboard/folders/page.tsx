@@ -23,9 +23,5 @@ export default async function FoldersPage() {
     .groupBy(folders.id)
     .orderBy(asc(folders.name));
 
-  return (
-    <div className="bg-secondary h-full rounded-xl border p-4 md:p-6">
-      <FoldersView folders={rows} />
-    </div>
-  );
+  return <FoldersView folders={rows} />;
 }

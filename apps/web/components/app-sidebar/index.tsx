@@ -42,33 +42,32 @@ export function AppSidebar({ user }: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon" className="dark:border-transparent">
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" render={<Link href="/dashboard" />}>
-              <Image
-                src="/favicon-96x96.png"
-                alt="Notebase"
-                width={32}
-                height={32}
-                className="hidden size-8 shrink-0 group-data-[collapsible=icon]:block"
-              />
-              <Image
-                src="/notebase-logo.webp"
-                alt="Notebase"
-                width={124}
-                height={30}
-                className="h-6 w-auto group-data-[collapsible=icon]:hidden dark:hidden"
-              />
-              <Image
-                src="/notebase-logo-dark.webp"
-                alt="Notebase"
-                width={124}
-                height={30}
-                className="hidden h-6 w-auto group-data-[collapsible=icon]:hidden dark:block"
-              />
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <div className="bg-background flex h-14 items-center overflow-hidden rounded-lg border px-3 transition-[width,height,padding] group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-1">
+          <Image
+            src="/favicon-96x96.png"
+            alt="Notebase"
+            width={32}
+            height={32}
+            className="hidden size-full shrink-0 group-data-[collapsible=icon]:block"
+          />
+          {/* Collapse hides the wrapper, so it doesn't fight dark:block on the images */}
+          <span className="flex group-data-[collapsible=icon]:hidden">
+            <Image
+              src="/notebase-logo.webp"
+              alt="Notebase"
+              width={166}
+              height={40}
+              className="h-8 w-auto dark:hidden"
+            />
+            <Image
+              src="/notebase-logo-dark.webp"
+              alt="Notebase"
+              width={166}
+              height={40}
+              className="hidden h-8 w-auto dark:block"
+            />
+          </span>
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -87,9 +86,10 @@ export function AppSidebar({ user }: AppSidebarProps) {
                       tooltip={item.title}
                       render={<Link href={item.href} />}
                       className={cn(
-                        "rounded-lg",
-                        isActive &&
-                          "data-active:bg-background data-active:text-primary data-active:hover:bg-background/80",
+                        "rounded-lg border border-transparent transition-[width,height,padding,translate,box-shadow,background-color,border-color] [--depth:2px]",
+                        isActive
+                          ? "data-active:bg-primary data-active:text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary active:text-primary-foreground data-active:border-edge-primary pressable depth-primary data-active:font-semibold"
+                          : "hover:bg-background hover:border-edge hover:raised",
                       )}
                     >
                       <item.icon />
@@ -102,7 +102,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="border-t">
+      <SidebarFooter className="">
         <SidebarUser user={user} />
       </SidebarFooter>
       <SidebarRail />

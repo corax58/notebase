@@ -1,7 +1,11 @@
 "use client";
 import Link from "next/link";
 import { ArrowLeftIcon, FolderIcon } from "@phosphor-icons/react/dist/ssr";
-import { NoteGridSkeleton } from "@/components/dashboard-skeletons";
+import {
+  LIST_PANEL_CLASS_NAME,
+  NOTE_GRID_CLASS_NAME,
+  NoteGridSkeleton,
+} from "@/components/dashboard-skeletons";
 import { AddNoteDialog } from "@/components/add-note-dialog";
 import { NoteCard } from "@/components/note-card";
 import { Card, CardContent } from "@/components/ui/card";
@@ -72,7 +76,7 @@ const FolderNotesList = ({
       ) : !ready ? (
         <NoteGridSkeleton />
       ) : view === "grid" ? (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className={NOTE_GRID_CLASS_NAME}>
           {notes.map((note) => (
             <NoteCard
               key={note.id}
@@ -83,7 +87,7 @@ const FolderNotesList = ({
           ))}
         </div>
       ) : (
-        <div className="bg-card divide-y overflow-hidden rounded-xl border">
+        <div className={LIST_PANEL_CLASS_NAME}>
           {notes.map((note) => (
             <NoteListItem
               key={note.id}

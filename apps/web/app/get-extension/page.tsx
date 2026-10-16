@@ -121,7 +121,7 @@ export default function GetExtensionPage() {
           <a
             href={EXTENSION_ZIP}
             download
-            className="bg-primary inline-flex h-[50px] items-center gap-2.5 rounded-xl px-6 text-base font-semibold whitespace-nowrap text-white"
+            className="pressable depth-primary border border-edge-primary bg-primary inline-flex h-[50px] items-center gap-2.5 rounded-xl px-6 text-base font-semibold whitespace-nowrap text-white"
           >
             <DownloadSimpleIcon weight="bold" className="size-[18px]" />
             Download the extension
@@ -238,7 +238,7 @@ export default function GetExtensionPage() {
           </div>
           <Link
             href="/auth"
-            className="bg-primary inline-flex h-[52px] items-center gap-2.5 rounded-xl px-[26px] text-base font-semibold whitespace-nowrap text-white"
+            className="pressable depth-primary border border-edge-primary bg-primary inline-flex h-[52px] items-center gap-2.5 rounded-xl px-[26px] text-base font-semibold whitespace-nowrap text-white"
           >
             Open the web app <ArrowRightIcon />
           </Link>

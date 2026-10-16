@@ -51,7 +51,7 @@ export function ViewToggle({
     <div
       role="group"
       aria-label="View mode"
-      className="bg-muted inline-flex items-center rounded-lg p-0.5"
+      className="bg-muted sunken border-edge inline-flex items-center rounded-lg border p-0.5"
     >
       {options.map(({ value, label, Icon }) => (
         <button
@@ -62,8 +62,9 @@ export function ViewToggle({
           title={label}
           onClick={() => onChange(value)}
           className={cn(
-            "text-muted-foreground hover:text-foreground flex size-7 items-center justify-center rounded-md transition-colors",
-            view === value && "bg-background text-foreground shadow-sm",
+            "text-muted-foreground hover:text-foreground flex size-7 items-center justify-center rounded-md border border-transparent transition-colors",
+            view === value &&
+              "bg-background text-foreground border-edge raised [--depth:2px]",
           )}
         >
           <Icon className="size-4" />

@@ -8,7 +8,6 @@ import {
   PencilSimpleIcon,
   TrashIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { Card, CardContent } from "@/components/ui/card";
 import { DeleteFolderAlert } from "@/components/delete-folder-alert";
 import {
   DropdownMenu,
@@ -17,9 +16,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { EditFolderDialog } from "@/components/edit-folder-dialog";
+import { FolderChip, folderColor } from "@/components/folder-chip";
 import { Highlight } from "@/components/highlight";
-import { Button } from "./ui/button";
-import { Folder } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type FolderCardProps = {
   folder: {
@@ -32,91 +31,102 @@ type FolderCardProps = {
   highlight?: string[];
 };
 
+// A paper peeking out of the folder, white in both themes like real paper
+const paperClassName = "absolute h-9 rounded-[2px_3px_3px_2px] border bg-white";
+
 export function FolderCard({ folder, highlight }: FolderCardProps) {
   const href = `/dashboard/folders/${folder.id}`;
+  const color = folderColor(folder);
   const [editOpen, setEditOpen] = React.useState(false);
   const [deleteOpen, setDeleteOpen] = React.useState(false);
 
+  // Lifts by hand rather than with `pressable`, which would also sink the
+  // card whenever its menu button is pressed
   return (
-    <Card key={folder.id} size="sm" className="py-0">
-      <CardContent className="p-0">
-        <Link
-          href={href}
-          className="bg-input/40 flex aspect-video w-full items-center justify-center"
-        >
-          <div className="relative size-32">
-            <FolderIcon
-              weight="fill"
-              className="absolute inset-1 size-30 rotate-180"
-              style={folder.color ? { color: folder.color } : undefined}
-            />
+    <article className="bg-card border-edge raised flex flex-col overflow-hidden rounded-xl border transition-[translate,box-shadow] duration-120 hover:-translate-y-0.5 hover:[--depth:5px]">
+      <Link
+        href={href}
+        tabIndex={-1}
+        aria-hidden
+        className="bg-input/40 flex aspect-16/10 w-full items-center justify-center border-b bg-[radial-gradient(color-mix(in_oklch,var(--foreground)_14%,transparent)_1px,transparent_1px)] bg-size-[18px_18px] bg-center"
+      >
+        <div className="relative size-28">
+          <FolderIcon
+            weight="fill"
+            className="absolute top-1 left-1 size-26 rotate-180"
+            style={{ color: `color-mix(in oklch, ${color}, black 18%)` }}
+          />
 
-            <div className="absolute inset-x-4 inset-y-7 z-0 h-10 w-20 rounded-r-sm border bg-white"></div>
-            <div className="absolute inset-x-4 inset-y-8 z-0 h-10 w-22 rounded-r-sm border bg-white"></div>
-
-            <FolderIcon
-              weight="fill"
-              className="absolute z-10 size-32"
-              style={folder.color ? { color: folder.color } : undefined}
-            />
-            {/* highlight: same icon, white, faded top-to-bottom via mask */}
-            <FolderIcon
-              weight="fill"
-              className="absolute inset-0 z-10 size-32 text-white opacity-50"
-              style={{
-                maskImage: "linear-gradient(to bottom, black, transparent 75%)",
-                WebkitMaskImage:
-                  "linear-gradient(to bottom, black, transparent 75%)",
-              }}
-            />
-          </div>
-        </Link>
-        <div className="flex items-center justify-between">
-          <Link href={href} className="flex w-full min-w-0 gap-4 p-4">
+          {/* Fuller folders hold more papers */}
+          {folder.noteCount >= 20 && (
             <div
-              className="bg-primary/10 text-primary flex size-9 shrink-0 items-center justify-center rounded-lg"
-              style={
-                folder.color
-                  ? {
-                      backgroundColor: `${folder.color}1a`,
-                      color: folder.color,
-                    }
-                  : undefined
-              }
-            >
-              <FolderIcon className="size-4" />
-            </div>
-            <div className="min-w-0">
-              <p className="truncate text-sm font-medium">
-                <Highlight text={folder.name} terms={highlight} />
-              </p>
-              <p className="text-muted-foreground text-xs">
-                {folder.noteCount} {folder.noteCount === 1 ? "note" : "notes"}
-              </p>
-            </div>
-          </Link>
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={<Button variant="ghost" className={"size-6"} />}
-            >
-              <DotsThreeVerticalIcon className="size-6" weight="bold" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setEditOpen(true)}>
-                <PencilSimpleIcon />
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                variant="destructive"
-                onClick={() => setDeleteOpen(true)}
-              >
-                <TrashIcon />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              className={`${paperClassName} top-4 left-4.5 w-16 -rotate-6`}
+            />
+          )}
+          {folder.noteCount >= 5 && (
+            <div
+              className={`${paperClassName} top-5.5 left-3.5 w-18 rotate-3`}
+            />
+          )}
+          <div className={`${paperClassName} top-7 left-3.5 w-19.5`} />
+
+          <FolderIcon
+            weight="fill"
+            className="absolute inset-0 z-10 size-28"
+            style={{ color }}
+          />
+          {/* highlight: same icon, white, faded top-to-bottom via mask */}
+          <FolderIcon
+            weight="fill"
+            className="absolute inset-0 z-10 size-28 text-white opacity-45"
+            style={{
+              maskImage: "linear-gradient(to bottom, black, transparent 75%)",
+              WebkitMaskImage:
+                "linear-gradient(to bottom, black, transparent 75%)",
+            }}
+          />
         </div>
-      </CardContent>
+      </Link>
+      <div className="flex items-center gap-2 py-3 pr-2.5 pl-3.5">
+        <Link href={href} className="flex min-w-0 flex-1 items-center gap-3">
+          <FolderChip color={color} />
+          <span className="flex min-w-0 flex-1 flex-col gap-px">
+            <span className="truncate text-[15px] font-bold tracking-[-0.02em]">
+              <Highlight text={folder.name} terms={highlight} />
+            </span>
+            <span className="text-muted-foreground text-xs tabular-nums">
+              {folder.noteCount} {folder.noteCount === 1 ? "note" : "notes"}
+            </span>
+          </span>
+        </Link>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label={`${folder.name} options`}
+                className="text-muted-foreground size-7"
+              />
+            }
+          >
+            <DotsThreeVerticalIcon className="size-4.5" weight="bold" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => setEditOpen(true)}>
+              <PencilSimpleIcon />
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              variant="destructive"
+              onClick={() => setDeleteOpen(true)}
+            >
+              <TrashIcon />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
 
       <EditFolderDialog
         folder={folder}
@@ -129,6 +139,6 @@ export function FolderCard({ folder, highlight }: FolderCardProps) {
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
       />
-    </Card>
+    </article>
   );
 }

@@ -165,7 +165,9 @@ export function SortNotesDialog({
                 items={order.map((note) => note.id)}
                 strategy={verticalListSortingStrategy}
               >
-                <ol className="flex flex-col gap-2">
+                {/* Room above and below so the scroll box doesn't clip the
+                    first row's ring or the last row's edge */}
+                <ol className="flex flex-col gap-2 py-1.5">
                   {order.map((note, index) => (
                     <SortableRow
                       key={note.id}
@@ -241,8 +243,9 @@ function SortableRow({
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
       className={cn(
-        "bg-card flex items-center gap-3 rounded-lg border px-2 py-2",
-        isDragging && "ring-primary/40 relative z-10 shadow-lg ring-2",
+        "bg-card border-edge raised flex items-center gap-3 rounded-lg border px-2 py-2",
+        // The picked-up row stands taller on its edge
+        isDragging && "ring-primary/40 relative z-10 ring-2 [--depth:5px]",
       )}
     >
       <button

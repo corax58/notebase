@@ -206,7 +206,7 @@ export function CompileDemo() {
                 <span className="text-[13.5px] font-medium">
                   {setting.label}
                 </span>
-                <div className="inline-flex gap-0.5 rounded-[9px] bg-muted p-[3px]">
+                <div className="sunken inline-flex gap-0.5 rounded-[9px] border border-edge bg-muted p-[3px]">
                   {setting.options.map((option) => (
                     <button
                       key={option}
@@ -216,9 +216,9 @@ export function CompileDemo() {
                         setCfg((prev) => ({ ...prev, [setting.key]: option }))
                       }
                       className={cn(
-                        "cursor-pointer rounded-[7px] px-[11px] py-[5px] text-[12.5px] font-medium whitespace-nowrap",
+                        "cursor-pointer rounded-[7px] border border-transparent px-[11px] py-[5px] text-[12.5px] font-semibold whitespace-nowrap",
                         cfg[setting.key] === option
-                          ? "bg-card text-foreground shadow-[0_1px_3px_0_oklch(0_0_0/0.1)]"
+                          ? "raised border-edge bg-card text-foreground [--depth:2px]"
                           : "text-muted-foreground",
                       )}
                     >
@@ -250,7 +250,7 @@ export function CompileDemo() {
             <FileTextIcon className="text-primary" />
             study-methods.md
           </span>
-          <span className="inline-flex h-[30px] items-center gap-1.5 rounded-lg border border-border px-3 text-[12.5px] font-medium">
+          <span className="raised inline-flex h-[30px] items-center gap-1.5 rounded-lg border border-edge px-3 text-[12.5px] font-semibold [--depth:2px]">
             <DownloadSimpleIcon />
             Export
           </span>

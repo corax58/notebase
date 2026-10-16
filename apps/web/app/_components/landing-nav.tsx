@@ -65,7 +65,7 @@ export function LandingNav() {
             </button>
             <Link
               href={session ? "/dashboard" : "/auth"}
-              className="inline-flex h-[38px] items-center rounded-[10px] bg-primary px-4 text-sm font-semibold whitespace-nowrap text-white"
+              className="pressable depth-primary border border-edge-primary inline-flex h-[38px] items-center rounded-[10px] bg-primary px-4 text-sm font-semibold whitespace-nowrap text-white"
             >
               {session ? "Dashboard" : "Sign in"}
             </Link>
