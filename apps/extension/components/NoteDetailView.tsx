@@ -1,16 +1,22 @@
-import { useState } from "react";
+import { useState, type ElementType, type ReactNode } from "react";
 import {
-  Archive,
-  ArrowLeft,
-  ExternalLink,
-  Folder,
-  Globe,
-  Pencil,
-  Trash2,
-} from "lucide-react";
+  ArchiveIcon,
+  ArrowLeftIcon,
+  ArrowSquareOutIcon,
+  CalendarBlankIcon,
+  FileIcon,
+  GlobeIcon,
+  HashIcon,
+  PencilSimpleIcon,
+  TrashIcon,
+} from "@phosphor-icons/react";
 import type { Note } from "@/types";
+import { NoteFolderPill } from "@/components/note-folder-pill";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { deleteNote } from "@/lib/api-client";
-import { cn } from "@/lib/utils";
+import { getNoteSource } from "@/lib/note-source";
+import { formatRelativeDate } from "@/lib/utils";
 
 interface NoteDetailViewProps {
   note: Note;
@@ -19,41 +25,35 @@ interface NoteDetailViewProps {
   onDeleted: (noteId: string) => void;
 }
 
-const buttonClassName = cn(
-  "inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-4xl",
-  "border border-border bg-clip-padding px-4 py-2 text-sm font-medium",
-  "whitespace-nowrap transition-colors outline-none select-none",
-  "hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50",
-  "disabled:pointer-events-none disabled:opacity-50",
-);
-
-const sectionLabelClassName = "text-xs font-medium text-muted-foreground";
-
-// Only http(s) sources are linked; anything else is shown as plain text
-function parseSourceUrl(url: string | null) {
-  if (!url) return null;
-  try {
-    const parsed = new URL(url);
-    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-      return null;
-    }
-    return {
-      href: parsed.href,
-      hostname: parsed.hostname.replace(/^www\./, ""),
-    };
-  } catch {
-    return null;
-  }
-}
-
-function formatDate(value: string) {
-  return new Date(value).toLocaleString(undefined, {
+function formatDate(value: Date) {
+  return value.toLocaleString(undefined, {
     month: "short",
     day: "numeric",
     year: "numeric",
     hour: "numeric",
     minute: "2-digit",
   });
+}
+
+// One labelled line of the details list, as in the web app's note view
+function DetailRow({
+  icon: Icon,
+  label,
+  children,
+}: {
+  icon: ElementType;
+  label: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="grid grid-cols-[5.5rem_1fr] items-start gap-3 py-2.5">
+      <dt className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+        <Icon className="size-4 shrink-0" />
+        {label}
+      </dt>
+      <dd className="min-w-0 text-sm">{children}</dd>
+    </div>
+  );
 }
 
 function NoteDetailView({
@@ -66,10 +66,14 @@ function NoteDetailView({
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string>();
 
-  const source = parseSourceUrl(note.sourceUrl);
-  const sourceTitle =
-    note.sourceTitle || source?.hostname || note.sourceUrl || "";
+  const source = getNoteSource(note);
+  const createdAt = new Date(note.createdAt);
+  const updatedAt = new Date(note.updatedAt);
   const wasEdited = note.updatedAt !== note.createdAt;
+
+  const trimmed = note.content.trim();
+  const wordCount = trimmed ? trimmed.split(/\s+/).length : 0;
+  const readingMinutes = Math.max(1, Math.round(wordCount / 200));
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -84,155 +88,168 @@ function NoteDetailView({
     }
   };
 
-  const sourceDetails = (
-    <>
-      {note.faviconUrl ? (
-        <img src={note.faviconUrl} alt="" className="size-4 shrink-0" />
-      ) : (
-        <Globe className="size-4 shrink-0" />
-      )}
-      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="truncate text-foreground">{sourceTitle}</span>
-        {source && sourceTitle !== source.hostname && (
-          <span className="truncate">{source.hostname}</span>
-        )}
-      </span>
-    </>
-  );
-
-  const sourceClassName =
-    "flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-xs text-muted-foreground";
-
   return (
-    <div className="flex h-full flex-col gap-4 px-6 pb-6">
-      <button
+    <div className="flex h-full flex-col gap-4 px-6 pt-3 pb-6">
+      <Button
         type="button"
+        variant="ghost"
+        size="sm"
+        className="-ml-3 w-fit text-muted-foreground"
         onClick={onBack}
-        className="flex w-fit cursor-pointer items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
       >
-        <ArrowLeft className="size-4" />
+        <ArrowLeftIcon data-icon="inline-start" />
         Back
-      </button>
+      </Button>
 
       <div className="-mx-2 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-2">
-        <div className="flex flex-col gap-1.5">
-          <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-muted-foreground">
-            <span
-              className="flex min-w-0 items-center gap-1"
-              style={
-                note.folder?.color ? { color: note.folder.color } : undefined
-              }
-            >
-              <Folder className="size-3.5 shrink-0" />
-              <span className="truncate">
-                {note.folder?.name ?? "No folder"}
-              </span>
-            </span>
+        <div className="flex flex-col gap-2.5">
+          <div className="flex flex-wrap items-center gap-2">
+            <NoteFolderPill folder={note.folder} />
             {note.archived && (
-              <span className="flex items-center gap-1 rounded-sm border border-border px-1.5 py-0.5">
-                <Archive className="size-3" />
+              <Badge variant="outline">
+                <ArchiveIcon />
                 Archived
-              </span>
+              </Badge>
             )}
           </div>
-          <h2 className="text-base font-semibold wrap-break-word text-foreground">
+          <h2 className="text-xl leading-tight font-semibold tracking-tight wrap-break-word">
             {note.label || "Untitled note"}
           </h2>
-          <p className="text-xs text-muted-foreground">
-            Created {formatDate(note.createdAt)}
-            {wasEdited && ` · Edited ${formatDate(note.updatedAt)}`}
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+            <span title={formatDate(createdAt)}>
+              Created {formatRelativeDate(createdAt)}
+            </span>
+            <span aria-hidden>·</span>
+            <span>
+              {wordCount.toLocaleString()} {wordCount === 1 ? "word" : "words"}
+            </span>
+            <span aria-hidden>·</span>
+            <span>{readingMinutes} min read</span>
           </p>
         </div>
 
-        <p className="rounded-lg border border-border bg-muted/40 p-3 text-sm wrap-break-word whitespace-pre-wrap text-foreground">
-          {note.content}
-        </p>
-
-        {note.tags.length > 0 && (
-          <div className="flex flex-col gap-1.5">
-            <span className={sectionLabelClassName}>Tags</span>
-            <ul className="flex flex-wrap gap-1.5">
-              {note.tags.map((tag) => (
-                <li
-                  key={tag}
-                  className="max-w-full truncate rounded-sm bg-muted px-1.5 py-0.5 text-xs font-medium text-foreground"
-                >
-                  #{tag}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {sourceTitle && (
-          <div className="flex flex-col gap-1.5">
-            <span className={sectionLabelClassName}>Source</span>
-            {source ? (
-              <a
-                href={source.href}
-                target="_blank"
-                rel="noreferrer"
-                title={source.href}
-                className={cn(
-                  sourceClassName,
-                  "transition-colors hover:bg-accent",
-                )}
-              >
-                {sourceDetails}
-                <ExternalLink className="size-3.5 shrink-0" />
-              </a>
-            ) : (
-              <div className={sourceClassName}>{sourceDetails}</div>
+        <div className="rounded-lg border bg-muted/40 p-3">
+          <p className="text-sm leading-relaxed wrap-break-word whitespace-pre-wrap text-foreground">
+            {note.content || (
+              <span className="text-muted-foreground italic">
+                This note is empty.
+              </span>
             )}
-          </div>
-        )}
+          </p>
+        </div>
+
+        <div>
+          <h3 className="mb-1 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+            Details
+          </h3>
+          <dl className="divide-y">
+            <DetailRow icon={GlobeIcon} label="Source">
+              {source?.href ? (
+                <a
+                  href={source.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  title={source.href}
+                  className="group flex min-w-0 items-center gap-2 hover:underline"
+                >
+                  {note.faviconUrl ? (
+                    <img
+                      src={note.faviconUrl}
+                      className="size-4 shrink-0 rounded-sm object-cover"
+                      alt=""
+                    />
+                  ) : (
+                    <GlobeIcon className="size-4 shrink-0 text-muted-foreground" />
+                  )}
+                  <span className="flex min-w-0 flex-col">
+                    <span className="truncate">{source.label}</span>
+                    {source.hostname && source.hostname !== source.label && (
+                      <span className="truncate text-xs text-muted-foreground">
+                        {source.hostname}
+                      </span>
+                    )}
+                  </span>
+                  <ArrowSquareOutIcon className="size-3.5 shrink-0 text-muted-foreground" />
+                </a>
+              ) : source ? (
+                <span className="flex min-w-0 items-center gap-2">
+                  <FileIcon className="size-4 shrink-0 text-muted-foreground" />
+                  <span className="truncate">{source.label}</span>
+                </span>
+              ) : (
+                <span className="text-muted-foreground">Added manually</span>
+              )}
+            </DetailRow>
+
+            <DetailRow icon={CalendarBlankIcon} label="Created">
+              <span>{formatDate(createdAt)}</span>
+              {wasEdited && (
+                <span className="block text-xs text-muted-foreground">
+                  Edited {formatDate(updatedAt)}
+                </span>
+              )}
+            </DetailRow>
+
+            <DetailRow icon={HashIcon} label="Tags">
+              {note.tags.length > 0 ? (
+                <div className="flex flex-wrap gap-1.5">
+                  {note.tags.map((tag) => (
+                    <Badge key={tag} variant="secondary" className="max-w-full">
+                      <span className="truncate">#{tag}</span>
+                    </Badge>
+                  ))}
+                </div>
+              ) : (
+                <span className="text-muted-foreground">No tags</span>
+              )}
+            </DetailRow>
+          </dl>
+        </div>
       </div>
 
       {error && <p className="text-sm text-destructive">{error}</p>}
 
       {isConfirmingDelete ? (
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => setIsConfirmingDelete(false)}
-            disabled={isDeleting}
-            className={buttonClassName}
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={handleDelete}
-            disabled={isDeleting}
-            className={cn(
-              buttonClassName,
-              "border-transparent bg-destructive text-white hover:bg-destructive hover:opacity-90",
-            )}
-          >
-            {isDeleting ? "Deleting..." : "Delete note"}
-          </button>
+        <div className="flex flex-col gap-2">
+          <p className="text-sm text-muted-foreground">
+            Permanently delete this note? This can't be undone.
+          </p>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1"
+              disabled={isDeleting}
+              onClick={() => setIsConfirmingDelete(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              className="flex-1"
+              disabled={isDeleting}
+              onClick={handleDelete}
+            >
+              {isDeleting ? "Deleting..." : "Delete note"}
+            </Button>
+          </div>
         </div>
       ) : (
         <div className="flex gap-2">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            className="flex-1 text-destructive hover:bg-destructive/10 hover:text-destructive"
             onClick={() => setIsConfirmingDelete(true)}
-            className={cn(buttonClassName, "text-destructive")}
           >
-            <Trash2 className="size-4" />
+            <TrashIcon data-icon="inline-start" />
             Delete
-          </button>
-          <button
-            type="button"
-            onClick={onEdit}
-            className={cn(
-              buttonClassName,
-              "border-transparent bg-primary text-primary-foreground hover:bg-primary hover:opacity-90",
-            )}
-          >
-            <Pencil className="size-4" />
-            Edit
-          </button>
+          </Button>
+          <Button type="button" className="flex-1" onClick={onEdit}>
+            <PencilSimpleIcon data-icon="inline-start" />
+            Edit note
+          </Button>
         </div>
       )}
     </div>

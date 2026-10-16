@@ -3,6 +3,7 @@ import AuthLayout from "./AuthLayout";
 import NoteForm from "./note-form";
 import RecentNotesView from "@/components/RecentNotesView";
 import { sourceFromTab } from "@/lib/source";
+import { openWebPage } from "@/lib/web";
 
 type PopupView =
   | { name: "login" }
@@ -28,8 +29,6 @@ function editableNote(note: Note): CreateNote {
   };
 }
 
-const backendUrl = import.meta.env.WXT_API_URL;
-
 function App() {
   const [view, setView] = useState<PopupView>({ name: "recent" });
 
@@ -53,9 +52,7 @@ function App() {
               onAddNote={async () =>
                 setView({ name: "form", note: await blankNote() })
               }
-              onOpenNotebase={() => {
-                browser.tabs.create({ url: `${backendUrl}/dashboard/notes` });
-              }}
+              onOpenNotebase={() => openWebPage("/dashboard/notes")}
               onSelectNote={(note) => setView({ name: "detail", note })}
             />
           )}

@@ -1,29 +1,14 @@
-import {
-  Combobox,
-  ComboboxChip,
-  ComboboxChips,
-  ComboboxChipsInput,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-  useComboboxAnchor,
-} from "@/components/ui/combobox";
+import { NoteFolderSelect } from "@/components/note-folder-select";
+import { NoteSourceCard } from "@/components/note-source-card";
+import { NoteTagsInput } from "@/components/note-tags-input";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  createNote,
-  getFolders,
-  getTags,
-  updateNote,
-} from "@/lib/api-client";
+import { createNote, getFolders, updateNote } from "@/lib/api-client";
 import { createNoteSchema } from "@/lib/validation";
-import type { CreateNote, Folder, Note, Tag } from "@/types";
-import { X } from "lucide-react";
-import React, { type FormEvent } from "react";
-
-const RECENT_TAG_LIMIT = 10;
+import type { CreateNote, Folder, Note } from "@/types";
+import type { FormEvent } from "react";
 
 const NoteForm = ({
   initialNote,
@@ -42,44 +27,12 @@ const NoteForm = ({
   const [isSaving, setIsSaving] = useState(false);
 
   const [folders, setFolders] = useState<Folder[]>([]);
-  const [tagSuggestions, setTagSuggestions] = useState<Tag[]>([]);
-  const [tagInputValue, setTagInputValue] = useState("");
-  const [highlightedTag, setHighlightedTag] = useState<string | null>(null);
-  const tagAnchor = useComboboxAnchor();
 
   useEffect(() => {
     getFolders().then((result) => {
       if (result.success) setFolders(result.data);
     });
-    getTags().then((result) => {
-      if (result.success) setTagSuggestions(result.data);
-    });
   }, []);
-
-  const selectedFolder =
-    folders.find((folder) => folder.id === note.folderId) ?? null;
-
-  const tags = note.tags ?? [];
-
-  const tagItems = useMemo(
-    () =>
-      tagSuggestions
-        .map((tag) => tag.name)
-        .filter((name) => !tags.includes(name)),
-    [tagSuggestions, tags],
-  );
-
-  const setTags = (next: string[]) => {
-    setNote({ ...note, tags: next });
-  };
-
-  const addTag = (value: string) => {
-    const next = value.trim().toLowerCase();
-    if (next && !tags.includes(next)) {
-      setNote({ ...note, tags: [...tags, next] });
-    }
-    setTagInputValue("");
-  };
 
   const handleDiscard = () => {
     onDone();
@@ -149,158 +102,85 @@ const NoteForm = ({
       faviconUrl: undefined,
     });
   };
+
   return (
-    <form
-      onSubmit={handleSave}
-      className="flex flex-col gap-4 border-t border-border px-6 py-6"
-    >
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="note-label" className="text-sm font-medium">
-          Label
-        </label>
-        <Input
-          id="note-label"
-          type="text"
-          value={note.label ?? ""}
-          onChange={(e) => setNote({ ...note, label: e.target.value })}
-          placeholder="Add a label (optional)"
-        />
+    <form onSubmit={handleSave} className="flex flex-col gap-4 px-6 pt-4 pb-6">
+      <div className="flex flex-col gap-1">
+        <h2 className="text-base font-semibold">
+          {noteId ? "Edit note" : "Add a note"}
+        </h2>
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="note-content" className="text-sm font-medium">
-          Note
-        </label>
+        <Label htmlFor="note-content">Content</Label>
         <Textarea
           id="note-content"
+          placeholder="Write your note..."
           className="min-h-34 resize-none"
           value={note.content}
           onChange={(e) => setNote({ ...note, content: e.target.value })}
+          autoFocus
         />
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="note-folder" className="text-sm font-medium">
-          Folder
-        </label>
-        <Combobox
-          items={folders}
-          value={selectedFolder}
-          onValueChange={(folder: Folder | null) =>
-            setNote({ ...note, folderId: folder?.id })
-          }
-          itemToStringLabel={(folder: Folder) => folder.name}
-        >
-          <ComboboxInput id="note-folder" placeholder="No folder" showClear />
-          <ComboboxContent>
-            <ComboboxEmpty>No matching folders</ComboboxEmpty>
-            <ComboboxList>
-              {(folder: Folder) => (
-                <ComboboxItem key={folder.id} value={folder}>
-                  <span className="truncate">{folder.name}</span>
-                </ComboboxItem>
-              )}
-            </ComboboxList>
-          </ComboboxContent>
-        </Combobox>
+        <Label htmlFor="note-folder">Folder</Label>
+        <NoteFolderSelect
+          id="note-folder"
+          folders={folders}
+          value={note.folderId}
+          onChange={(folderId) => setNote({ ...note, folderId })}
+        />
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="note-tag-input" className="text-sm font-medium">
-          Tags
-        </label>
-        <Combobox
-          multiple
-          items={tagItems}
-          // Tags arrive most recently used first, so the cap leaves the latest
-          // ones until a query narrows the list
-          limit={tagInputValue.trim() ? -1 : RECENT_TAG_LIMIT}
-          value={tags}
-          onValueChange={setTags}
-          inputValue={tagInputValue}
-          onInputValueChange={setTagInputValue}
-          onItemHighlighted={(item) =>
-            setHighlightedTag((item as string | undefined) ?? null)
-          }
-        >
-          <ComboboxChips ref={tagAnchor}>
-            {tags.map((tag) => (
-              <ComboboxChip key={tag} aria-label={`Remove tag ${tag}`}>
-                #{tag}
-              </ComboboxChip>
-            ))}
-            <ComboboxChipsInput
-              id="note-tag-input"
-              placeholder={tags.length ? undefined : "Add a tag"}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && highlightedTag === null) {
-                  e.preventDefault();
-                  addTag(tagInputValue);
-                }
-              }}
-            />
-          </ComboboxChips>
-          <ComboboxContent anchor={tagAnchor}>
-            <ComboboxEmpty>No matching tags</ComboboxEmpty>
-            <ComboboxList>
-              {(name: string) => (
-                <ComboboxItem key={name} value={name}>
-                  #{name}
-                </ComboboxItem>
-              )}
-            </ComboboxList>
-          </ComboboxContent>
-        </Combobox>
+        <Label htmlFor="note-tag-input">Tags</Label>
+        <NoteTagsInput
+          id="note-tag-input"
+          value={note.tags ?? []}
+          onChange={(tags) => setNote({ ...note, tags })}
+        />
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="note-label">Label</Label>
+        <Input
+          id="note-label"
+          type="text"
+          placeholder="e.g. Reading list"
+          value={note.label ?? ""}
+          onChange={(e) => setNote({ ...note, label: e.target.value })}
+          maxLength={100}
+        />
       </div>
 
       {(note.sourceTitle || note.sourceUrl || note.faviconUrl) && (
-        <div className="relative flex items-start gap-2 rounded-lg border border-border bg-clip-padding px-3 py-2 pr-8 text-xs text-muted-foreground">
-          {note.faviconUrl && (
-            <img
-              src={note.faviconUrl}
-              alt=""
-              className="mt-0.5 size-4 shrink-0"
-            />
-          )}
-          <div className="flex min-w-0 flex-col gap-0.5">
-            {note.sourceTitle && (
-              <span className="truncate text-foreground">
-                {note.sourceTitle}
-              </span>
-            )}
-            {note.sourceUrl && (
-              <span className="truncate">{note.sourceUrl}</span>
-            )}
-          </div>
-          <button
-            type="button"
-            onClick={handleRemoveSource}
-            aria-label="Remove source"
-            className="absolute top-1.5 right-1.5 inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-full outline-none transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
-          >
-            <X className="size-3.5" />
-          </button>
+        <div className="flex flex-col gap-1.5">
+          <span className="text-xs text-muted-foreground">Source</span>
+          <NoteSourceCard
+            faviconUrl={note.faviconUrl}
+            sourceTitle={note.sourceTitle}
+            sourceUrl={note.sourceUrl}
+            onRemove={handleRemoveSource}
+          />
         </div>
       )}
 
       {error && <p className="text-sm text-destructive">{error}</p>}
 
       <div className="flex gap-2">
-        <button
+        <Button
           type="button"
-          onClick={handleDiscard}
+          variant="outline"
+          className="flex-1"
           disabled={isSaving}
-          className="inline-flex flex-1 cursor-pointer items-center justify-center rounded-4xl border border-border bg-clip-padding px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors outline-none select-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50"
+          onClick={handleDiscard}
         >
           {noteId ? "Cancel" : "Discard"}
-        </button>
-        <button
-          type="submit"
-          disabled={isSaving}
-          className="inline-flex flex-1 cursor-pointer items-center justify-center rounded-4xl border border-transparent bg-primary px-4 py-2 text-sm font-medium whitespace-nowrap text-primary-foreground transition-colors outline-none select-none hover:opacity-90 focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50"
-        >
-          {isSaving ? "Saving..." : "Save"}
-        </button>
+        </Button>
+        <Button type="submit" className="flex-1" disabled={isSaving}>
+          {isSaving ? "Saving..." : "Save note"}
+        </Button>
       </div>
     </form>
   );
