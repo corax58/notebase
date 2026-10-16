@@ -3,6 +3,7 @@
 import { DeleteNoteAlert } from "@/components/delete-note-alert";
 import { EditNoteDialog } from "@/components/edit-note-dialog";
 import { Highlight, matchExcerpt } from "@/components/highlight";
+import { NoteFolderPill } from "@/components/note-folder-pill";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +13,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ViewNoteDialog } from "@/components/view-note-dialog";
-import { notesHref } from "@/lib/note-filters";
 import { getNoteSource } from "@/lib/note-source";
 import { formatRelativeDate } from "@/lib/utils";
 import {
@@ -20,13 +20,11 @@ import {
   DotsThreeVerticalIcon,
   EyeIcon,
   FileIcon,
-  FolderIcon,
   GlobeIcon,
   MinusCircleIcon,
   PencilSimpleIcon,
   TrashIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import Link from "next/link";
 import * as React from "react";
 
 type Folder = { id: string; name: string; color: string | null };
@@ -66,111 +64,74 @@ export function NoteListItem({
   const [editOpen, setEditOpen] = React.useState(false);
   const [deleteOpen, setDeleteOpen] = React.useState(false);
 
-  const visibleTags = note.tags.slice(0, 3);
-  const extraTags = note.tags.length - visibleTags.length;
-
   return (
-    <div className="hover:bg-muted/40 flex items-center gap-4 px-4 py-3 transition-colors">
+    <div className="hover:bg-background hover:border-edge hover:raised flex items-center gap-3.5 rounded-lg border border-transparent py-2.5 pr-2.5 pl-3 transition-[background-color,border-color,box-shadow] [--depth:2px]">
       <button
         type="button"
         onClick={() => setViewOpen(true)}
-        className="flex min-w-0 flex-1 cursor-pointer flex-col gap-1 text-left"
+        className="flex min-w-0 flex-1 cursor-pointer items-center gap-3.5 text-left"
       >
-        <div className="flex items-center gap-2">
-          <span className="truncate text-sm font-semibold">
-            {note.label ? (
-              <Highlight text={note.label} terms={highlight} />
-            ) : (
-              "Untitled note"
+        <span
+          className="bg-background flex size-9 shrink-0 items-center justify-center rounded-lg border"
+          title={source?.label}
+        >
+          {note.faviconUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={note.faviconUrl} className="size-4 object-cover" alt="" />
+          ) : source?.href ? (
+            <GlobeIcon className="text-muted-foreground size-4" />
+          ) : (
+            <FileIcon className="text-muted-foreground size-4" />
+          )}
+        </span>
+        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="flex items-center gap-2">
+            <span className="truncate text-sm font-semibold">
+              {note.label ? (
+                <Highlight text={note.label} terms={highlight} />
+              ) : (
+                "Untitled note"
+              )}
+            </span>
+            {note.archived && (
+              <Badge variant="outline" className="shrink-0">
+                <ArchiveIcon />
+                Archived
+              </Badge>
             )}
           </span>
-          {note.archived && (
-            <Badge variant="outline" className="shrink-0">
-              <ArchiveIcon />
-              Archived
-            </Badge>
-          )}
-        </div>
-        <p className="text-muted-foreground line-clamp-1 text-sm">
-          <Highlight
-            text={matchExcerpt(note.content, highlight, 30)}
-            terms={highlight}
-          />
-        </p>
+          <span className="text-muted-foreground truncate text-[13px]">
+            <Highlight
+              text={matchExcerpt(note.content, highlight, 30)}
+              terms={highlight}
+            />
+          </span>
+        </span>
       </button>
 
-      <div className="hidden w-36 shrink-0 md:block">
-        {note.folder ? (
-          <Link
-            href={`/dashboard/folders/${note.folder.id}`}
-            className="text-muted-foreground hover:text-foreground flex w-fit max-w-full items-center gap-1.5 text-xs font-medium hover:underline"
-            style={note.folder.color ? { color: note.folder.color } : undefined}
-          >
-            <FolderIcon className="size-3.5 shrink-0" weight="fill" />
-            <span className="truncate">{note.folder.name}</span>
-          </Link>
-        ) : (
-          <span className="text-muted-foreground/60 flex items-center gap-1.5 text-xs">
-            <FolderIcon className="size-3.5" />
-            No folder
-          </span>
-        )}
-      </div>
-
-      <div className="hidden w-48 shrink-0 items-center gap-1 lg:flex">
-        {visibleTags.map((tag) => (
-          <Badge
-            key={tag}
-            variant="secondary"
-            className="max-w-20 truncate"
-            render={<Link href={notesHref({ tags: [tag] })} prefetch={false} />}
-          >
-            #{tag}
-          </Badge>
-        ))}
-        {extraTags > 0 && (
-          <span className="text-muted-foreground text-xs">+{extraTags}</span>
-        )}
-      </div>
-
-      <div className="text-muted-foreground hidden w-32 shrink-0 xl:block">
-        {source?.href ? (
-          <a
-            href={source.href}
-            target="_blank"
-            rel="noreferrer"
-            className="hover:text-foreground flex items-center gap-1.5 text-xs hover:underline"
-          >
-            {note.faviconUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={note.faviconUrl}
-                className="size-3.5 shrink-0 object-cover"
-                alt=""
-              />
-            ) : (
-              <GlobeIcon className="size-3.5 shrink-0" />
-            )}
-            <span className="truncate">{source.label}</span>
-          </a>
-        ) : source ? (
-          <span className="flex items-center gap-1.5 text-xs">
-            <FileIcon className="size-3.5 shrink-0" />
-            <span className="truncate">{source.label}</span>
-          </span>
-        ) : null}
-      </div>
+      <span className="hidden w-37.5 shrink-0 md:flex">
+        <NoteFolderPill folder={note.folder} />
+      </span>
 
       <span
-        className="text-muted-foreground w-24 shrink-0 text-right text-xs"
+        className="text-muted-foreground w-18 shrink-0 text-right text-xs tabular-nums"
         title={note.createdAt.toDateString()}
       >
         {formatRelativeDate(note.createdAt)}
       </span>
 
       <DropdownMenu>
-        <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" />}>
-          <DotsThreeVerticalIcon className="size-5" weight="bold" />
+        <DropdownMenuTrigger
+          render={
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label="Note options"
+              className="text-muted-foreground size-7"
+            />
+          }
+        >
+          <DotsThreeVerticalIcon className="size-4.5" weight="bold" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem onClick={() => setViewOpen(true)}>

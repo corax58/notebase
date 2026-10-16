@@ -7,22 +7,12 @@ import {
   ClockIcon,
   EyeIcon,
   FileIcon,
-  FolderIcon,
   GlobeIcon,
   DotsThreeVerticalIcon,
   PencilSimpleIcon,
   TrashIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { DeleteNoteAlert } from "@/components/delete-note-alert";
 import {
   DropdownMenu,
@@ -32,11 +22,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { EditNoteDialog } from "@/components/edit-note-dialog";
 import { Highlight, matchExcerpt } from "@/components/highlight";
+import { NoteFolderPill } from "@/components/note-folder-pill";
 import { ViewNoteDialog } from "@/components/view-note-dialog";
 import { notesHref } from "@/lib/note-filters";
 import { getNoteSource } from "@/lib/note-source";
-import { formatRelativeDate } from "@/lib/utils";
-import { Separator } from "./ui/separator";
+import { cn, formatRelativeDate } from "@/lib/utils";
+
+// A tag or the archived mark, under the note's preview
+const tagClassName =
+  "bg-background inline-flex h-5.5 items-center rounded-[7px] border px-1.75 text-xs font-semibold";
 
 type Folder = { id: string; name: string; color: string | null };
 type Tag = { id: string; name: string };
@@ -75,33 +69,26 @@ export function NoteCard({
   const [deleteOpen, setDeleteOpen] = React.useState(false);
 
   return (
-    <Card size="sm" className="flex flex-col gap-2 py-3">
-      <CardHeader className="flex flex-row items-center justify-between gap-2 border-b pb-2!">
-        <div className="min-w-0">
-          {note.folder ? (
-            <Link
-              href={`/dashboard/notes?folder=${note.folder.id}`}
-              className="text-muted-foreground hover:text-foreground flex w-fit items-center gap-1 text-xs font-medium hover:underline"
-              style={
-                note.folder.color ? { color: note.folder.color } : undefined
-              }
-            >
-              <FolderIcon className="size-3.5" weight="fill" />
-              {note.folder.name}
-            </Link>
-          ) : (
-            <div className="text-muted-foreground hover:text-foreground flex w-fit items-center gap-1 text-xs font-medium hover:underline">
-              {" "}
-              <FolderIcon className="size-3.5" weight="fill" />
-              No folder
-            </div>
-          )}
-        </div>
+    <article className="bg-card border-edge raised flex flex-col overflow-hidden rounded-xl border transition-[translate,box-shadow] duration-120 hover:-translate-y-0.5 hover:[--depth:5px]">
+      <div className="flex items-center justify-between gap-2 pt-3 pr-2.5 pl-4">
+        <NoteFolderPill
+          folder={note.folder}
+          href={
+            note.folder ? notesHref({ folders: [note.folder.id] }) : undefined
+          }
+        />
         <DropdownMenu>
           <DropdownMenuTrigger
-            render={<Button variant="ghost" size="icon-sm" />}
+            render={
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Note options"
+                className="text-muted-foreground size-7"
+              />
+            }
           >
-            <DotsThreeVerticalIcon className="size-5" weight="bold" />
+            <DotsThreeVerticalIcon className="size-4.5" weight="bold" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={() => setViewOpen(true)}>
@@ -121,89 +108,86 @@ export function NoteCard({
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      </CardHeader>
-      <CardContent className="flex flex-1 flex-col justify-start gap-3 pt-0!">
+      </div>
+      <div className="flex flex-1 flex-col gap-2 px-4 pt-2.5 pb-3.5">
         <button
           type="button"
           onClick={() => setViewOpen(true)}
-          className="block w-full cursor-pointer text-left"
+          className="flex w-full cursor-pointer flex-col gap-2 text-left"
         >
-          <CardTitle className="mt-1 line-clamp-1 text-xl font-semibold hover:underline">
+          <h3 className="line-clamp-2 text-[17px] leading-[1.3] font-bold tracking-[-0.02em] text-pretty">
             {note.label ? (
               <Highlight text={note.label} terms={highlight} />
             ) : (
               "Untitled note"
             )}
-          </CardTitle>
-          <div className="mt-2 line-clamp-4">
+          </h3>
+          <p className="text-foreground/75 line-clamp-3 text-sm leading-[1.55]">
             <Highlight
               text={matchExcerpt(note.content, highlight, 120)}
               terms={highlight}
             />
-          </div>
+          </p>
         </button>
 
         {hasBadges && (
-          <div className="mt-2 flex flex-wrap items-center gap-1.5">
+          <div className="mt-1 flex flex-wrap items-center gap-1.5">
             {note.archived && (
-              <Badge variant="outline">
-                <ArchiveIcon />
+              <span className={tagClassName}>
+                <ArchiveIcon className="text-muted-foreground mr-1 size-3" />
                 Archived
-              </Badge>
+              </span>
             )}
             {note.tags.map((tag) => (
-              <Badge
+              <Link
                 key={tag}
-                variant="secondary"
-                render={
-                  <Link href={notesHref({ tags: [tag] })} prefetch={false} />
-                }
+                href={notesHref({ tags: [tag] })}
+                prefetch={false}
+                className={cn(tagClassName, "hover:border-edge")}
               >
-                #{tag}
-              </Badge>
+                <span className="text-primary">#</span>
+                {tag}
+              </Link>
             ))}
           </div>
         )}
-      </CardContent>
-      <Separator />
-      <CardFooter className="flex items-center">
-        <div className="text-muted-foreground flex w-full items-center justify-between gap-2 text-xs">
-          {source?.href ? (
-            <a
-              href={source.href}
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-foreground flex min-w-0 items-center gap-1 truncate hover:underline"
-            >
-              {note.faviconUrl ? (
-                <img
-                  src={note.faviconUrl}
-                  className="size-3.5 shrink-0 object-cover"
-                  alt={`${source.label} favicon`}
-                />
-              ) : (
-                <GlobeIcon className="size-3.5 shrink-0" />
-              )}
-
-              <span className="truncate">{source.label}</span>
-            </a>
-          ) : source ? (
-            <span className="flex min-w-0 items-center gap-1">
-              <FileIcon className="size-3.5 shrink-0" />
-              <span className="truncate">{source.label}</span>
-            </span>
-          ) : (
-            <span />
-          )}
-          <span
-            className="flex shrink-0 items-center gap-1"
-            title={note.createdAt.toDateString()}
+      </div>
+      <div className="bg-background/60 text-muted-foreground mt-auto flex items-center justify-between gap-2 border-t px-4 py-2.5 text-xs">
+        {source?.href ? (
+          <a
+            href={source.href}
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-foreground flex min-w-0 items-center gap-1.5 hover:underline"
           >
-            <ClockIcon className="size-3.5" />
-            {formatRelativeDate(note.createdAt)}
+            {note.faviconUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={note.faviconUrl}
+                className="size-3.5 shrink-0 object-cover"
+                alt=""
+              />
+            ) : (
+              <GlobeIcon className="size-3.5 shrink-0" />
+            )}
+            <span className="truncate">{source.label}</span>
+          </a>
+        ) : source ? (
+          <span className="flex min-w-0 items-center gap-1.5">
+            <FileIcon className="size-3.5 shrink-0" />
+            <span className="truncate">{source.label}</span>
           </span>
-        </div>
-      </CardFooter>
+        ) : (
+          <span />
+        )}
+        <span
+          className="flex shrink-0 items-center gap-1 tabular-nums"
+          title={note.createdAt.toDateString()}
+        >
+          <ClockIcon className="size-3.5" />
+          {formatRelativeDate(note.createdAt)}
+        </span>
+      </div>
       <ViewNoteDialog
         note={note}
         open={viewOpen}
@@ -237,6 +221,6 @@ export function NoteCard({
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
       />
-    </Card>
+    </article>
   );
 }

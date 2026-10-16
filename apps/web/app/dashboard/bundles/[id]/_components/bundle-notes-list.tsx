@@ -1,6 +1,7 @@
 "use client";
 
 import { NoteListItem } from "@/app/dashboard/notes/_components/note-list-item";
+import { LIST_PANEL_CLASS_NAME } from "@/components/dashboard-skeletons";
 import { DeleteBundleAlert } from "@/components/delete-bundle-alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -79,47 +80,63 @@ const BundleNotesList = ({
 
   return (
     <div className="flex flex-col gap-6">
-      <Link
-        href="/dashboard/bundles"
-        className="text-muted-foreground hover:text-foreground flex w-fit items-center gap-1 text-sm hover:underline"
-      >
-        <ArrowLeftIcon className="size-3.5" />
-        Bundles
-      </Link>
+      <div className="bg-card flex flex-col gap-4 rounded-xl border p-4 md:px-6 md:py-5">
+        <Link
+          href="/dashboard/bundles"
+          className="text-muted-foreground hover:text-foreground flex w-fit items-center gap-1 text-sm hover:underline"
+        >
+          <ArrowLeftIcon className="size-3.5" />
+          Bundles
+        </Link>
 
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex min-w-0 items-center gap-3">
-          <div className="bg-primary/10 text-primary flex size-9 shrink-0 items-center justify-center rounded-lg">
-            <StackIcon className="size-4" weight="fill" />
+        {/* One row on wide screens. Narrower, the title shares the top row
+            with the menu and the actions wrap onto a row of their own. */}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-4">
+          <div className="order-1 flex min-w-0 flex-1 items-center gap-3">
+            <div className="bg-primary/10 border-primary/30 text-primary flex size-10 shrink-0 items-center justify-center rounded-lg border">
+              <StackIcon className="size-5" weight="fill" />
+            </div>
+            <div className="min-w-0">
+              <h2 className="text-2xl leading-tight font-bold tracking-[-0.03em] break-words">
+                {bundle.name}
+              </h2>
+              <p className="text-muted-foreground text-sm">
+                <span className="text-foreground font-bold tabular-nums">
+                  {notes.length}
+                </span>{" "}
+                {notes.length === 1 ? "note" : "notes"} ·{" "}
+                {bundle.compiledAt
+                  ? `compiled ${formatRelativeDate(bundle.compiledAt)}`
+                  : "not compiled yet"}
+              </p>
+            </div>
           </div>
-          <div className="min-w-0">
-            <h2 className="text-lg font-semibold break-words">{bundle.name}</h2>
-            <p className="text-muted-foreground text-sm">
-              {notes.length} {notes.length === 1 ? "note" : "notes"} ·{" "}
-              {bundle.compiledAt
-                ? `compiled ${formatRelativeDate(bundle.compiledAt)}`
-                : "not compiled yet"}
-            </p>
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <SortNotesDialog bundleId={bundle.id} notes={notes} />
-          <CompileDialog
-            bundleId={bundle.id}
-            lastCompileSettings={bundle.lastCompileSettings}
-            noteCount={notes.length}
-          />
-          {bundle.docContent && (
-            <DocDialog
-              bundle={{ id: bundle.id, title: bundle.name }}
-              docContent={bundle.docContent}
+          <div className="order-3 flex w-full flex-wrap items-center gap-3 lg:order-2 lg:w-auto">
+            <SortNotesDialog bundleId={bundle.id} notes={notes} />
+            <CompileDialog
+              bundleId={bundle.id}
+              lastCompileSettings={bundle.lastCompileSettings}
+              noteCount={notes.length}
             />
-          )}
+            {bundle.docContent && (
+              <DocDialog
+                bundle={{ id: bundle.id, title: bundle.name }}
+                docContent={bundle.docContent}
+              />
+            )}
+          </div>
           <DropdownMenu>
             <DropdownMenuTrigger
-              render={<Button variant="ghost" className={"size-6"} />}
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Bundle options"
+                  className="text-muted-foreground order-2 shrink-0 lg:order-3"
+                />
+              }
             >
-              <DotsThreeVerticalIcon className="size-6" weight="bold" />
+              <DotsThreeVerticalIcon className="size-5" weight="bold" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
@@ -149,10 +166,10 @@ const BundleNotesList = ({
           </CardContent>
         </Card>
       ) : (
-        <ol className="bg-card divide-y overflow-hidden rounded-xl border">
+        <ol className={LIST_PANEL_CLASS_NAME}>
           {notes.map((note, index) => (
             <li key={note.id} className="flex items-center">
-              <span className="text-muted-foreground w-10 shrink-0 pl-4 text-xs font-medium tabular-nums">
+              <span className="text-muted-foreground w-8 shrink-0 pl-3 text-xs font-medium tabular-nums">
                 {index + 1}
               </span>
               <div className="min-w-0 flex-1">

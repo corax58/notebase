@@ -1,17 +1,26 @@
 import {
+  Bar,
   BundleGridSkeleton,
   LoadingStatus,
-  ViewHeaderSkeleton,
 } from "@/components/dashboard-skeletons";
 
 export default function BundlesLoading() {
   return (
-    <div className="bg-secondary h-full rounded-xl border p-4 md:p-6">
+    <div className="flex flex-col gap-6">
       <LoadingStatus label="Loading bundles" />
-      <div className="flex flex-col gap-6">
-        <ViewHeaderSkeleton title="Bundles" />
-        <BundleGridSkeleton />
+      <div className="bg-card flex flex-wrap items-end justify-between gap-4 rounded-xl border p-4 md:px-6 md:py-5">
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <h2 className="text-[28px] leading-[1.1] font-bold tracking-[-0.035em]">
+            Bundles
+          </h2>
+          <Bar className="h-3.5 w-56" />
+        </div>
+        <div className="flex items-center gap-3">
+          <Bar className="h-8 w-15 rounded-lg" />
+          <Bar className="h-9 w-32 rounded-lg" />
+        </div>
       </div>
+      <BundleGridSkeleton />
     </div>
   );
 }

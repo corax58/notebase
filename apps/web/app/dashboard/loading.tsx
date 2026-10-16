@@ -1,9 +1,11 @@
 import { LoadingStatus } from "@/components/dashboard-skeletons";
 import {
-  CountedRowsSkeleton,
   CountSkeleton,
+  FolderBreakdownSkeleton,
+  FolderRowsSkeleton,
   OverviewShell,
   RecentNotesSkeleton,
+  TagChipsSkeleton,
 } from "./_components/overview-shell";
 
 export default function DashboardLoading() {
@@ -13,10 +15,11 @@ export default function DashboardLoading() {
       <OverviewShell
         noteCount={<CountSkeleton />}
         folderCount={<CountSkeleton />}
+        folderBreakdown={<FolderBreakdownSkeleton />}
         tagCount={<CountSkeleton />}
         recentNotes={<RecentNotesSkeleton />}
-        folders={<CountedRowsSkeleton />}
-        tags={<CountedRowsSkeleton />}
+        folders={<FolderRowsSkeleton />}
+        tags={<TagChipsSkeleton />}
       />
     </>
   );

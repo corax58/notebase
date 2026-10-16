@@ -1,16 +1,27 @@
 import {
+  Bar,
   LoadingStatus,
   NoteGridSkeleton,
   ToolbarSkeleton,
-  ViewHeaderSkeleton,
 } from "@/components/dashboard-skeletons";
 
 export default function NotesLoading() {
   return (
-    <div className="bg-secondary flex flex-col gap-6 rounded-xl border p-4 md:p-6">
+    <div className="flex flex-col gap-6">
       <LoadingStatus label="Loading notes" />
-      <div className="flex flex-col gap-4">
-        <ViewHeaderSkeleton title="Notes" />
+      <div className="bg-card flex flex-col gap-4 rounded-xl border p-4 md:px-6 md:py-5">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <h2 className="text-[28px] leading-[1.1] font-bold tracking-[-0.035em]">
+              Notes
+            </h2>
+            <Bar className="h-3.5 w-40" />
+          </div>
+          <div className="flex items-center gap-3">
+            <Bar className="h-8 w-15 rounded-lg" />
+            <Bar className="h-9 w-28 rounded-lg" />
+          </div>
+        </div>
         <ToolbarSkeleton filters />
       </div>
       <NoteGridSkeleton />
