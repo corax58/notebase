@@ -69,7 +69,7 @@ export function SidebarUser({ user }: SidebarUserProps) {
             render={
               <SidebarMenuButton
                 size="lg"
-                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                className="data-[state=open]:bg-sidebar-accent bg-background hover:bg-background data-[state=open]:text-sidebar-accent-foreground border-edge pressable border transition-[width,height,padding,translate,box-shadow,background-color,border-color] [--depth:2px] active:[--lift:calc(var(--depth)*-1)]!"
               >
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage
