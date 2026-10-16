@@ -103,25 +103,25 @@ export default function GetExtensionPage() {
       <section className="bg-background bg-dots px-4 pt-4">
         <LandingNav />
 
-        <div className="mx-auto flex max-w-[1160px] flex-col items-center gap-[26px] px-2 pt-[clamp(56px,9vw,104px)] pb-[clamp(56px,8vw,96px)] text-center">
+        <div className="mx-auto flex max-w-[1160px] flex-col items-center gap-4.5 px-2 pt-[clamp(36px,5vw,64px)] pb-[clamp(36px,4.5vw,56px)] text-center">
           <span className="text-primary font-mono text-[13px] tracking-[0]">
             Chrome
           </span>
-          <h1 className="max-w-[900px] text-[clamp(2.6rem,7.4vw,5.2rem)] leading-[1.1] font-bold tracking-[-0.045em] text-balance">
+          <h1 className="max-w-190 text-[clamp(2.1rem,4.8vw,3.5rem)] leading-[1.1] font-bold tracking-[-0.045em] text-balance">
             Install the{" "}
             <span className="bg-primary rounded-md px-[0.1em] text-white">
               extension
             </span>{" "}
             in <Em>five steps</Em>.
           </h1>
-          <p className="text-muted-foreground max-w-[600px] text-[clamp(1.05rem,1.7vw,1.25rem)] leading-[1.6] text-pretty">
+          <p className="text-muted-foreground max-w-140 text-[clamp(1rem,1.4vw,1.125rem)] leading-[1.6] text-pretty">
             Notebase isn’t on the Chrome Web Store, so you load it into your
             browser yourself. It takes about a minute.
           </p>
           <a
             href={EXTENSION_ZIP}
             download
-            className="pressable depth-primary border border-edge-primary bg-primary inline-flex h-[50px] items-center gap-2.5 rounded-xl px-6 text-base font-semibold whitespace-nowrap text-white"
+            className="pressable depth-primary border border-edge-primary bg-primary mt-1 inline-flex h-12 items-center gap-2.5 rounded-xl px-6 text-base font-semibold whitespace-nowrap text-white"
           >
             <DownloadSimpleIcon weight="bold" className="size-[18px]" />
             Download the extension
